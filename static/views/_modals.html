@@ -1,0 +1,110 @@
+    </main>
+  </section>
+
+  <div id="signature-modal" class="signature-modal" hidden inert tabindex="-1">
+    <div class="signature-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="signature-modal-title">
+      <header class="signature-modal__header">
+        <h3 id="signature-modal-title" data-i18n="signature.title">Assinatura digital</h3>
+      </header>
+      <div class="signature-modal__body">
+        <label><span data-i18n="portal.signerName">Nome do assinante</span>
+          <input id="signature-modal-name" type="text" readonly>
+        </label>
+        <label><span data-i18n="signature.dateTime">Data e hora</span>
+          <input id="signature-modal-at" type="text" readonly>
+        </label>
+        <p id="signature-modal-canvas-label" class="hint"><strong data-i18n="signature.title">Assinatura digital</strong></p>
+        <canvas id="signature-modal-canvas" width="560" height="200" aria-labelledby="signature-modal-canvas-label"></canvas>
+        <div class="action-group">
+          <button id="signature-modal-clear" class="ghost" type="button" data-i18n="signature.clear">Limpar assinatura</button>
+        </div>
+        <label><span data-i18n="delivery.notes">Observações</span>
+          <textarea id="signature-modal-comment" rows="3" placeholder="Caso não reconheça algum EPI, informe neste campo" data-i18n-placeholder="portal.signatureCommentPlaceholder"></textarea>
+        </label>
+        <label class="signature-modal__identity" style="display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.4;">
+          <input id="signature-modal-identity" type="checkbox">
+          <span data-i18n="signature.identityConfirm">Declaro que sou o assinante identificado acima e que esta assinatura é de meu próprio punho, com validade legal (NR-6).</span>
+        </label>
+        <div id="signature-modal-identity-error" class="field-error-msg" role="alert" hidden></div>
+      </div>
+      <footer class="signature-modal__footer">
+        <button id="signature-modal-cancel" class="ghost" type="button" data-i18n="cancel">Cancelar</button>
+        <button id="signature-modal-confirm" class="primary" type="button">OK</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal: Solicitar Relatório de Movimentações -->
+  <div id="smr-request-report-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:var(--color-surface);border-radius:10px;padding:24px;max-width:440px;width:95%;box-shadow:0 4px 24px rgba(0,0,0,.18);">
+      <h3 style="margin-top:0;">Solicitar Relatório de Movimentações</h3>
+      <p style="font-size:13px;color:var(--color-text-muted);margin-top:0;">O Administrador Local receberá a solicitação e gerará o relatório para a unidade selecionada.</p>
+      <label style="display:block;margin-bottom:10px;">Unidade
+        <select id="smr-req-unit" style="width:100%;margin-top:4px;"><option value="">Todas as unidades</option></select>
+      </label>
+      <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <label style="flex:1;">Ano
+          <input id="smr-req-year" type="number" min="2020" max="2099" style="width:100%;margin-top:4px;" placeholder="Ex: 2025">
+        </label>
+        <label style="flex:1;">Mês
+          <select id="smr-req-month" style="width:100%;margin-top:4px;">
+            <option value="">Todos</option>
+            <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+            <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+            <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+          </select>
+        </label>
+      </div>
+      <label style="display:block;margin-bottom:16px;">Observação (opcional)
+        <textarea id="smr-req-notes" rows="2" style="width:100%;margin-top:4px;" placeholder="Ex: Relatório mensal para auditoria..."></textarea>
+      </label>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button id="smr-req-report-cancel" class="btn ghost" type="button">Cancelar</button>
+        <button id="smr-req-report-confirm" class="btn primary" type="button">Solicitar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recovery token modal -->
+  <div id="recovery-token-modal" class="modal-overlay" hidden>
+    <div class="card form-stack modal-card" style="max-width:480px;width:90%;">
+      <h3>Chave de recuperação gerada</h3>
+      <p class="hint">Compartilhe esta chave com o usuário. Válida por <strong>24 horas</strong> e de uso único.</p>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--color-bg-alt);border:1px solid var(--line);border-radius:6px;padding:10px 14px;">
+        <code id="recovery-token-value" style="flex:1;font-size:13px;word-break:break-all;font-family:monospace;"></code>
+        <button id="recovery-token-copy" class="ghost" type="button" style="white-space:nowrap;">Copiar</button>
+      </div>
+      <p class="hint" style="margin-top:4px;">Após fechar, esta chave não poderá ser recuperada novamente.</p>
+      <button id="recovery-token-close" class="primary" type="button">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Master admin profile modal -->
+  <div id="master-profile-modal" class="modal-overlay" hidden>
+    <div class="card form-stack modal-card" style="max-width:440px;width:90%;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3 style="margin:0;">Meu Perfil</h3>
+        <button id="master-profile-close" class="ghost" type="button" style="padding:4px 10px;" aria-label="Fechar" data-i18n-aria-label="cancel">✕</button>
+      </div>
+
+      <!-- Section 1: Email -->
+      <div style="background:var(--color-bg-alt);border-radius:8px;padding:14px 16px;">
+        <strong style="font-size:13px;display:block;margin-bottom:8px;">E-mail de recuperação</strong>
+        <input id="master-profile-email" type="email" autocomplete="email" placeholder="seu@email.com" style="width:100%;box-sizing:border-box;">
+        <small class="hint" style="margin-top:4px;display:block;">Usado para receber chave de recuperação de senha por e-mail.</small>
+        <button id="master-profile-save" class="primary" type="button" style="margin-top:10px;width:100%;">Salvar e-mail</button>
+      </div>
+
+      <!-- Section 2: Change password -->
+      <div style="background:var(--color-bg-alt);border-radius:8px;padding:14px 16px;">
+        <strong style="font-size:13px;display:block;margin-bottom:8px;">Trocar senha</strong>
+        <label style="display:block;margin-bottom:6px;">Senha atual<input id="master-current-password" type="password" autocomplete="current-password" style="width:100%;box-sizing:border-box;"></label>
+        <label style="display:block;margin-bottom:6px;">Nova senha<input id="master-new-password" type="password" autocomplete="new-password" minlength="6" style="width:100%;box-sizing:border-box;"></label>
+        <label style="display:block;margin-bottom:6px;">Confirmar nova senha<input id="master-confirm-password" type="password" autocomplete="new-password" minlength="6" style="width:100%;box-sizing:border-box;"></label>
+        <button id="master-change-password" class="primary" type="button" style="margin-top:4px;width:100%;">Atualizar senha</button>
+      </div>
+
+      <div id="master-profile-feedback" class="form-feedback" aria-live="polite"></div>
+    </div>
+  </div>
