@@ -1,0 +1,87 @@
+      <section id="colaboradores-view" class="view" data-phase2-view="colaboradores">
+        <article class="phase3-context-bar" data-phase3-screen="colaboradores" hidden>
+          <div>
+            <strong>Cadastro de Colaborador</strong>
+            <small>Preencha o cadastro e acompanhe a listagem com atualização parcial.</small>
+          </div>
+          <span id="phase3-colaboradores-context-status" class="phase3-context-status">Pronto</span>
+        </article>
+        <div class="panel-grid">
+          <form id="employee-form" class="card form-stack" data-update-permission="employees:update">
+            <div class="phase29-form-toolbar" data-phase2="colaboradores" hidden>
+              <span class="phase29-pill">UX produtiva</span>
+              <span id="phase29-colab-form-status" class="phase29-inline-status">Preencha os campos e salve sem sair da tela.</span>
+            </div>
+            <h3 data-i18n="employee.createEdit">Cadastro de colaborador</h3>
+            <input type="hidden" name="id">
+            <label><span data-i18n="company.title">Empresa</span><select name="company_id" id="employee-company" required></select></label>
+            <label><span data-i18n="employee.mainUnit">Unidade principal (opcional neste cadastro)</span><select name="unit_id" id="employee-unit"></select></label>
+            <label><span data-i18n="employee.employeeId">ID do colaborador</span><input name="employee_id_code" type="text" required></label>
+            <label><span data-i18n="employee.cpf">CPF</span><input name="cpf" type="text" placeholder="Somente Números" required></label>
+            <label><span data-i18n="employee.name">Nome</span><input name="name" type="text" required></label>
+            <label><span data-i18n="employee.email">E-mail</span><input name="email" type="email" placeholder="exemplo@empresa.com"></label>
+            <label><span data-i18n="employee.whatsapp">WhatsApp</span><input name="whatsapp" type="text" placeholder="5511999999999"></label>
+            <label><span data-i18n="employee.preferredChannel">Canal preferido</span>
+              <select name="preferred_contact_channel">
+                <option value="whatsapp">WhatsApp</option>
+                <option value="email">E-mail</option>
+              </select>
+            </label>
+            <label><span data-i18n="employee.sector">SETOR</span><input name="sector" type="text" required></label>
+            <label><span data-i18n="employee.function">Função do colaborador</span><input name="role_name" type="text" required></label>
+            <label><span data-i18n="employee.scheduleType">Escala</span><select name="schedule_type"><option value="14x14">14x14</option><option value="28x28">28x28</option><option value="30 dias">30 dias</option></select></label>
+            <label><span data-i18n="employee.admissionDate">Data de Admissão</span><input name="admission_date" type="date" required></label>
+            <label><span data-i18n="employee.vincType">Tipo de Vínculo</span>
+              <select name="tipo_vinculo" id="employee-tipo-vinculo">
+                <option value="CLT" data-i18n="employee.vincClt">CLT</option>
+                <option value="Terceirizado" data-i18n="employee.vincOutsourced">Terceirizado</option>
+                <option value="Temporário" data-i18n="employee.vincTemporary">Temporário</option>
+                <option value="Prestador de Serviço" data-i18n="employee.vincServiceProvider">Prestador de Serviço</option>
+              </select>
+            </label>
+            <label id="employee-empresa-origem-row" hidden><span data-i18n="employee.sourceCompany">Empresa de Origem</span><input name="empresa_origem" type="text" placeholder="Nome da empresa de origem do colaborador"></label>
+            <button class="primary" type="submit" data-i18n="employee.save">Salvar colaborador</button>
+          </form>
+          <article id="colaborador-list-view" class="card phase29-focus-surface"><h3 data-i18n="employee.listTitle">Colaboradores</h3>
+            <div id="phase3-colaboradores-summary" class="phase3-summary-cards" hidden></div>
+            <div class="phase29-list-toolbar" data-phase2="colaborador-lista" hidden>
+              <div class="phase29-counts">
+                <strong id="phase29-colab-count">0</strong>
+                <span data-i18n="employee.visibleEmployees">colaboradores visíveis</span>
+              </div>
+              <div id="phase29-colab-feedback" class="phase29-inline-status" data-i18n="employee.filtersRealtimeHint">Use os filtros para atualizar a listagem em tempo real.</div>
+            </div>
+            <div class="phase2-toolbar" data-phase2="colaboradores" hidden>
+              <div class="phase2-actions" data-ui-dropdown data-ux-module="colaboradores">
+                <button class="ghost" type="button" data-dropdown-trigger aria-expanded="false" data-i18n="employee.quickActions">Ações rápidas</button>
+                <div class="phase2-dropdown" data-dropdown-panel hidden>
+                  <button class="ghost" type="button" data-ux-action="clear-filters" data-ux-module="colaboradores">Limpar filtros</button>
+                  <button class="ghost" type="button" data-ux-action="refresh-data" data-ux-module="colaboradores">Recarregar dados</button>
+                  <button class="ghost" type="button" data-ux-action="scroll-top" data-ux-module="colaboradores">Ir para topo</button>
+                  <button class="ghost" type="button" data-ux-action="toggle-density" data-ux-module="colaboradores">Modo compacto/detalhado</button>
+                  <button class="ghost" type="button" data-ux-action="reload-section" data-ux-module="colaboradores">Recarregar esta seção</button>
+                  <button class="ghost" type="button" data-ux-action="close-panel" data-ux-module="colaboradores">Fechar painel</button>
+                </div>
+              </div>
+              <button class="ghost" type="button" data-phase2-refresh-module="colaboradores" hx-get="/fragments/phase2-refresh-status.html" hx-target="#phase2-colaboradores-status" hx-swap="innerHTML" hx-indicator="#phase2-colaboradores-loading" data-i18n="employee.updateData">Atualizar dados</button>
+              <span id="phase2-colaboradores-loading" class="phase2-loading htmx-indicator" data-i18n="employee.updating">Atualizando...</span>
+              <div id="phase2-colaboradores-status" class="phase2-status hint" data-i18n="employee.listReadyRealtime">Lista pronta para atualização em tempo real.</div>
+            </div>
+            <div class="phase2-toolbar" data-phase2="colaborador-lista" hidden>
+              <button class="ghost" type="button" data-colab-list-refresh data-phase2-refresh-module="colaborador-lista" hx-get="/fragments/phase2-refresh-status.html" hx-target="#phase2-colab-list-status" hx-swap="innerHTML" hx-indicator="#phase2-colab-list-loading" data-i18n="employee.updateList">Atualizar listagem</button>
+              <span id="phase2-colab-list-loading" class="phase2-loading htmx-indicator" hidden data-i18n="employee.updatingList">Atualizando listagem...</span>
+              <div id="phase2-colab-list-status" class="phase2-status hint" data-i18n="employee.listReadyRealtime">Lista pronta para atualização em tempo real.</div>
+            </div>
+            <div class="form-grid" data-colab-list-filters data-phase3-filters>
+              <label><span data-i18n="company.title">Empresa</span><select id="employees-filter-company"><option value="" data-i18n="employee.filterAllCompanies">Todas</option></select></label>
+              <label><span data-i18n="unit.title">Unidade</span><select id="employees-filter-unit"><option value="" data-i18n="employee.filterAllUnits">Todas</option></select></label>
+              <label><span data-i18n="employee.searchLabel">Busca de colaborador</span><input id="employees-filter-search" type="search" placeholder="Nome, matrícula ou ID" data-i18n-placeholder="employee.searchPlaceholder"></label>
+              <label><span data-i18n="employee.sector">Setor</span><input id="employees-filter-sector" type="search" placeholder="Setor" data-i18n-placeholder="employee.sector"></label>
+              <label><span data-i18n="employee.roleFilter">Função</span><input id="employees-filter-role" type="search" placeholder="Função" data-i18n-placeholder="employee.roleFilter"></label>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th scope="col" data-i18n="company.title">Empresa</th><th scope="col">ID</th><th scope="col" data-i18n="employee.name">Nome</th><th scope="col" data-i18n="employee.contact">Contato</th><th scope="col" data-i18n="employee.sector">SETOR</th><th scope="col" data-i18n="employee.roleFilter">Função</th><th scope="col" data-i18n="employee.vincType">Tipo Vínculo</th><th scope="col" data-i18n="unit.title">Unidade</th><th scope="col" data-i18n="employee.allocation">Alocação</th><th scope="col" data-i18n="employee.link">Link</th><th scope="col" data-i18n="unit.tableActions">Ações</th></tr></thead><tbody id="employees-table"></tbody></table></div>
+            <div id="employees-pagination" class="ds-pagination-bar"></div>
+          </article>
+        </div>
+      </section>
+

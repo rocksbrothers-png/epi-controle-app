@@ -1,0 +1,22 @@
+abstract final class Routes {
+  static const login       = '/login';
+  static const dashboard   = '/';
+  static const employees   = '/employees';
+  static const employeeDetail = '/employees/:id';
+  static const epiDetail      = '/epis/:id';
+  static const epis        = '/epis';
+  static const stock       = '/stock';
+  static const deliveries  = '/deliveries';
+  static const deliveryNew = '/deliveries/new';
+  static const returns     = '/returns';
+  static const records     = '/records';
+  static const purchases   = '/purchases';
+  static const reports     = '/reports';
+  static const settings    = '/settings';
+  static const companies   = '/companies';
+  static const users       = '/users';
+  static const units       = '/units';
+  static const portal      = '/portal';
+  static const qr          = '/qr';
+  static const feedback     = '/feedback';
+}
