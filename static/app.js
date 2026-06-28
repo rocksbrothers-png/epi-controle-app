@@ -9850,7 +9850,7 @@ async function init() {
   }
   bindAppListener(refs.unitsTable, 'click', (event) => {
     if (event.target.dataset.unitEdit) startEditUnit(event.target.dataset.unitEdit);
-    if (event.target.dataset.unitDelete) deleteRegistryEntity('/api/units', event.target.dataset.unitDelete, 'units:delete', 'Tem certeza que deseja excluir esta unidade?\nEssa ação apagarãopermanentemente a unidade e todos os registros vinculados a ela.\nEssa ação Não poderÃÂ¡ ser desfeita.');
+    if (event.target.dataset.unitDelete) deleteRegistryEntity('/api/units', event.target.dataset.unitDelete, 'units:delete', 'Tem certeza que deseja excluir esta unidade?\nEssa ação apagará permanentemente a unidade e todos os registros vinculados a ela.\nEssa ação Não poderá ser desfeita.');
   });
   bindAppListener(refs.episTable, 'click', (event) => {
     if (event.target.dataset.epiEdit) startEditEpi(event.target.dataset.epiEdit);
