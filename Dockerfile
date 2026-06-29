@@ -6,6 +6,10 @@ ARG FLUTTER_VERSION=3.24.5
 ENV FLUTTER_HOME=/opt/flutter \
     PUB_CACHE=/root/.pub-cache
 ENV PATH="$FLUTTER_HOME/bin:$FLUTTER_HOME/bin/cache/dart-sdk/bin:$PUB_CACHE/bin:$PATH"
+# No sandbox de build do Render, o tar do flutter precache tenta fazer chown e
+# falha ("Cannot change ownership ... Invalid argument"). --no-same-owner faz o
+# tar não tentar preservar dono/permissões (irrelevante em container root).
+ENV TAR_OPTIONS="--no-same-owner --no-same-permissions"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl git unzip xz-utils ca-certificates \
