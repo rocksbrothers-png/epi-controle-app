@@ -50,10 +50,27 @@ Variáveis `FIREBASE_WEB_*` como segredos.
 
 ## 5. Banco de dados (Supabase SaaS)
 
-Aplicar as **mesmas migrações** de `supabase/migrations/` no projeto SaaS
-(`wlneevhqklboctghvdeo`) e validar RLS (advisors) antes do go-live. Confirmar que
-o `DATABASE_URL` da API aponta para o pooler do projeto SaaS — **não** o
-corporativo.
+> ⚠️ **ORDEM OBRIGATÓRIA.** O schema-base do banco é criado pelo backend
+> (`core/schema.py` → `init_db()`, idempotente, com `CREATE TABLE IF NOT EXISTS`
+> e seu próprio runner `app_migrations`). As migrações em `supabase/migrations/`
+> são **RLS hardening** que rodam **por cima** desse schema e são **guardadas**
+> (`CONTINUE WHEN NOT EXISTS (tabela)`).
+>
+> Se as migrações de RLS forem aplicadas a um banco **vazio**, elas **pulam tudo
+> silenciosamente** mas ficam **registradas como aplicadas** → as tabelas
+> criadas depois ficariam **sem RLS**, com o histórico mentindo que estão
+> protegidas. **Não aplique RLS antes do schema existir.**
+
+Sequência correta no projeto SaaS (`wlneevhqklboctghvdeo`, us-east-1):
+
+1. Definir `DATABASE_URL` (com a senha do Postgres SaaS) no serviço de API e
+   **subir o backend uma vez** → `init_db()` cria todo o schema-base.
+2. Confirmar via `list_tables` que as tabelas existem.
+3. **Só então** aplicar as migrações `supabase/migrations/` e validar com
+   `get_advisors` (security) — não pode sobrar tabela sem RLS.
+
+Confirmar sempre que o `DATABASE_URL` aponta para o pooler do projeto SaaS
+(us-east-1) — **nunca** o corporativo (`kkmskwmkhyssrxqbsrqv`, sa-east-1).
 
 ## 6. Mobile (Android/iOS) — identidade SaaS
 
