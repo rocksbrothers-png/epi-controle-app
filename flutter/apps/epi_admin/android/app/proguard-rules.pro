@@ -38,7 +38,7 @@
 -dontwarn kotlinx.coroutines.**
 
 # Keep app entry point
--keep class com.rocksbrothers.epicontrole.** { *; }
+-keep class com.livamobile.epicontrole.** { *; }
 
 # Play Core (FlutterPlayStoreSplitApplication)
 -keep class com.google.android.play.core.splitcompat.** { *; }

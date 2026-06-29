@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleIdentifier</key>
-  <string>com.rocksbrothers.epicontrole</string>
+  <string>com.livamobile.epicontrole</string>
   <key>CFBundleName</key>
   <string>EPI Controle</string>
   <key>CFBundleDisplayName</key>

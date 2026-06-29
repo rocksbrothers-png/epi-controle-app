@@ -1,4 +1,4 @@
-package com.rocksbrothers.epicontrole
+package com.livamobile.epicontrole
 
 import io.flutter.embedding.android.FlutterActivity
 
