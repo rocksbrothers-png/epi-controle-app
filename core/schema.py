@@ -1720,9 +1720,9 @@ def ensure_epi_operational_tables(connection) -> None:
     _safe_add_column(connection, 'epi_feedbacks', 'admin_tech_notes', "TEXT NOT NULL DEFAULT ''")
     _safe_add_column(connection, 'epi_feedbacks', 'marca_modelo_sugerido', "TEXT NOT NULL DEFAULT ''")
     _safe_add_column(connection, 'epi_feedbacks', 'admin_tech_eval_at', "TEXT NOT NULL DEFAULT ''")
-    for _rc in ('excelente', 'otimo', 'muito_bom', 'ruim', 'muito_ruim', 'pessimo',
-                'excelente_sug', 'otima_sug', 'muito_boa_sug', 'pessima_sug', 'muito_ruim_sug', 'ruim_sug'):
-        _safe_add_column(connection, 'epi_evaluation_summary', f'rank_{_rc}', 'INTEGER NOT NULL DEFAULT 0')
+    # Cria a tabela ANTES de adicionar colunas (rank_*). Em banco existente o
+    # CREATE IF NOT EXISTS é no-op; em banco novo (ex.: SaaS) garante que os
+    # _safe_add_column abaixo não falhem por tabela ausente.
     try:
         connection.execute(
             '''
@@ -1752,6 +1752,9 @@ def ensure_epi_operational_tables(connection) -> None:
         )
     except Exception as _e:
         structured_log('warning', 'db.col_skip', error=str(_e))
+    for _rc in ('excelente', 'otimo', 'muito_bom', 'ruim', 'muito_ruim', 'pessimo',
+                'excelente_sug', 'otima_sug', 'muito_boa_sug', 'pessima_sug', 'muito_ruim_sug', 'ruim_sug'):
+        _safe_add_column(connection, 'epi_evaluation_summary', f'rank_{_rc}', 'INTEGER NOT NULL DEFAULT 0')
     try:
         connection.execute(
             '''
@@ -2381,7 +2384,13 @@ def init_db():
                 _companies_count = connection.execute('SELECT COUNT(*) FROM companies').fetchone()[0]
             except Exception:
                 _companies_count = -1
-        if _companies_count == 0:
+        # Seed de tenants de DEMONSTRAÇÃO (DOF Brasil / Norskan) — DESLIGADO por
+        # padrão. No SaaS o banco deve nascer limpo (apenas o master admin de
+        # bootstrap criado por _ensure_admin abaixo). Defina SEED_DEMO_TENANTS=1
+        # para popular dados de exemplo (dev/teste/legado). Em banco já
+        # inicializado (companies != 0) este trecho não roda de qualquer forma.
+        _seed_demo = str(_os.environ.get('SEED_DEMO_TENANTS', '')).strip().lower() in ('1', 'true', 'yes', 'on')
+        if _seed_demo and _companies_count == 0:
             connection.executemany(
                 'INSERT INTO companies (name, legal_name, cnpj, logo_type, plan_name, user_limit, license_status, active, commercial_notes, contract_start, contract_end, monthly_value, addendum_enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [
@@ -2415,22 +2424,23 @@ def init_db():
             except Exception:
                 existing_usernames = set()
         users_to_insert = []
-        if 'dof.general' not in existing_usernames:
-            users_to_insert.append(('dof.general', _hash_password(_os.environ.get('SEED_DOF_GENERAL_PW', '')), 'Administrador Geral DOF Brasil', 'general_admin', companies['DOF Brasil']))
-        if 'dof.admin' not in existing_usernames:
-            users_to_insert.append(('dof.admin', _hash_password(_os.environ.get('SEED_DOF_ADMIN_PW', '')), 'Administrador DOF Brasil', 'admin', companies['DOF Brasil']))
-        if 'dof.user' not in existing_usernames:
-            users_to_insert.append(('dof.user', _hash_password(_os.environ.get('SEED_DOF_PW', '')), 'Usuário DOF Brasil', 'user', companies['DOF Brasil']))
-        if 'norskan.general' not in existing_usernames:
-            users_to_insert.append(('norskan.general', _hash_password(_os.environ.get('SEED_NORSKAN_GENERAL_PW', '')), 'Administrador Geral Norskan', 'general_admin', companies['Norskan Offshore']))
-        if 'norskan.admin' not in existing_usernames:
-            users_to_insert.append(('norskan.admin', _hash_password(_os.environ.get('SEED_NORSKAN_ADMIN_PW', '')), 'Administrador Norskan', 'admin', companies['Norskan Offshore']))
-        if 'norskan.user' not in existing_usernames:
-            users_to_insert.append(('norskan.user', _hash_password(_os.environ.get('SEED_NORSKAN_PW', '')), 'Usuário Norskan Offshore', 'user', companies['Norskan Offshore']))
+        if _seed_demo:
+            if 'dof.general' not in existing_usernames:
+                users_to_insert.append(('dof.general', _hash_password(_os.environ.get('SEED_DOF_GENERAL_PW', '')), 'Administrador Geral DOF Brasil', 'general_admin', companies['DOF Brasil']))
+            if 'dof.admin' not in existing_usernames:
+                users_to_insert.append(('dof.admin', _hash_password(_os.environ.get('SEED_DOF_ADMIN_PW', '')), 'Administrador DOF Brasil', 'admin', companies['DOF Brasil']))
+            if 'dof.user' not in existing_usernames:
+                users_to_insert.append(('dof.user', _hash_password(_os.environ.get('SEED_DOF_PW', '')), 'Usuário DOF Brasil', 'user', companies['DOF Brasil']))
+            if 'norskan.general' not in existing_usernames:
+                users_to_insert.append(('norskan.general', _hash_password(_os.environ.get('SEED_NORSKAN_GENERAL_PW', '')), 'Administrador Geral Norskan', 'general_admin', companies['Norskan Offshore']))
+            if 'norskan.admin' not in existing_usernames:
+                users_to_insert.append(('norskan.admin', _hash_password(_os.environ.get('SEED_NORSKAN_ADMIN_PW', '')), 'Administrador Norskan', 'admin', companies['Norskan Offshore']))
+            if 'norskan.user' not in existing_usernames:
+                users_to_insert.append(('norskan.user', _hash_password(_os.environ.get('SEED_NORSKAN_PW', '')), 'Usuário Norskan Offshore', 'user', companies['Norskan Offshore']))
         if users_to_insert:
             connection.executemany('INSERT INTO users (username, password, full_name, role, company_id) VALUES (?, ?, ?, ?, ?)', users_to_insert)
         bootstrap_admin = _ensure_admin(connection)
-        if connection.execute('SELECT COUNT(*) FROM units').fetchone()[0] == 0:
+        if _seed_demo and connection.execute('SELECT COUNT(*) FROM units').fetchone()[0] == 0:
             connection.executemany(
                 'INSERT INTO units (company_id, name, unit_type, city, notes) VALUES (?, ?, ?, ?, ?)',
                 [
@@ -2440,7 +2450,7 @@ def init_db():
                     (companies['Norskan Offshore'], 'Navio Norskan Alpha', 'navio', 'Bacia de Santos', 'Navio offshore'),
                 ]
             )
-        if connection.execute('SELECT COUNT(*) FROM employees').fetchone()[0] == 0:
+        if _seed_demo and connection.execute('SELECT COUNT(*) FROM employees').fetchone()[0] == 0:
             dof_base = connection.execute("SELECT id FROM units WHERE name = 'Base Macae'").fetchone()['id']
             norskan_ship = connection.execute("SELECT id FROM units WHERE name = 'Navio Norskan Alpha'").fetchone()['id']
             connection.executemany(
@@ -2450,7 +2460,7 @@ def init_db():
                     (companies['Norskan Offshore'], norskan_ship, '2001', '12345678902', 'Fernanda Lima', 'fernanda.lima@example.com', '55999990002', 'whatsapp', 'SSMA', 'Tecnica de Seguranca', '2024-11-20', '28x28'),
                 ]
             )
-        if connection.execute('SELECT COUNT(*) FROM epis').fetchone()[0] == 0:
+        if _seed_demo and connection.execute('SELECT COUNT(*) FROM epis').fetchone()[0] == 0:
             dof_base = connection.execute("SELECT id FROM units WHERE name = 'Base Macae'").fetchone()['id']
             norskan_ship = connection.execute("SELECT id FROM units WHERE name = 'Navio Norskan Alpha'").fetchone()['id']
             connection.executemany(
