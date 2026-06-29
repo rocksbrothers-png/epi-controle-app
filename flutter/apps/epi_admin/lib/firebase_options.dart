@@ -57,6 +57,6 @@ class DefaultFirebaseOptions {
         messagingSenderId: _senderId,
         projectId: _projectId,
         storageBucket: _bucket,
-        iosBundleId: 'com.rocksbrothers.epicontrole',
+        iosBundleId: 'com.livamobile.epicontrole',
       );
 }

@@ -18,7 +18,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <!-- Bundle ID → Provisioning Profile display name -->
-        <key>com.rocksbrothers.epicontrole</key>
+        <key>com.livamobile.epicontrole</key>
         <string>EPI Controle App Store</string>
     </dict>
 

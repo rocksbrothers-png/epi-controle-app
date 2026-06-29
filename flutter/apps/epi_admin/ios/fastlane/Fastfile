@@ -22,7 +22,7 @@ platform :ios do
     Dir.chdir(APP_ROOT) do
       # Cria a plataforma iOS se o Runner.xcodeproj não existir (idempotente).
       unless File.exist?(File.join(IOS_DIR, "Runner.xcodeproj"))
-        sh("flutter create . --platforms=ios --org com.rocksbrothers --project-name epi_admin")
+        sh("flutter create . --platforms=ios --org com.livamobile --project-name epi_admin")
       end
       # Preserva nossos arquivos versionados (flutter create pode sobrescrever).
       sh("git checkout -- ios/Runner/Info.plist ios/Runner/PrivacyInfo.xcprivacy ios/Runner/Runner.entitlements")

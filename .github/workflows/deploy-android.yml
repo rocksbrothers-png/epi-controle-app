@@ -102,7 +102,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
-          packageName: com.rocksbrothers.epicontrole
+          packageName: com.livamobile.epicontrole
           releaseFiles: flutter/apps/epi_admin/build/app/outputs/bundle/release/app-release.aab
           track: ${{ inputs.track || 'internal' }}
           status: completed

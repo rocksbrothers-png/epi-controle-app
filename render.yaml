@@ -1,6 +1,22 @@
+# =============================================================================
+# Render Blueprint — EPI-CONTROLE-APP (PRODUTO SaaS — Liva Mobile)
+# =============================================================================
+# Deploy SEPARADO do ambiente corporativo/legado (repo EPI-CONTROLE).
+# Dois serviços, com os MESMOS nomes dos serviços já criados no Render para que
+# o blueprint os ADOTE (em vez de duplicar):
+#
+#   1) epi-controle-app-livamobile-api  → API/backend Python (Docker full-stack)
+#   2) epi-controle-app-livamobile-web  → Flutter Web (static site)
+#
+# Segredos (sync:false) devem ser preenchidos no painel do Render com as
+# credenciais do SaaS (Supabase wlneevhqklboctghvdeo, JWT, Mercado Pago).
+# Ver docs/DEPLOY_SAAS.md.
+# =============================================================================
+
 services:
+  # ── 1) API / Backend (Docker full-stack) ───────────────────────────────────
   - type: web
-    name: epi-controle
+    name: epi-controle-app-livamobile-api
     env: docker
     plan: starter
     dockerfilePath: ./Dockerfile
@@ -10,8 +26,23 @@ services:
         value: /usr/bin/tesseract
       - key: OCR_REQUIRED
         value: "1"
+      # Banco SaaS — Supabase wlneevhqklboctghvdeo (NUNCA o corporativo).
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        value: https://wlneevhqklboctghvdeo.supabase.co
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      # Front-end SaaS vive em outro origin → CORS obrigatório.
+      - key: CORS_ALLOW_ORIGIN
+        value: https://epi-controle-app-livamobile-web.onrender.com
+      - key: WEB_BASE_URL
+        value: https://epi-controle-app-livamobile-web.onrender.com
+      - key: WEB_APP_URL
+        value: https://epi-controle-app-livamobile-web.onrender.com
       # Mercado Pago — defina os valores no painel do Render (sync:false).
-      # O Access Token é SECRETO e fica somente no backend.
       - key: MERCADO_PAGO_ACCESS_TOKEN
         sync: false
       - key: MERCADO_PAGO_PUBLIC_KEY
@@ -20,7 +51,50 @@ services:
         value: sandbox
       - key: MERCADO_PAGO_WEBHOOK_SECRET
         sync: false
-      - key: WEB_BASE_URL
+
+  # ── 2) Flutter Web (static site) ────────────────────────────────────────────
+  # Build do Flutter Web na raiz "/" (site próprio) apontando para a API do SaaS.
+  # Diferente do legado, que embute o Flutter em "/app/" no mesmo container.
+  - type: web
+    runtime: static
+    name: epi-controle-app-livamobile-web
+    autoDeploy: true
+    buildCommand: |
+      set -e
+      # Instala Flutter SDK (versão alinhada ao Dockerfile/CI).
+      git clone --depth 1 --branch 3.24.5 https://github.com/flutter/flutter.git "$HOME/flutter"
+      export PATH="$HOME/flutter/bin:$HOME/flutter/bin/cache/dart-sdk/bin:$PATH"
+      flutter config --no-analytics --enable-web
+      dart pub global activate melos
+      export PATH="$PATH:$HOME/.pub-cache/bin"
+      cd flutter
+      melos bootstrap
+      melos run gen:l10n
+      melos run gen
+      # SaaS: base-href "/" e API_BASE_URL apontando para o serviço de API.
+      cd apps/epi_admin
+      flutter build web --release \
+        --base-href / \
+        --dart-define=API_BASE_URL=https://epi-controle-app-livamobile-api.onrender.com \
+        --dart-define=FIREBASE_PROJECT_ID="$FIREBASE_PROJECT_ID" \
+        --dart-define=FIREBASE_SENDER_ID="$FIREBASE_SENDER_ID" \
+        --dart-define=FIREBASE_STORAGE_BUCKET="$FIREBASE_STORAGE_BUCKET" \
+        --dart-define=FIREBASE_WEB_API_KEY="$FIREBASE_WEB_API_KEY" \
+        --dart-define=FIREBASE_WEB_APP_ID="$FIREBASE_WEB_APP_ID"
+    staticPublishPath: flutter/apps/epi_admin/build/web
+    envVars:
+      - key: FIREBASE_PROJECT_ID
         sync: false
-      - key: WEB_APP_URL
+      - key: FIREBASE_SENDER_ID
         sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_WEB_API_KEY
+        sync: false
+      - key: FIREBASE_WEB_APP_ID
+        sync: false
+    routes:
+      # SPA fallback — rotas do Flutter (go_router) resolvidas no client.
+      - type: rewrite
+        source: /*
+        destination: /index.html
