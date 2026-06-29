@@ -316,7 +316,11 @@ def test_legacy_flutter_web_paths_redirect_to_official_app_url():
 def test_flutter_web_build_targets_official_app_directory():
     root = _repo_root()
     melos = (root / "flutter" / "melos.yaml").read_text(encoding="utf-8")
-    dockerfile = (root / "Dockerfile").read_text(encoding="utf-8")
+    # No SaaS (split-deploy) o ./Dockerfile é Python-only e o Flutter Web é um
+    # static site separado; o modelo co-deploy (Flutter Web embutido em
+    # static/app/) é preservado em Dockerfile.fullstack — é nele que o alvo
+    # oficial /app/ deve ser verificado.
+    dockerfile = (root / "Dockerfile.fullstack").read_text(encoding="utf-8")
 
     assert "--base-href /app/" in melos
     assert "./static/app/" in dockerfile
