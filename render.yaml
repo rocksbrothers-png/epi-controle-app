@@ -61,8 +61,11 @@ services:
     autoDeploy: true
     buildCommand: |
       set -e
-      # Instala Flutter SDK (versão alinhada ao Dockerfile/CI).
-      git clone --depth 1 --branch 3.24.5 https://github.com/flutter/flutter.git "$HOME/flutter"
+      # tar do precache do Flutter falha com chown no sandbox de build → desliga.
+      export TAR_OPTIONS="--no-same-owner --no-same-permissions"
+      # Flutter SDK no canal STABLE (o pubspec.lock exige flutter >=3.44; uma
+      # versão antiga como 3.24.5 quebra a resolução do intl ^0.20.2). Igual ao CI.
+      git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
       export PATH="$HOME/flutter/bin:$HOME/flutter/bin/cache/dart-sdk/bin:$PATH"
       flutter config --no-analytics --enable-web
       dart pub global activate melos
