@@ -13,6 +13,8 @@ abstract final class Routes {
   static const purchases   = '/purchases';
   static const reports     = '/reports';
   static const settings    = '/settings';
+  static const subscription = '/subscription';
+  static const invoices    = '/invoices';
   static const companies   = '/companies';
   static const users       = '/users';
   static const units       = '/units';

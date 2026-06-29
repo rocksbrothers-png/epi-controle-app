@@ -70,6 +70,8 @@ void main() {
           Routes.units,
           Routes.feedback,
           Routes.settings,
+          Routes.subscription,
+          Routes.invoices,
         },
       );
     });
