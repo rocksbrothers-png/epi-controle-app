@@ -223,6 +223,17 @@ def sync_subscription_status(connection, preapproval_id, mp_status, *, raw=None)
                  action='status_synced', company_id=item.get('company_id'),
                  tenant_id=item.get('tenant_id') or '',
                  detail={'mp_status': mp_status, 'normalized': norm})
+
+    # Onboarding: quando a assinatura passa a ativa, ativa a empresa pendente e
+    # envia as credenciais do dono por e-mail. Idempotente (só age se a empresa
+    # ainda estiver pendente); best-effort para nunca quebrar o webhook.
+    if norm == 'active' and item.get('company_id'):
+        try:
+            from modules.onboarding import service as onboarding_service
+            onboarding_service.activate_tenant_and_notify(connection, item['company_id'])
+        except Exception as exc:  # pragma: no cover - defensivo
+            structured_log('warning', 'onboarding.activate_on_webhook_failed',
+                           company_id=item.get('company_id'), error=str(exc))
     return True
 
 
