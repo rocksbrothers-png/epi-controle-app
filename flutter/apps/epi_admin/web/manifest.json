@@ -1,0 +1,11 @@
+{
+  "name": "EPI Controle",
+  "short_name": "EPI Controle",
+  "description": "Gestão de Equipamentos de Proteção Individual",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#C1440E",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}
