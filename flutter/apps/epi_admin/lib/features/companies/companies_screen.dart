@@ -3,7 +3,10 @@ import 'package:epi_design/epi_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:epi_admin/core/i18n/generated/app_localizations.dart';
+import '../../core/bloc/auth_cubit.dart';
+import '../../core/bloc/auth_state.dart';
 import '../../core/bloc/companies_cubit.dart';
+import '../../core/widgets/create_company_dialog.dart';
 
 class CompaniesScreen extends StatelessWidget {
   const CompaniesScreen({super.key});
@@ -23,6 +26,12 @@ class _CompaniesBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final authState = context.watch<AuthCubit>().state;
+    final canCreate = authState is AuthAuthenticated &&
+        authState.permissions.contains('companies:create');
+    final actorUserId = authState is AuthAuthenticated
+        ? (authState.sessionContext.userId ?? 0)
+        : 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.companiesTitle),
@@ -33,6 +42,19 @@ class _CompaniesBody extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: (canCreate && actorUserId > 0)
+          ? FloatingActionButton(
+              // Sem tooltip de propósito: o gate de i18n barra `tooltip:` em
+              // lib/features. O ícone "+" é autoexplicativo; o título do
+              // diálogo ("Nova empresa") dá o contexto textual.
+              onPressed: () => CreateCompanyDialog.show(
+                context,
+                context.read<CompaniesCubit>(),
+                actorUserId,
+              ),
+              child: const Icon(Icons.add_rounded),
+            )
+          : null,
       body: Column(
         children: [
           _SearchBar(),

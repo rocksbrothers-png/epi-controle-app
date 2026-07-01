@@ -168,6 +168,40 @@ class ApiClient {
     final resp = await _dio.get<Map<String, dynamic>>('/api/auth/me');
     return resp.data ?? const {};
   }
+
+  /// Cria uma empresa (tenant) via `POST /api/companies`. Fora do retrofit de
+  /// propósito — evita regenerar o cliente gerado (`.g.dart`) apenas para um
+  /// endpoint de escrita. Retorna a mensagem de erro do backend (envelope
+  /// `{"error":{"message":...}}`) numa `ApiException` quando a request falha.
+  static Future<void> createCompany(Map<String, dynamic> data) async {
+    try {
+      await _dio.post<Map<String, dynamic>>('/api/companies', data: data);
+    } on DioException catch (e) {
+      throw ApiException(_extractErrorMessage(e));
+    }
+  }
+
+  /// Extrai `error.message` do envelope de erro do backend; cai para uma
+  /// mensagem genérica quando a resposta não segue o formato esperado.
+  static String _extractErrorMessage(DioException e) {
+    final data = e.response?.data;
+    if (data is Map) {
+      final err = data['error'];
+      if (err is Map && err['message'] is String) {
+        return err['message'] as String;
+      }
+      if (data['message'] is String) return data['message'] as String;
+    }
+    return e.message ?? 'Erro ao comunicar com o servidor';
+  }
+}
+
+/// Erro de negócio devolvido pela API, já com a mensagem pronta para exibição.
+class ApiException implements Exception {
+  ApiException(this.message);
+  final String message;
+  @override
+  String toString() => message;
 }
 
 class _RetryInterceptor extends Interceptor {
