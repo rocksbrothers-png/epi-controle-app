@@ -63,4 +63,17 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   void search(String q) => emit(state._copyWith(query: q));
+
+  /// Cria uma empresa e recarrega a lista em caso de sucesso. Retorna `null`
+  /// quando a criação foi bem-sucedida, ou a mensagem de erro do backend para
+  /// a UI exibir.
+  Future<String?> create(Map<String, dynamic> data) async {
+    try {
+      await ApiClient.createCompany(data);
+      await load();
+      return null;
+    } on Exception catch (e) {
+      return e.toString();
+    }
+  }
 }
