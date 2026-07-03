@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro — EPI Controle</title>
+  <!--
+    Cadastro self-service servido pelo BACKEND Python (mesma origem da API
+    /api/onboarding/*), no padrão do /pagamento.
+
+    O site institucional apresenta os planos e redireciona para cá com
+    ?plan=<chave>&cycle=<ciclo>&lang=<idioma>. Este formulário provisiona a
+    empresa (estado pendente) via POST /api/onboarding/signup e, com o
+    company_id devolvido, segue para o checkout (/pagamento) já existente.
+  -->
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root {
+      --c-primary: #0f6fde; --c-ink: #0f2742; --c-muted: #5b6b7e;
+      --c-line: #dfe6ee; --c-soft: #eef4fb; --c-soft-line: #d6e3f2;
+      --c-err-bg: #fdecec; --c-err-line: #f3b7b7; --c-err: #b3261e;
+      --radius: 12px;
+    }
+    .signup { max-width: 640px; margin: 32px auto; padding: 0 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--c-ink); }
+    .signup h1 { font-size: 24px; margin: 0 0 4px; }
+    .signup .muted { color: var(--c-muted); font-size: 14px; margin: 0 0 20px; }
+    .card { border: 1px solid var(--c-line); border-radius: var(--radius); padding: 20px; background: #fff; }
+    .signup label.field { display: block; margin: 14px 0 4px; font-size: 13px; color: var(--c-muted); }
+    .signup label.field:first-of-type { margin-top: 0; }
+    .signup input[type=email], .signup input[type=text], .signup input[type=number], .signup select {
+      width: 100%; padding: 11px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; }
+    .signup .row2 { display: grid; gap: 14px; grid-template-columns: 1fr; }
+    @media (min-width: 560px) { .signup .row2 { grid-template-columns: 1fr 1fr; } }
+    .signup .hint { font-size: 12px; color: var(--c-muted); margin-top: 4px; }
+    .signup button { width: 100%; padding: 13px 16px; margin-top: 20px; cursor: pointer;
+      background: var(--c-primary); color: #fff; border: 0; border-radius: 8px; font-size: 16px; font-weight: 700; }
+    .signup button:disabled { background: #9bb6d6; cursor: not-allowed; }
+    .error-box { border: 1px solid var(--c-err-line); background: var(--c-err-bg); color: var(--c-err);
+      border-radius: 10px; padding: 12px 14px; margin-top: 16px; font-size: 13.5px; line-height: 1.5; }
+    .secure { font-size: 12px; color: var(--c-muted); margin-top: 12px; text-align: center; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="signup">
+    <h1>Criar sua conta</h1>
+    <p class="muted">Plano selecionado: <strong id="plan-name">—</strong>. Depois de cadastrar, você segue para o pagamento.</p>
+
+    <form class="card" id="signup-form" novalidate>
+      <label class="field" for="name">Nome fantasia</label>
+      <input id="name" name="name" type="text" autocomplete="organization" required />
+
+      <label class="field" for="legal_name">Razão social</label>
+      <input id="legal_name" name="legal_name" type="text" required />
+
+      <div class="row2">
+        <div>
+          <label class="field" for="cnpj">CNPJ</label>
+          <input id="cnpj" name="cnpj" type="text" inputmode="numeric" placeholder="00.000.000/0000-00" required />
+        </div>
+        <div>
+          <label class="field" for="plan_name">Plano</label>
+          <select id="plan_name" name="plan_name" required>
+            <option value="start">START</option>
+            <option value="business">BUSINESS</option>
+            <option value="corporate">CORPORATE</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="field" for="user_limit">Limite de usuários</label>
+      <input id="user_limit" name="user_limit" type="number" min="1" step="1" required />
+      <p class="hint" id="user-limit-hint"></p>
+
+      <label class="field" for="owner_name">Nome do responsável</label>
+      <input id="owner_name" name="owner_name" type="text" autocomplete="name" required />
+
+      <label class="field" for="owner_email">E-mail do responsável</label>
+      <input id="owner_email" name="owner_email" type="email" autocomplete="email" required />
+      <p class="hint">As credenciais de acesso serão enviadas para este e-mail assim que o pagamento for aprovado.</p>
+
+      <button id="submitBtn" type="submit">Continuar para pagamento</button>
+      <p class="secure">🔒 Seus dados são usados apenas para provisionar sua empresa no EPI Controle.</p>
+      <div class="error-box" id="error-box" hidden></div>
+    </form>
+  </main>
+
+  <script src="/js/cadastro.js" type="module"></script>
+</body>
+</html>
