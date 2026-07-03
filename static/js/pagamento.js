@@ -79,6 +79,10 @@ const ctx = {
   plan: (params.get('plan') || '').trim(),
   cycle: (params.get('cycle') || 'monthly').trim().toLowerCase() === 'annual' ? 'annual' : 'monthly',
   lang: (params.get('lang') || 'pt').trim().toLowerCase().slice(0, 2),
+  // Presente quando o cliente vem do /cadastro (onboarding self-service):
+  // liga o pagamento à empresa PENDENTE já provisionada, para o webhook do
+  // Mercado Pago poder ativá-la (ver modules/onboarding/service.py).
+  companyId: (params.get('company_id') || '').trim(),
 };
 const t = (key) => (I18N[ctx.lang] || I18N.pt)[key] || (I18N.pt[key] || key);
 
@@ -240,6 +244,7 @@ function basePayload() {
     payer_email: $('payer_email').value.trim(),
     amount: selected ? selected.amount : undefined,
     cycle: selected ? selected.cycle : ctx.cycle,
+    company_id: ctx.companyId || undefined,
     external_reference: `web|${ctx.plan}|${selected ? selected.cycle : ctx.cycle}|${selected ? selected.method : ''}`,
     description: `Assinatura EPI Controle — ${planLabel()} (${selected ? cycleLabel(selected) : ctx.cycle})`,
   };
