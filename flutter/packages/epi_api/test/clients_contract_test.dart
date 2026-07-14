@@ -356,14 +356,25 @@ void main() {
   });
 
   group('SettingsApi.getFichaConfig', () {
-    test('parseia FichaConfig', () async {
+    // O backend envia `rastreabilidade` como String (rótulo do rodapé da
+    // ficha) — o parse como bool corrompia a configuração com "true"/"false".
+    test('parseia FichaConfig com rastreabilidade String (payload real)', () async {
+      final api = SettingsApi(_dioReturning({
+        'titulo': 'Ficha de EPI',
+        'rastreabilidade': 'Ficha Individual de Controle de EPI - Ver. 01',
+      }));
+      final cfg = await api.getFichaConfig();
+      expect(cfg.titulo, 'Ficha de EPI');
+      expect(cfg.rastreabilidade, 'Ficha Individual de Controle de EPI - Ver. 01');
+    });
+
+    test('tolera bool salvo pela versão antiga', () async {
       final api = SettingsApi(_dioReturning({
         'titulo': 'Ficha de EPI',
         'rastreabilidade': true,
       }));
       final cfg = await api.getFichaConfig();
-      expect(cfg.titulo, 'Ficha de EPI');
-      expect(cfg.rastreabilidade, isTrue);
+      expect(cfg.rastreabilidade, isNotEmpty);
     });
   });
 
@@ -373,6 +384,41 @@ void main() {
       final created = await api.createUser({'username': 'novo'});
       expect(created['id'], 99);
       expect(created['username'], 'novo');
+    });
+  });
+
+  group('Employee.fromJson (payload real do bootstrap)', () {
+    // fetch_employees/bootstrap usam employee_id_code, role_name e
+    // schedule_type; is_active/photo_url não existem no backend. As chaves
+    // curtas antigas (code/role/schedule) deixavam esses campos sempre vazios.
+    test('mapeia employee_id_code, role_name e schedule_type', () {
+      final employee = Employee.fromJson(const {
+        'id': 7,
+        'name': 'Maria Souza',
+        'employee_id_code': 'EMP-007',
+        'sector': 'Operações',
+        'role_name': 'Técnica de Segurança',
+        'schedule_type': '12x36',
+        'unit_name': 'Matriz',
+        'admission_date': '2025-03-01',
+      });
+      expect(employee.code, 'EMP-007');
+      expect(employee.role, 'Técnica de Segurança');
+      expect(employee.schedule, '12x36');
+      expect(employee.unitName, 'Matriz');
+      expect(employee.isActive, isTrue); // backend não envia flag — assume ativo
+    });
+
+    test('prioriza current_unit_name e aceita active como 0/1', () {
+      final employee = Employee.fromJson(const {
+        'id': 8,
+        'name': 'João Lima',
+        'unit_name': 'Matriz',
+        'current_unit_name': 'Base Norte',
+        'active': 0,
+      });
+      expect(employee.unitName, 'Base Norte');
+      expect(employee.isActive, isFalse);
     });
   });
 }

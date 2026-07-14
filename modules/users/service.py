@@ -82,6 +82,37 @@ def ensure_operational_role_link(connection, role, linked_employee_id, company_i
         raise ValueError('Colaborador vinculado precisa possuir unidade principal definida.')
 
 
+_MANUAL_EMPLOYEE_FIELDS = (
+    'employee_id_code', 'employee_role_name', 'employee_sector',
+    'employee_schedule_type', 'employee_admission_date', 'employee_unit_id',
+)
+
+
+def _resolve_optional_employee_link(connection, actor, payload, company_id, role, allow_manual_link):
+    """Resolve o vínculo de colaborador apenas quando ele é necessário.
+
+    Perfis administrativos (general_admin, registry_admin, buyer, approver)
+    podem existir sem colaborador vinculado — exigir os campos de criação
+    manual de colaborador para eles fazia o POST /api/users devolver 400
+    ("Campo obrigatório: employee_id_code") para qualquer payload dos apps.
+
+    O vínculo continua obrigatório para admin/user (validado em
+    ensure_operational_role_link) e para o perfil employee (que é a própria
+    identidade do colaborador no portal).
+    """
+    linked_raw = str(payload.get('linked_employee_id', '') or '').strip()
+    linked_provided = linked_raw not in ('', 'null')
+    manual_fields_provided = any(
+        str(payload.get(field, '') or '').strip() for field in _MANUAL_EMPLOYEE_FIELDS
+    )
+    if linked_provided or manual_fields_provided or role == 'employee':
+        return resolve_user_employee_link(
+            connection, actor, payload, company_id,
+            allow_manual_create=allow_manual_link and not linked_provided,
+        )
+    return None, company_id
+
+
 def resolve_user_employee_link(connection, actor, payload, company_id, allow_manual_create=False):
     linked_employee_id = payload.get('linked_employee_id')
     if linked_employee_id not in (None, '', 'null'):
@@ -171,9 +202,8 @@ def create_user(connection, payload):
     password = hash_password(raw_password if raw_password else _secrets.token_urlsafe(16))
     company_id = resolve_target_company_id(actor, payload.get('company_id'), role, payload.get('linked_employee_id'))
     allow_manual_link = actor['role'] in ('master_admin', 'general_admin')
-    linked_employee_id, company_id = resolve_user_employee_link(
-        connection, actor, payload, company_id,
-        allow_manual_create=allow_manual_link and str(payload.get('linked_employee_id', '')).strip() == ''
+    linked_employee_id, company_id = _resolve_optional_employee_link(
+        connection, actor, payload, company_id, role, allow_manual_link
     )
     ensure_operational_role_link(connection, role, linked_employee_id, company_id)
     if company_id and int(payload.get('active', 1)) == 1:
@@ -207,8 +237,9 @@ def update_user(connection, user_id, payload):
     linked_value = payload.get('linked_employee_id', current.get('linked_employee_id'))
     company_id = resolve_target_company_id(actor, payload.get('company_id'), role, linked_value)
     payload_for_link = {**payload, 'linked_employee_id': linked_value}
-    linked_employee_id, company_id = resolve_user_employee_link(connection, actor, payload_for_link, company_id,
-        allow_manual_create=allow_manual_link and str(linked_value or '').strip() == '')
+    linked_employee_id, company_id = _resolve_optional_employee_link(
+        connection, actor, payload_for_link, company_id, role, allow_manual_link
+    )
     ensure_operational_role_link(connection, role, linked_employee_id, company_id)
     if company_id and int(payload.get('active', 1)) == 1:
         ensure_company_user_limit(connection, int(company_id), ignore_user_id=user_id)
