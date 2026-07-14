@@ -85,9 +85,12 @@ lib/features/units/units_screen.dart|Empresa
 lib/features/units/units_screen.dart|Nome
 lib/features/units/units_screen.dart|Observações (opcional)
 lib/features/units/units_screen.dart|Tipo
+lib/features/users/users_screen.dart|Copiar senha
 lib/features/users/users_screen.dart|Empresa
-lib/features/users/users_screen.dart|ID do Colaborador (obrigatório para perfis admin/user)
+lib/features/users/users_screen.dart|Gerar senha segura
+lib/features/users/users_screen.dart|ID do Colaborador (obrigatório para admin/user/employee)
 lib/features/users/users_screen.dart|Nome completo
 lib/features/users/users_screen.dart|Nome de usuário
 lib/features/users/users_screen.dart|Perfil
-lib/features/users/users_screen.dart|Senha (opcional — gerada automaticamente se vazio)
+lib/features/users/users_screen.dart|Senha copiada para a área de transferência.
+lib/features/users/users_screen.dart|Senha temporária

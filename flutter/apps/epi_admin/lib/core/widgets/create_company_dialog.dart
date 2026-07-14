@@ -58,6 +58,8 @@ class _CreateCompanyDialogState extends State<CreateCompanyDialog> {
   final _legalNameCtrl = TextEditingController();
   final _cnpjCtrl = TextEditingController();
   final _userLimitCtrl = TextEditingController(text: '1');
+  final _ownerNameCtrl = TextEditingController();
+  final _ownerEmailCtrl = TextEditingController();
 
   String _plan = 'start';
   bool _submitting = false;
@@ -69,6 +71,8 @@ class _CreateCompanyDialogState extends State<CreateCompanyDialog> {
     _legalNameCtrl.dispose();
     _cnpjCtrl.dispose();
     _userLimitCtrl.dispose();
+    _ownerNameCtrl.dispose();
+    _ownerEmailCtrl.dispose();
     super.dispose();
   }
 
@@ -94,6 +98,8 @@ class _CreateCompanyDialogState extends State<CreateCompanyDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _submitting = true);
+    final ownerEmail = _ownerEmailCtrl.text.trim().toLowerCase();
+    final ownerName = _ownerNameCtrl.text.trim();
     final payload = <String, dynamic>{
       'actor_user_id': widget.actorUserId,
       'name': _nameCtrl.text.trim(),
@@ -103,6 +109,12 @@ class _CreateCompanyDialogState extends State<CreateCompanyDialog> {
       'user_limit': int.parse(_userLimitCtrl.text),
       'license_status': 'active',
       'active': 1,
+      // Owner (Administrador Geral): o backend cria o usuário com senha
+      // aleatória não divulgada e envia o convite de primeiro acesso por
+      // e-mail (provision_tenant_structure).
+      if (ownerEmail.isNotEmpty) 'general_admin_email': ownerEmail,
+      if (ownerEmail.isNotEmpty && ownerName.isNotEmpty)
+        'general_admin_name': ownerName,
     };
 
     final error = await widget.cubit.create(payload);
@@ -200,6 +212,43 @@ class _CreateCompanyDialogState extends State<CreateCompanyDialog> {
                     final min = _minUsersFor(_plan);
                     if (n < min) return 'Mínimo de $min para este plano';
                     return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Owner (Administrador Geral) — opcional',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Se informado, o Owner recebe por e-mail o convite com a '
+                  'chave de primeiro acesso. A senha nunca é conhecida pelo '
+                  'Administrador Master.',
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _ownerNameCtrl,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do Owner',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _ownerEmailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'E-mail do Owner (envia o convite)',
+                    hintText: 'owner@empresa.com.br',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (v) {
+                    final email = (v ?? '').trim();
+                    if (email.isEmpty) return null; // opcional
+                    final ok = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+                    return ok ? null : 'E-mail inválido';
                   },
                 ),
                 if (_serverError != null) ...[
