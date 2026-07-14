@@ -69,6 +69,31 @@ void main() {
       }));
       expect(await api.getCompanies(), isEmpty);
     });
+
+    // O backend serializa `active` como inteiro 0/1 (coluna INTEGER). O cast
+    // `as bool?` lançava _CastError e travava a tela de Empresas — inclusive o
+    // diálogo "Nova empresa", que ficava no spinner após criar a tenant.
+    test('parseia `active` como inteiro 0/1 (payload real do backend)', () async {
+      final api = CompaniesApi(_dioReturning({
+        'items': [
+          {
+            'id': 2,
+            'name': 'DOF Brasil',
+            'license_status': 'active',
+            'active': 1,
+            'plan_name': 'enterprise',
+            'user_limit': 500,
+            'user_count': 0,
+          },
+          {'id': 3, 'name': 'Inativa', 'license_status': 'active', 'active': 0},
+        ],
+      }));
+      final list = await api.getCompanies();
+      expect(list, hasLength(2));
+      expect(list.first.isActive, isTrue);
+      expect(list.first.userLimit, 500);
+      expect(list.last.isActive, isFalse);
+    });
   });
 
   group('DeliveriesApi', () {
