@@ -240,7 +240,7 @@ def build_report_pdf(report, meta=None):
 
 def fetch_report_requests(connection, clauses, params):
     from epi_backend.db import row_to_dict
-    where = f"WHERE {' AND '.join(clauses)}"
+    where = f"WHERE {' AND '.join(clauses)}" if clauses else ''
     rows = connection.execute(
         f'SELECT rr.*, u.name AS unit_name FROM report_requests rr '
         f'LEFT JOIN units u ON u.id = rr.unit_id '
@@ -262,7 +262,14 @@ def create_report_request(connection, company_id, unit_id, requester_user_id, re
 
 
 def mark_report_request_done(connection, rr_id, company_id, handled_by_user_id, handled_by_name, handled_at):
-    connection.execute(
-        "UPDATE report_requests SET status = 'done', handled_by_user_id = ?, handled_by_name = ?, handled_at = ? WHERE id = ? AND company_id = ?",
-        (int(handled_by_user_id), handled_by_name, handled_at, int(rr_id), int(company_id))
-    )
+    # company_id None = master_admin (sem empresa vinculada): atualiza qualquer empresa.
+    if company_id:
+        connection.execute(
+            "UPDATE report_requests SET status = 'done', handled_by_user_id = ?, handled_by_name = ?, handled_at = ? WHERE id = ? AND company_id = ?",
+            (int(handled_by_user_id), handled_by_name, handled_at, int(rr_id), int(company_id))
+        )
+    else:
+        connection.execute(
+            "UPDATE report_requests SET status = 'done', handled_by_user_id = ?, handled_by_name = ?, handled_at = ? WHERE id = ?",
+            (int(handled_by_user_id), handled_by_name, handled_at, int(rr_id))
+        )
