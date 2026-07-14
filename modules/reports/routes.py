@@ -49,11 +49,17 @@ def handle_get_reports_pdf(handler, parsed, payload, match):
 def handle_get_report_requests(handler, parsed, payload, match):
     with closing(get_connection()) as connection:
         actor = authorize_action(connection, resolve_actor_user_id(handler, parsed), PERM_STOCK_VIEW)
-        company_id = int(actor['company_id'])
+        # master_admin não tem empresa vinculada (company_id NULL) e enxerga as
+        # solicitações de todas as empresas; os demais perfis exigem empresa.
+        company_id = actor.get('company_id')
+        if not company_id and actor.get('role') != 'master_admin':
+            raise PermissionError('Perfil sem empresa vinculada para consultar solicitações de relatório.')
         scope_unit_id = actor_operational_unit_id(connection, actor)
         purchase_scope = get_actor_purchase_unit_scope(connection, actor)
-        clauses = ['rr.company_id = %s']
-        params = [company_id]
+        clauses, params = [], []
+        if company_id:
+            clauses.append('rr.company_id = %s')
+            params.append(int(company_id))
         if scope_unit_id:
             clauses.append('rr.unit_id = %s')
             params.append(int(scope_unit_id))
@@ -76,13 +82,21 @@ def handle_post_report_requests(handler, parsed, payload, match):
         actor = authorize_action(connection, resolve_actor_user_id(handler, parsed, payload), PERM_STOCK_VIEW)
         if actor.get('role') not in ('approver', 'general_admin', 'registry_admin', 'master_admin'):
             raise PermissionError('Apenas Aprovadores e Administradores podem solicitar relatórios.')
-        company_id = int(actor['company_id'])
         purchase_scope = get_actor_purchase_unit_scope(connection, actor)
         unit_id = payload.get('unit_id')
         if unit_id:
             unit_id = int(unit_id)
             if purchase_scope and unit_id not in purchase_scope:
                 raise PermissionError('Aprovador só pode solicitar relatório para unidades que administra.')
+        company_id = actor.get('company_id')
+        if not company_id and unit_id:
+            # master_admin não tem empresa própria — deriva da unidade escolhida.
+            from modules.units.service import get_unit_by_id
+            unit = get_unit_by_id(connection, unit_id)
+            company_id = (unit or {}).get('company_id')
+        if not company_id:
+            raise ValueError('Selecione uma unidade para solicitar o relatório.')
+        company_id = int(company_id)
         now = datetime.now(UTC).isoformat()
         create_report_request(
             connection, company_id, unit_id, actor['id'], actor['full_name'],
@@ -102,8 +116,11 @@ def handle_post_report_request_mark_done(handler, parsed, payload, match):
         actor = authorize_action(connection, resolve_actor_user_id(handler, parsed, payload), PERM_STOCK_VIEW)
         if actor.get('role') not in ('admin', 'general_admin', 'registry_admin', 'master_admin'):
             raise PermissionError('Apenas Administradores podem marcar relatório como enviado.')
+        company_id = actor.get('company_id')
+        if not company_id and actor.get('role') != 'master_admin':
+            raise PermissionError('Perfil sem empresa vinculada para atualizar solicitações de relatório.')
         now = datetime.now(UTC).isoformat()
-        mark_report_request_done(connection, rr_id, actor['company_id'], actor['id'], actor['full_name'], now)
+        mark_report_request_done(connection, rr_id, company_id, actor['id'], actor['full_name'], now)
         connection.commit()
         return send_json(handler, 200, {'ok': True})
 
