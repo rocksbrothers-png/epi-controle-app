@@ -57,7 +57,9 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     try {
       final items = await ApiClient.companies.getCompanies();
       emit(state._copyWith(isLoading: false, companies: items));
-    } on Exception catch (e) {
+    } catch (e) {
+      // `catch` amplo de propósito: um Error de parsing (ex.: _CastError)
+      // deixaria a tela em loading eterno se só Exception fosse tratada.
       emit(state._copyWith(isLoading: false, error: e.toString()));
     }
   }
@@ -70,10 +72,14 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   Future<String?> create(Map<String, dynamic> data) async {
     try {
       await ApiClient.createCompany(data);
-      await load();
-      return null;
-    } on Exception catch (e) {
+    } catch (e) {
+      // `catch` amplo: um Error não capturado deixaria o diálogo travado no
+      // spinner (o `_submitting` nunca é resetado).
       return e.toString();
     }
+    // Falha ao recarregar a lista não é falha da criação — a empresa já foi
+    // persistida; o diálogo fecha e a tela mostra o erro de load, se houver.
+    await load();
+    return null;
   }
 }
