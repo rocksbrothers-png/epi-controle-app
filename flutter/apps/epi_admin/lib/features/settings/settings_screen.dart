@@ -23,8 +23,11 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthCubit>().state;
+    final isMaster = authState is AuthAuthenticated &&
+        authState.sessionContext.role == 'master_admin';
     return BlocProvider(
-      create: (_) => SettingsCubit()..load(),
+      create: (_) => SettingsCubit()..init(isMaster: isMaster),
       child: _SettingsBody(
         localeProvider: localeProvider,
         themeNotifier: themeNotifier,
@@ -111,10 +114,19 @@ class _SettingsBody extends StatelessWidget {
               ),
               const SizedBox(height: EpiSpacing.lg),
               _SectionHeader(label: l10n.settingsFichaSection),
+              if (state.isMaster) _CompanySelector(state: state),
               if (state.isLoading)
                 const Padding(
                   padding: EdgeInsets.all(EpiSpacing.xl),
                   child: Center(child: CircularProgressIndicator()),
+                )
+              else if (state.isMaster && state.selectedCompanyId == null)
+                const Padding(
+                  padding: EdgeInsets.all(EpiSpacing.lg),
+                  child: Text(
+                    'Selecione uma empresa para configurar a Ficha.',
+                    style: TextStyle(color: EpiColors.textMuted),
+                  ),
                 )
               else
                 _FichaConfigForm(
@@ -130,6 +142,77 @@ class _SettingsBody extends StatelessWidget {
 }
 
 // ── Section header ─────────────────────────────────────────────────────────
+
+// ── Seletor de empresa (master_admin) ───────────────────────────────────────
+// A Ficha é isolada por empresa. O master_admin, que não pertence a uma
+// empresa, escolhe explicitamente qual tenant está administrando; um banner
+// deixa a empresa ativa visível para evitar edição na empresa errada.
+class _CompanySelector extends StatelessWidget {
+  const _CompanySelector({required this.state});
+  final SettingsState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = state.companies
+        .where((c) => c.id == state.selectedCompanyId)
+        .toList();
+    final activeName = active.isNotEmpty ? active.first.name : null;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: EpiSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          DropdownButtonFormField<int>(
+            value: state.selectedCompanyId,
+            decoration: const InputDecoration(
+              labelText: 'Empresa',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: [
+              for (final c in state.companies)
+                DropdownMenuItem(value: c.id, child: Text(c.name)),
+            ],
+            onChanged: state.isSaving
+                ? null
+                : (v) {
+                    if (v != null) {
+                      context.read<SettingsCubit>().selectCompany(v);
+                    }
+                  },
+          ),
+          if (activeName != null) ...[
+            const SizedBox(height: EpiSpacing.sm),
+            Container(
+              padding: const EdgeInsets.all(EpiSpacing.sm),
+              decoration: BoxDecoration(
+                color: EpiColors.brand.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.apartment_rounded,
+                      size: 18, color: EpiColors.brand),
+                  const SizedBox(width: EpiSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Administrando a empresa: $activeName',
+                      style: const TextStyle(
+                        color: EpiColors.brand,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: EpiSpacing.md),
+        ],
+      ),
+    );
+  }
+}
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});

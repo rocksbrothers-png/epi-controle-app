@@ -40,6 +40,7 @@ class LoginResponse {
     required this.user,
     this.refreshToken,
     this.permissions = const [],
+    this.mustChangePassword = false,
   });
 
   final String token;
@@ -52,12 +53,25 @@ class LoginResponse {
   /// (que não existe), deixando o RBAC do app sem permissões.
   final List<String> permissions;
 
+  /// Credencial temporária provisionada por admin: exige troca no 1º acesso.
+  /// Vem no topo da resposta (e espelhada em `user.must_change_password`).
+  final bool mustChangePassword;
+
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
         token: json['token'] as String,
         user: _asMap(json['user']),
         refreshToken: json['refresh_token'] as String?,
         permissions: _parsePermissions(json['permissions']),
+        mustChangePassword: _asBool(json['must_change_password']) ||
+            _asBool(_asMap(json['user'])['must_change_password']),
       );
+}
+
+bool _asBool(Object? raw) {
+  if (raw is bool) return raw;
+  if (raw is num) return raw.toInt() == 1;
+  if (raw is String) return raw == 'true' || raw == '1';
+  return false;
 }
 
 /// Resposta de `POST /api/auth/refresh` (access + refresh rotacionado).

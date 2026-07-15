@@ -82,11 +82,27 @@ class AuthCubit extends Cubit<AuthState> {
         user: res.user,
         permissions: permissions,
         sessionContext: context,
+        mustChangePassword: res.mustChangePassword,
       ));
     } on Exception catch (e) {
       final isNetwork = e.toString().contains('SocketException') ||
           e.toString().contains('DioException');
       emit(AuthError(isNetwork ? 'network' : 'invalid'));
+    }
+  }
+
+  /// Chamado após a troca de senha obrigatória concluir com sucesso: libera a
+  /// navegação preservando a sessão (token/permissões/contexto atuais).
+  void completePasswordChange() {
+    final current = state;
+    if (current is AuthAuthenticated && current.mustChangePassword) {
+      emit(AuthAuthenticated(
+        token: current.token,
+        user: current.user,
+        permissions: current.permissions,
+        sessionContext: current.sessionContext,
+        mustChangePassword: false,
+      ));
     }
   }
 
