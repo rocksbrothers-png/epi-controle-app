@@ -19,6 +19,16 @@ lib/features/settings/settings_screen.dart|Norsk
 
 # ─────────────────────────────────────────────────────────────────────────────
 # (B) DÉBITO TÉCNICO (migrar para epi_i18n em PRs futuros)
+# Troca obrigatória de senha no 1º acesso (gen:l10n indisponível neste ambiente)
+lib/features/auth/change_password_screen.dart|Confirmar nova senha
+lib/features/auth/change_password_screen.dart|Nova senha
+lib/features/auth/change_password_screen.dart|Sair
+lib/features/auth/change_password_screen.dart|Salvar nova senha
+lib/features/auth/change_password_screen.dart|Senha atual (temporária)
+lib/features/auth/change_password_screen.dart|Defina uma nova senha
+lib/features/auth/change_password_screen.dart|Sua senha é temporária. Por segurança, defina uma nova senha para continuar.
+# Seletor de empresa da Ficha (master_admin) nas Configurações
+lib/features/settings/settings_screen.dart|Empresa
 # Avaliações / Feedback
 lib/features/feedback/feedback_screen.dart|Avaliações de EPIs
 lib/features/feedback/feedback_screen.dart|Fechar

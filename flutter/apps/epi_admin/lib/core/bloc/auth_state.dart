@@ -21,13 +21,20 @@ final class AuthAuthenticated extends AuthState {
     required this.user,
     this.permissions = const [],
     this.sessionContext = SessionContext.empty,
+    this.mustChangePassword = false,
   });
   final String token;
   final Map<String, dynamic> user;
   final List<String> permissions;
   final SessionContext sessionContext;
+
+  /// Credencial temporária: enquanto true, o app força a tela de troca de
+  /// senha e bloqueia a navegação para as demais rotas privadas.
+  final bool mustChangePassword;
+
   @override
-  List<Object?> get props => [token, user, permissions, sessionContext];
+  List<Object?> get props =>
+      [token, user, permissions, sessionContext, mustChangePassword];
 }
 
 final class AuthError extends AuthState {
