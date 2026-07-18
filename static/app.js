@@ -5671,11 +5671,11 @@ async function loadStockMovementsReport() {
     if (compliance === 'ca_expired') params.set('ca_status', 'expired');
     else if (compliance === 'manufacturer_expiring') params.set('manufacturer_validity', 'expiring');
     else if (compliance === 'manufacturer_expired') params.set('manufacturer_validity', 'expired');
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--color-text-muted);">${tr('stock.loading', 'Carregando...')}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;color:var(--color-text-muted);">${tr('stock.loading', 'Carregando...')}</td></tr>`;
     const res = await api(`/api/stock/movements/report?${params.toString()}`);
     renderStockMovementsReport(res.items || []);
   } catch (e) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="11" style="color:var(--color-danger);">Erro: ${escapeHtml(e.message || 'Falha ao carregar')}</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="14" style="color:var(--color-danger);">Erro: ${escapeHtml(e.message || 'Falha ao carregar')}</td></tr>`;
   }
 }
 
@@ -5686,6 +5686,23 @@ const SOURCE_TYPE_LABELS = {
   return: tr('stock.return', 'Devolução'),
   purchase_order: tr('purchase.order', 'Ordem de Compra'),
 };
+
+// Conformidade CA/validade de uma movimentação (dados vindos do backend:
+// item.ca, item.ca_expiry, item.epi_validity_date). Indicadores:
+// 🔴 vencido · 🟡 próximo do vencimento (≤30d) · 🟢 normal · — sem data.
+function stockComplianceBadge(item) {
+  const today = new Date().toISOString().slice(0, 10);
+  const soon = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+  const caExp = String(item.ca_expiry || '').slice(0, 10);
+  const valExp = String(item.epi_validity_date || '').slice(0, 10);
+  const dates = [caExp, valExp].filter(Boolean);
+  if (!dates.length) return '<span title="Sem data de validade">—</span>';
+  const expired = dates.some((d) => d < today);
+  const expiring = !expired && dates.some((d) => d >= today && d <= soon);
+  if (expired) return `<span title="${tr('stock.expired', 'Vencido')}" style="color:var(--color-danger);font-weight:600;">🔴 ${tr('stock.expired', 'Vencido')}</span>`;
+  if (expiring) return `<span title="${tr('stock.expiringSoon', 'Próximo do vencimento')}" style="color:var(--pending,#b45309);font-weight:600;">🟡 ${tr('stock.expiringSoon', 'Próximo')}</span>`;
+  return `<span title="${tr('stock.compliant', 'Conforme')}" style="color:var(--color-success);">🟢 ${tr('stock.compliant', 'Normal')}</span>`;
+}
 
 function renderStockMovementsReport(items) {
   const tbody = document.getElementById('smr-tbody');
@@ -5706,7 +5723,7 @@ function renderStockMovementsReport(items) {
     hint.textContent = tr('stock.limitedResult', 'Resultado limitado a 500 registros. Use os filtros para refinar.');
   }
   if (!items.length) {
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--color-text-muted);">${tr('stock.noMovements', 'Nenhuma movimentação encontrada para os filtros selecionados.')}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;color:var(--color-text-muted);">${tr('stock.noMovements', 'Nenhuma movimentação encontrada para os filtros selecionados.')}</td></tr>`;
     return;
   }
   const h = (v) => escapeHtml(String(v ?? '—'));
@@ -5722,9 +5739,15 @@ function renderStockMovementsReport(items) {
       item.uniform_size && item.uniform_size !== 'N/A' ? `${tr('stock.uniformShort', 'Unif')}:${item.uniform_size}` : ''
     ].filter(Boolean).join(' ') || '';
     const epiDisplay = sizeInfo ? `${h(item.epi_name)} <small style="color:var(--color-text-muted);">${sizeInfo}</small>` : h(item.epi_name);
+    const caCell = item.ca
+      ? `${h(item.ca)}${item.ca_expiry ? ` <small style="color:var(--color-text-muted);">${formatDate(item.ca_expiry)}</small>` : ''}`
+      : '—';
     return `<tr>
       <td style="font-size:12px;white-space:nowrap;">${formatDate(item.created_at)}</td>
       <td>${epiDisplay}</td>
+      <td style="font-size:12px;">${caCell}</td>
+      <td style="font-size:12px;white-space:nowrap;">${item.epi_validity_date ? formatDate(item.epi_validity_date) : '—'}</td>
+      <td style="font-size:12px;white-space:nowrap;">${stockComplianceBadge(item)}</td>
       <td style="font-size:12px;">${h(item.unit_name)}</td>
       <td>${typeLabel}</td>
       <td style="font-weight:600;">${h(item.quantity)}</td>
@@ -9826,22 +9849,37 @@ async function _postStockItemStatus({ stockItemId, qrCode, unitId, newStatus, re
   });
 }
 
+function _setBlockFeedback(feedback, message, kind) {
+  if (!feedback) return;
+  feedback.textContent = message;
+  feedback.style.color = kind === 'error'
+    ? 'var(--color-danger)'
+    : (kind === 'success' ? 'var(--color-success)' : '');
+}
+
 async function blockStockItem() {
   const qr = String(document.getElementById('blocked-stock-qr')?.value || '').trim();
   const status = String(document.getElementById('blocked-stock-status')?.value || '').trim();
   const reason = String(document.getElementById('blocked-stock-reason')?.value || '').trim();
+  // unitId é opcional: o backend localiza o item pelo QR na empresa e deriva a
+  // unidade do próprio item. Enviamos a unidade só como dica quando selecionada.
   const { unitId } = _blockedStockContext();
   const feedback = document.getElementById('blocked-stock-feedback');
-  if (!qr) { if (feedback) feedback.textContent = tr('stock.blockedNeedQr', 'Bipe/digite o QR do item.'); return; }
-  if (!unitId) { if (feedback) feedback.textContent = tr('stock.blockedNeedUnit', 'Selecione empresa/unidade acima.'); return; }
+  if (!qr) { _setBlockFeedback(feedback, tr('stock.blockedNeedQr', 'Bipe/digite o QR do item.'), 'error'); return; }
+  if (!status) { _setBlockFeedback(feedback, tr('stock.blockedNeedStatus', 'Selecione o status de bloqueio.'), 'error'); return; }
+  const btn = document.getElementById('blocked-stock-block-btn');
+  if (btn) btn.disabled = true;
+  _setBlockFeedback(feedback, tr('stock.loading', 'Processando...'), '');
   try {
-    await _postStockItemStatus({ qrCode: qr, unitId, newStatus: status, reason });
-    if (feedback) feedback.textContent = tr('stock.blockedDone', 'Item bloqueado.');
+    await _postStockItemStatus({ qrCode: qr, unitId: unitId || undefined, newStatus: status, reason });
+    _setBlockFeedback(feedback, tr('stock.blockedDone', 'Item bloqueado.'), 'success');
     document.getElementById('blocked-stock-qr').value = '';
     document.getElementById('blocked-stock-reason').value = '';
     await loadBlockedStock();
   } catch (error) {
-    if (feedback) feedback.textContent = error.message;
+    _setBlockFeedback(feedback, error.message || tr('stock.blockedFailed', 'Não foi possível bloquear o item.'), 'error');
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 
