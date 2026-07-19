@@ -805,6 +805,127 @@ class AppLocalizationsNo extends AppLocalizations {
 
   @override
   String get purchaseStatusCancelled => 'Kansellert';
+
+  @override
+  String get epiArchiveBlockTitle => 'Arkiver med lagersperring';
+
+  @override
+  String get epiArchiveBlockBody => 'Dette verneutstyret har tilgjengelig lager eller aktive koblinger. Ved bekreftelse flyttes tilgjengelig lager til Sperret lager (sporbart) og utstyret arkiveres.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Sperr lager og arkiver';
+
+  @override
+  String get epiArchiveReasonLabel => 'Årsak til arkivering (revisjon)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Oppgi en årsak for å fortsette.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Lager som sperres';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Aktive koblinger';
+
+  @override
+  String get epiArchiveAvailable => 'Tilgjengelig';
+
+  @override
+  String get epiArchiveInTransit => 'Under transport';
+
+  @override
+  String get epiArchiveInPossession => 'I bruk';
+
+  @override
+  String get epiArchivePendingRequests => 'Åpne forespørsler';
+
+  @override
+  String get epiArchivePendingPurchase => 'Åpne innkjøp';
+
+  @override
+  String get dashboardComplianceTitle => 'Lagersamsvar';
+
+  @override
+  String get dashboardComplianceAllOk => 'Lager i samsvar';
+
+  @override
+  String get complianceCaExpired => 'CA utløpt';
+
+  @override
+  String get complianceCaExpiring => 'CA utløper snart';
+
+  @override
+  String get complianceProductExpired => 'Produkt utløpt';
+
+  @override
+  String get complianceProductExpiring => 'Produkt utløper snart';
+
+  @override
+  String get complianceMissingManufacture => 'Uten produksjonsdato';
+
+  @override
+  String get complianceMissingLot => 'Uten parti';
+
+  @override
+  String get complianceAdminBlocked => 'Sperret';
+
+  @override
+  String get handoverTitle => 'Utleveringskontroll';
+
+  @override
+  String get handoverPrompt => 'Skann leverings-QR eller skriv inn koden.';
+
+  @override
+  String get handoverCodeLabel => 'Leveringskode';
+
+  @override
+  String get handoverLookupButton => 'Søk levering';
+
+  @override
+  String get handoverScanButton => 'Skann QR';
+
+  @override
+  String get handoverConfirmButton => 'Bekreft mottak';
+
+  @override
+  String get handoverConfirmedTitle => 'Mottak bekreftet';
+
+  @override
+  String get handoverAlreadyConfirmed => 'Denne leveringen er allerede bekreftet.';
+
+  @override
+  String get handoverNotFound => 'Ingen levering funnet for denne koden.';
+
+  @override
+  String get handoverConfirmError => 'Kunne ikke bekrefte mottak.';
+
+  @override
+  String get handoverEmployeeLabel => 'Ansatt';
+
+  @override
+  String get handoverEpiLabel => 'Verneutstyr';
+
+  @override
+  String get handoverQuantityLabel => 'Antall';
+
+  @override
+  String get handoverSectorLabel => 'Sektor';
+
+  @override
+  String get handoverRoleLabel => 'Rolle';
+
+  @override
+  String get handoverUnitLabel => 'Enhet';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Leveringsdato';
+
+  @override
+  String get handoverReceiverNameLabel => 'Mottakerens navn (valgfritt)';
+
+  @override
+  String get handoverScanAgain => 'Ny kontroll';
+
 }
 
 /// The translations for Norwegian, as used in Norway (`no_NO`).

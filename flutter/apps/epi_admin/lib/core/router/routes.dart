@@ -9,6 +9,7 @@ abstract final class Routes {
   static const stock       = '/stock';
   static const deliveries  = '/deliveries';
   static const deliveryNew = '/deliveries/new';
+  static const handover    = '/deliveries/handover';
   static const returns     = '/returns';
   static const records     = '/records';
   static const purchases   = '/purchases';
