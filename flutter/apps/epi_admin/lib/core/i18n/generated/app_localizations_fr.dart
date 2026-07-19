@@ -805,6 +805,127 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get purchaseStatusCancelled => 'Annulé';
+
+  @override
+  String get epiArchiveBlockTitle => 'Archiver avec blocage du stock';
+
+  @override
+  String get epiArchiveBlockBody => 'Cet EPI a du stock disponible ou des liens actifs. En confirmant, le stock disponible est déplacé vers le Stock bloqué (traçable) et l\'EPI est archivé.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Bloquer le stock et archiver';
+
+  @override
+  String get epiArchiveReasonLabel => 'Motif d\'archivage (audit)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Indiquez un motif pour continuer.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Stock à bloquer';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Liens actifs';
+
+  @override
+  String get epiArchiveAvailable => 'Disponible';
+
+  @override
+  String get epiArchiveInTransit => 'En transit';
+
+  @override
+  String get epiArchiveInPossession => 'En possession';
+
+  @override
+  String get epiArchivePendingRequests => 'Demandes ouvertes';
+
+  @override
+  String get epiArchivePendingPurchase => 'Achats ouverts';
+
+  @override
+  String get dashboardComplianceTitle => 'Conformité du stock';
+
+  @override
+  String get dashboardComplianceAllOk => 'Stock conforme';
+
+  @override
+  String get complianceCaExpired => 'CA expiré';
+
+  @override
+  String get complianceCaExpiring => 'CA à expirer';
+
+  @override
+  String get complianceProductExpired => 'Produit expiré';
+
+  @override
+  String get complianceProductExpiring => 'Produit à expirer';
+
+  @override
+  String get complianceMissingManufacture => 'Sans fabrication';
+
+  @override
+  String get complianceMissingLot => 'Sans lot';
+
+  @override
+  String get complianceAdminBlocked => 'Bloqué';
+
+  @override
+  String get handoverTitle => 'Remise de livraison';
+
+  @override
+  String get handoverPrompt => 'Scannez le QR de livraison ou saisissez le code.';
+
+  @override
+  String get handoverCodeLabel => 'Code de livraison';
+
+  @override
+  String get handoverLookupButton => 'Rechercher la livraison';
+
+  @override
+  String get handoverScanButton => 'Scanner le QR';
+
+  @override
+  String get handoverConfirmButton => 'Confirmer la réception';
+
+  @override
+  String get handoverConfirmedTitle => 'Réception confirmée';
+
+  @override
+  String get handoverAlreadyConfirmed => 'Cette livraison a déjà été confirmée.';
+
+  @override
+  String get handoverNotFound => 'Aucune livraison trouvée pour ce code.';
+
+  @override
+  String get handoverConfirmError => 'Impossible de confirmer la réception.';
+
+  @override
+  String get handoverEmployeeLabel => 'Employé';
+
+  @override
+  String get handoverEpiLabel => 'EPI';
+
+  @override
+  String get handoverQuantityLabel => 'Quantité';
+
+  @override
+  String get handoverSectorLabel => 'Secteur';
+
+  @override
+  String get handoverRoleLabel => 'Fonction';
+
+  @override
+  String get handoverUnitLabel => 'Unité';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Date de livraison';
+
+  @override
+  String get handoverReceiverNameLabel => 'Nom du destinataire (facultatif)';
+
+  @override
+  String get handoverScanAgain => 'Nouvelle remise';
+
 }
 
 /// The translations for French, as used in France (`fr_FR`).

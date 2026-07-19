@@ -805,6 +805,127 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get purchaseStatusCancelled => 'Cancelled';
+
+  @override
+  String get epiArchiveBlockTitle => 'Archive with stock blocking';
+
+  @override
+  String get epiArchiveBlockBody => 'This PPE has available stock or active links. On confirming, the available stock is moved to Blocked Stock (traceable) and the PPE is archived.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Block stock and archive';
+
+  @override
+  String get epiArchiveReasonLabel => 'Archive reason (audit)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Enter a reason to continue.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Stock to block';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Active links';
+
+  @override
+  String get epiArchiveAvailable => 'Available';
+
+  @override
+  String get epiArchiveInTransit => 'In transit';
+
+  @override
+  String get epiArchiveInPossession => 'In possession';
+
+  @override
+  String get epiArchivePendingRequests => 'Open requests';
+
+  @override
+  String get epiArchivePendingPurchase => 'Open purchases';
+
+  @override
+  String get dashboardComplianceTitle => 'Stock compliance';
+
+  @override
+  String get dashboardComplianceAllOk => 'Stock is compliant';
+
+  @override
+  String get complianceCaExpired => 'CA expired';
+
+  @override
+  String get complianceCaExpiring => 'CA expiring';
+
+  @override
+  String get complianceProductExpired => 'Product expired';
+
+  @override
+  String get complianceProductExpiring => 'Product expiring';
+
+  @override
+  String get complianceMissingManufacture => 'No manufacture date';
+
+  @override
+  String get complianceMissingLot => 'No lot';
+
+  @override
+  String get complianceAdminBlocked => 'Blocked';
+
+  @override
+  String get handoverTitle => 'Delivery handover';
+
+  @override
+  String get handoverPrompt => 'Scan the delivery QR or enter the code.';
+
+  @override
+  String get handoverCodeLabel => 'Delivery code';
+
+  @override
+  String get handoverLookupButton => 'Look up delivery';
+
+  @override
+  String get handoverScanButton => 'Scan QR';
+
+  @override
+  String get handoverConfirmButton => 'Confirm receipt';
+
+  @override
+  String get handoverConfirmedTitle => 'Receipt confirmed';
+
+  @override
+  String get handoverAlreadyConfirmed => 'This delivery was already confirmed.';
+
+  @override
+  String get handoverNotFound => 'No delivery found for this code.';
+
+  @override
+  String get handoverConfirmError => 'Could not confirm receipt.';
+
+  @override
+  String get handoverEmployeeLabel => 'Employee';
+
+  @override
+  String get handoverEpiLabel => 'PPE';
+
+  @override
+  String get handoverQuantityLabel => 'Quantity';
+
+  @override
+  String get handoverSectorLabel => 'Sector';
+
+  @override
+  String get handoverRoleLabel => 'Role';
+
+  @override
+  String get handoverUnitLabel => 'Unit';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Delivery date';
+
+  @override
+  String get handoverReceiverNameLabel => 'Receiver name (optional)';
+
+  @override
+  String get handoverScanAgain => 'New handover';
+
 }
 
 /// The translations for English, as used in the United States (`en_US`).

@@ -13,6 +13,7 @@ class DashboardState extends Equatable {
     this.criticalStock = 0,
     this.pendingPurchases = 0,
     this.alerts = const [],
+    this.compliance = const {},
   });
 
   final bool isLoading;
@@ -23,6 +24,11 @@ class DashboardState extends Equatable {
   final int pendingPurchases;
   final List<Map<String, dynamic>> alerts;
 
+  /// Resumo de conformidade de estoque (item 2): contagens por categoria vindas
+  /// da FONTE ÚNICA do backend (GET /api/stock/compliance → `summary`). A REGRA
+  /// é do backend; o dashboard apenas exibe. Vazio em backends antigos.
+  final Map<String, int> compliance;
+
   @override
   List<Object?> get props => [
         isLoading,
@@ -32,6 +38,7 @@ class DashboardState extends Equatable {
         criticalStock,
         pendingPurchases,
         alerts,
+        compliance,
       ];
 }
 
@@ -76,6 +83,10 @@ class DashboardCubit extends Cubit<DashboardState> {
         return dateStr.startsWith(todayStr);
       }).length;
 
+      // Conformidade de estoque (item 2): fonte única do backend. Degrada
+      // graciosamente (mapa vazio) em backends sem o endpoint.
+      final compliance = await _loadComplianceSafe();
+
       // Requisições de compra pendentes: agora vêm do bootstrap
       // (pending_purchases), já escopadas e gateadas por permissão no backend.
       emit(DashboardState(
@@ -85,9 +96,29 @@ class DashboardCubit extends Cubit<DashboardState> {
         criticalStock: criticalCount,
         pendingPurchases: bootstrap.pendingPurchases,
         alerts: bootstrap.alerts,
+        compliance: compliance,
       ));
     } on Exception catch (e) {
       emit(DashboardState(isLoading: false, error: e.toString()));
+    }
+  }
+
+  /// Lê o resumo de conformidade da fonte única. Retorna `{}` se o endpoint não
+  /// existir ou falhar — a seção de conformidade some sem quebrar o dashboard.
+  Future<Map<String, int>> _loadComplianceSafe() async {
+    try {
+      final res = await ApiClient.stock.getStockCompliance(
+        actorUserId: ApiClient.actorUserId,
+      );
+      final summary = res['summary'];
+      if (summary is Map) {
+        return summary.map(
+          (k, v) => MapEntry('$k', v is int ? v : int.tryParse('$v') ?? 0),
+        );
+      }
+      return const {};
+    } on Exception {
+      return const {};
     }
   }
 }

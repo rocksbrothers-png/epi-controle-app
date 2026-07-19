@@ -805,6 +805,127 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get purchaseStatusCancelled => 'Cancelado';
+
+  @override
+  String get epiArchiveBlockTitle => 'Archivar con bloqueo de stock';
+
+  @override
+  String get epiArchiveBlockBody => 'Este EPP tiene stock disponible o vínculos activos. Al confirmar, el stock disponible se mueve a Stock Bloqueado (rastreable) y el EPP se archiva.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Bloquear stock y archivar';
+
+  @override
+  String get epiArchiveReasonLabel => 'Motivo del archivo (auditoría)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Indique el motivo para continuar.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Stock a bloquear';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Vínculos activos';
+
+  @override
+  String get epiArchiveAvailable => 'Disponible';
+
+  @override
+  String get epiArchiveInTransit => 'En tránsito';
+
+  @override
+  String get epiArchiveInPossession => 'En posesión';
+
+  @override
+  String get epiArchivePendingRequests => 'Solicitudes abiertas';
+
+  @override
+  String get epiArchivePendingPurchase => 'Compras abiertas';
+
+  @override
+  String get dashboardComplianceTitle => 'Conformidad de stock';
+
+  @override
+  String get dashboardComplianceAllOk => 'Stock conforme';
+
+  @override
+  String get complianceCaExpired => 'CA vencido';
+
+  @override
+  String get complianceCaExpiring => 'CA por vencer';
+
+  @override
+  String get complianceProductExpired => 'Producto vencido';
+
+  @override
+  String get complianceProductExpiring => 'Producto por vencer';
+
+  @override
+  String get complianceMissingManufacture => 'Sin fabricación';
+
+  @override
+  String get complianceMissingLot => 'Sin lote';
+
+  @override
+  String get complianceAdminBlocked => 'Bloqueado';
+
+  @override
+  String get handoverTitle => 'Conferencia de entrega';
+
+  @override
+  String get handoverPrompt => 'Escanee el QR de la entrega o ingrese el código.';
+
+  @override
+  String get handoverCodeLabel => 'Código de entrega';
+
+  @override
+  String get handoverLookupButton => 'Buscar entrega';
+
+  @override
+  String get handoverScanButton => 'Escanear QR';
+
+  @override
+  String get handoverConfirmButton => 'Confirmar recepción';
+
+  @override
+  String get handoverConfirmedTitle => 'Recepción confirmada';
+
+  @override
+  String get handoverAlreadyConfirmed => 'Esta entrega ya fue confirmada.';
+
+  @override
+  String get handoverNotFound => 'No se encontró entrega para este código.';
+
+  @override
+  String get handoverConfirmError => 'No se pudo confirmar la recepción.';
+
+  @override
+  String get handoverEmployeeLabel => 'Colaborador';
+
+  @override
+  String get handoverEpiLabel => 'EPP';
+
+  @override
+  String get handoverQuantityLabel => 'Cantidad';
+
+  @override
+  String get handoverSectorLabel => 'Sector';
+
+  @override
+  String get handoverRoleLabel => 'Función';
+
+  @override
+  String get handoverUnitLabel => 'Unidad';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Fecha de entrega';
+
+  @override
+  String get handoverReceiverNameLabel => 'Nombre de quien recibe (opcional)';
+
+  @override
+  String get handoverScanAgain => 'Nueva conferencia';
+
 }
 
 /// The translations for Spanish Castilian, as used in Spain (`es_ES`).

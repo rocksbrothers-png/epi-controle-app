@@ -1655,6 +1655,247 @@ abstract class AppLocalizations {
   /// In pt_BR, this message translates to:
   /// **'Cancelado'**
   String get purchaseStatusCancelled;
+
+  /// No description provided for @epiArchiveBlockTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Arquivar com bloqueio de saldo'**
+  String get epiArchiveBlockTitle;
+
+  /// No description provided for @epiArchiveBlockBody.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Este EPI possui saldo disponível ou vínculos vivos. Ao confirmar, o saldo disponível será movido para Estoque Bloqueado (rastreável) e o EPI será arquivado.'**
+  String get epiArchiveBlockBody;
+
+  /// No description provided for @epiArchiveBlockConfirm.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Bloquear saldo e arquivar'**
+  String get epiArchiveBlockConfirm;
+
+  /// No description provided for @epiArchiveReasonLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Motivo do arquivamento (auditoria)'**
+  String get epiArchiveReasonLabel;
+
+  /// No description provided for @epiArchiveReasonRequired.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Informe o motivo para prosseguir.'**
+  String get epiArchiveReasonRequired;
+
+  /// No description provided for @epiArchiveBlockableLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Saldo a bloquear'**
+  String get epiArchiveBlockableLabel;
+
+  /// No description provided for @epiArchiveLiveLinksTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Vínculos vivos'**
+  String get epiArchiveLiveLinksTitle;
+
+  /// No description provided for @epiArchiveAvailable.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Disponível'**
+  String get epiArchiveAvailable;
+
+  /// No description provided for @epiArchiveInTransit.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Em trânsito'**
+  String get epiArchiveInTransit;
+
+  /// No description provided for @epiArchiveInPossession.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Em posse'**
+  String get epiArchiveInPossession;
+
+  /// No description provided for @epiArchivePendingRequests.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Requisições abertas'**
+  String get epiArchivePendingRequests;
+
+  /// No description provided for @epiArchivePendingPurchase.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Compras abertas'**
+  String get epiArchivePendingPurchase;
+
+  /// No description provided for @dashboardComplianceTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Conformidade de estoque'**
+  String get dashboardComplianceTitle;
+
+  /// No description provided for @dashboardComplianceAllOk.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Estoque em conformidade'**
+  String get dashboardComplianceAllOk;
+
+  /// No description provided for @complianceCaExpired.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CA vencido'**
+  String get complianceCaExpired;
+
+  /// No description provided for @complianceCaExpiring.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CA a vencer'**
+  String get complianceCaExpiring;
+
+  /// No description provided for @complianceProductExpired.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Produto vencido'**
+  String get complianceProductExpired;
+
+  /// No description provided for @complianceProductExpiring.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Produto a vencer'**
+  String get complianceProductExpiring;
+
+  /// No description provided for @complianceMissingManufacture.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Sem fabricação'**
+  String get complianceMissingManufacture;
+
+  /// No description provided for @complianceMissingLot.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Sem lote'**
+  String get complianceMissingLot;
+
+  /// No description provided for @complianceAdminBlocked.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Bloqueado'**
+  String get complianceAdminBlocked;
+
+  /// No description provided for @handoverTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Conferência de entrega'**
+  String get handoverTitle;
+
+  /// No description provided for @handoverPrompt.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Escaneie o QR da entrega ou informe o código.'**
+  String get handoverPrompt;
+
+  /// No description provided for @handoverCodeLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Código da entrega'**
+  String get handoverCodeLabel;
+
+  /// No description provided for @handoverLookupButton.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Buscar entrega'**
+  String get handoverLookupButton;
+
+  /// No description provided for @handoverScanButton.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Escanear QR'**
+  String get handoverScanButton;
+
+  /// No description provided for @handoverConfirmButton.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Confirmar recebimento'**
+  String get handoverConfirmButton;
+
+  /// No description provided for @handoverConfirmedTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Recebimento confirmado'**
+  String get handoverConfirmedTitle;
+
+  /// No description provided for @handoverAlreadyConfirmed.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Esta entrega já foi confirmada.'**
+  String get handoverAlreadyConfirmed;
+
+  /// No description provided for @handoverNotFound.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Entrega não encontrada para este código.'**
+  String get handoverNotFound;
+
+  /// No description provided for @handoverConfirmError.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Não foi possível confirmar o recebimento.'**
+  String get handoverConfirmError;
+
+  /// No description provided for @handoverEmployeeLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Colaborador'**
+  String get handoverEmployeeLabel;
+
+  /// No description provided for @handoverEpiLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'EPI'**
+  String get handoverEpiLabel;
+
+  /// No description provided for @handoverQuantityLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Quantidade'**
+  String get handoverQuantityLabel;
+
+  /// No description provided for @handoverSectorLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Setor'**
+  String get handoverSectorLabel;
+
+  /// No description provided for @handoverRoleLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Função'**
+  String get handoverRoleLabel;
+
+  /// No description provided for @handoverUnitLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Unidade'**
+  String get handoverUnitLabel;
+
+  /// No description provided for @handoverDeliveryDateLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Data da entrega'**
+  String get handoverDeliveryDateLabel;
+
+  /// No description provided for @handoverReceiverNameLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Nome de quem recebe (opcional)'**
+  String get handoverReceiverNameLabel;
+
+  /// No description provided for @handoverScanAgain.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Nova conferência'**
+  String get handoverScanAgain;
+
 }
 
 class _AppLocalizationsDelegate

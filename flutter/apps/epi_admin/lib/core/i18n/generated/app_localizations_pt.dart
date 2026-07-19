@@ -804,6 +804,127 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get purchaseStatusCancelled => 'Cancelado';
+
+  @override
+  String get epiArchiveBlockTitle => 'Arquivar com bloqueio de saldo';
+
+  @override
+  String get epiArchiveBlockBody => 'Este EPI possui saldo disponível ou vínculos vivos. Ao confirmar, o saldo disponível será movido para Estoque Bloqueado (rastreável) e o EPI será arquivado.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Bloquear saldo e arquivar';
+
+  @override
+  String get epiArchiveReasonLabel => 'Motivo do arquivamento (auditoria)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Informe o motivo para prosseguir.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Saldo a bloquear';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Vínculos vivos';
+
+  @override
+  String get epiArchiveAvailable => 'Disponível';
+
+  @override
+  String get epiArchiveInTransit => 'Em trânsito';
+
+  @override
+  String get epiArchiveInPossession => 'Em posse';
+
+  @override
+  String get epiArchivePendingRequests => 'Requisições abertas';
+
+  @override
+  String get epiArchivePendingPurchase => 'Compras abertas';
+
+  @override
+  String get dashboardComplianceTitle => 'Conformidade de estoque';
+
+  @override
+  String get dashboardComplianceAllOk => 'Estoque em conformidade';
+
+  @override
+  String get complianceCaExpired => 'CA vencido';
+
+  @override
+  String get complianceCaExpiring => 'CA a vencer';
+
+  @override
+  String get complianceProductExpired => 'Produto vencido';
+
+  @override
+  String get complianceProductExpiring => 'Produto a vencer';
+
+  @override
+  String get complianceMissingManufacture => 'Sem fabricação';
+
+  @override
+  String get complianceMissingLot => 'Sem lote';
+
+  @override
+  String get complianceAdminBlocked => 'Bloqueado';
+
+  @override
+  String get handoverTitle => 'Conferência de entrega';
+
+  @override
+  String get handoverPrompt => 'Escaneie o QR da entrega ou informe o código.';
+
+  @override
+  String get handoverCodeLabel => 'Código da entrega';
+
+  @override
+  String get handoverLookupButton => 'Buscar entrega';
+
+  @override
+  String get handoverScanButton => 'Escanear QR';
+
+  @override
+  String get handoverConfirmButton => 'Confirmar recebimento';
+
+  @override
+  String get handoverConfirmedTitle => 'Recebimento confirmado';
+
+  @override
+  String get handoverAlreadyConfirmed => 'Esta entrega já foi confirmada.';
+
+  @override
+  String get handoverNotFound => 'Entrega não encontrada para este código.';
+
+  @override
+  String get handoverConfirmError => 'Não foi possível confirmar o recebimento.';
+
+  @override
+  String get handoverEmployeeLabel => 'Colaborador';
+
+  @override
+  String get handoverEpiLabel => 'EPI';
+
+  @override
+  String get handoverQuantityLabel => 'Quantidade';
+
+  @override
+  String get handoverSectorLabel => 'Setor';
+
+  @override
+  String get handoverRoleLabel => 'Função';
+
+  @override
+  String get handoverUnitLabel => 'Unidade';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Data da entrega';
+
+  @override
+  String get handoverReceiverNameLabel => 'Nome de quem recebe (opcional)';
+
+  @override
+  String get handoverScanAgain => 'Nova conferência';
+
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

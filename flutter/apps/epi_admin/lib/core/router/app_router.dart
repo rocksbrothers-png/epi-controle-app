@@ -21,6 +21,7 @@ import '../../features/subscription/subscription_screen.dart';
 import '../../features/subscription/invoices_screen.dart';
 import '../../features/stock/stock_screen.dart';
 import '../../features/qr/qr_scanner_screen.dart';
+import '../../features/deliveries/handover_conference_screen.dart';
 import '../../features/users/users_screen.dart';
 import '../../features/units/units_screen.dart';
 import '../../features/feedback/feedback_screen.dart';
@@ -94,6 +95,11 @@ GoRouter buildRouter({
         path: Routes.qr,
         name: 'qr',
         builder: (ctx, state) => const QrScannerScreen(),
+      ),
+      GoRoute(
+        path: Routes.handover,
+        name: 'handover',
+        builder: (ctx, state) => const HandoverConferenceScreen(),
       ),
       GoRoute(
         path: Routes.portal,
