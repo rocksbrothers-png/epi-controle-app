@@ -14,9 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// que Android/iOS/web-flutter falhem o CI se o contrato divergir — sem duplicar
 /// lógica no app.
 class _CapturingAdapter implements HttpClientAdapter {
-  _CapturingAdapter(this.body, {this.status = 200});
+  _CapturingAdapter(this.body);
   final Object body;
-  final int status;
   RequestOptions? lastRequest;
 
   @override
@@ -28,7 +27,7 @@ class _CapturingAdapter implements HttpClientAdapter {
     lastRequest = options;
     return ResponseBody.fromString(
       jsonEncode(body),
-      status,
+      200,
       headers: {
         Headers.contentTypeHeader: [Headers.jsonContentType],
       },
