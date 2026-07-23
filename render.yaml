@@ -68,6 +68,13 @@ services:
       git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
       export PATH="$HOME/flutter/bin:$HOME/flutter/bin/cache/dart-sdk/bin:$PATH"
       flutter config --no-analytics --enable-web
+      # Precacheia os artefatos do engine (inclui sky_engine) ANTES de qualquer
+      # "pub get". Melos 8+ (pub workspaces) resolve o workspace inteiro de uma
+      # vez com "dart pub get" — sem o precache, essa resolução falha com
+      # "could not find package sky_engine in the Flutter SDK" para pacotes que
+      # dependem do Flutter SDK (epi_api, epi_admin etc.). Sem este passo, o
+      # build falhava em "melos bootstrap".
+      flutter precache --web
       dart pub global activate melos
       export PATH="$PATH:$HOME/.pub-cache/bin"
       cd flutter

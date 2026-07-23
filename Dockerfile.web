@@ -17,8 +17,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Flutter STABLE (o pubspec.lock exige flutter >=3.44; intl ^0.20.2).
+# flutter precache --web: baixa os artefatos do engine (inclui sky_engine)
+# ANTES de qualquer "pub get". Melos 8+ (pub workspaces) resolve o workspace
+# inteiro de uma vez com "dart pub get" — sem o precache, essa resolução falha
+# com "could not find package sky_engine in the Flutter SDK" para pacotes que
+# dependem do Flutter SDK (epi_api, epi_admin etc.).
 RUN git clone --depth 1 --branch stable https://github.com/flutter/flutter.git $FLUTTER_HOME \
     && flutter config --no-analytics --enable-web \
+    && flutter precache --web \
     && dart pub global activate melos
 
 WORKDIR /src
