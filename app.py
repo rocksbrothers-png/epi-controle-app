@@ -887,7 +887,8 @@ class EpiHandler(SimpleHTTPRequestHandler):
             return super().do_GET()
         except AuthenticationError as exc:
             structured_log('warning', 'http.authentication_error', method='GET', path=parsed.path, error=str(exc))
-            return unauthorized(self, str(exc))
+            unauthorized(self, str(exc))
+            return
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='GET', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -947,7 +948,8 @@ class EpiHandler(SimpleHTTPRequestHandler):
             return not_found(self)
         except AuthenticationError as exc:
             structured_log('warning', 'http.authentication_error', method='POST', path=parsed.path, error=str(exc))
-            return unauthorized(self, str(exc))
+            unauthorized(self, str(exc))
+            return
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='POST', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -983,7 +985,8 @@ class EpiHandler(SimpleHTTPRequestHandler):
                 return result
         except AuthenticationError as exc:
             structured_log('warning', 'http.authentication_error', method='PUT', path=parsed.path, error=str(exc))
-            return unauthorized(self, str(exc))
+            unauthorized(self, str(exc))
+            return
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='PUT', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -1013,7 +1016,8 @@ class EpiHandler(SimpleHTTPRequestHandler):
                 return result
         except AuthenticationError as exc:
             structured_log('warning', 'http.authentication_error', method='DELETE', path=parsed.path, error=str(exc))
-            return unauthorized(self, str(exc))
+            unauthorized(self, str(exc))
+            return
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='DELETE', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
