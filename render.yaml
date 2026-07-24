@@ -65,6 +65,10 @@ services:
       export TAR_OPTIONS="--no-same-owner --no-same-permissions"
       # Flutter SDK no canal STABLE (o pubspec.lock exige flutter >=3.44; uma
       # versão antiga como 3.24.5 quebra a resolução do intl ^0.20.2). Igual ao CI.
+      # Remove qualquer clone anterior primeiro: em builds reexecutados/quentes,
+      # um "$HOME/flutter" pré-existente faria o "git clone" falhar com
+      # "destination path already exists".
+      rm -rf "$HOME/flutter"
       git clone --depth 1 --branch stable https://github.com/flutter/flutter.git "$HOME/flutter"
       export PATH="$HOME/flutter/bin:$HOME/flutter/bin/cache/dart-sdk/bin:$PATH"
       flutter config --no-analytics --enable-web
