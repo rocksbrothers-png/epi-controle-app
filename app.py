@@ -79,6 +79,7 @@ from core.schema import (
 from epi_backend.db import row_to_dict
 from epi_backend.http_utils import parse_json, require_fields, send_bytes, send_json, structured_log
 from core.security import (
+    AuthenticationError,
     create_jwt_token,
     decode_jwt_token,
     hash_password,
@@ -579,6 +580,13 @@ def bad_request(handler, message):
     send_json(handler, 400, {'error': message})
 
 
+def unauthorized(handler, message):
+    # 401 = falha de AUTENTICAÇÃO (token ausente/inválido/expirado). É o que
+    # dispara o refresh automático do access token no cliente Flutter; usar 403
+    # aqui fazia o refresh nunca ocorrer e o app mostrar "Sem conexão".
+    send_json(handler, 401, {'error': message})
+
+
 def forbidden(handler, message):
     send_json(handler, 403, {'error': message})
 
@@ -877,6 +885,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             if result is not None:
                 return result
             return super().do_GET()
+        except AuthenticationError as exc:
+            structured_log('warning', 'http.authentication_error', method='GET', path=parsed.path, error=str(exc))
+            return unauthorized(self, str(exc))
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='GET', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -934,6 +945,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             if result is not None:
                 return result
             return not_found(self)
+        except AuthenticationError as exc:
+            structured_log('warning', 'http.authentication_error', method='POST', path=parsed.path, error=str(exc))
+            return unauthorized(self, str(exc))
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='POST', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -967,6 +981,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             result = router.dispatch('PUT', parsed.path, self, parsed, payload)
             if result is not None:
                 return result
+        except AuthenticationError as exc:
+            structured_log('warning', 'http.authentication_error', method='PUT', path=parsed.path, error=str(exc))
+            return unauthorized(self, str(exc))
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='PUT', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -994,6 +1011,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             result = router.dispatch('DELETE', parsed.path, self, parsed)
             if result is not None:
                 return result
+        except AuthenticationError as exc:
+            structured_log('warning', 'http.authentication_error', method='DELETE', path=parsed.path, error=str(exc))
+            return unauthorized(self, str(exc))
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='DELETE', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))

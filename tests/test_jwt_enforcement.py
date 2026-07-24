@@ -4,7 +4,7 @@ Hoje o actor_user_id é aceito via body/query sem um Bearer token válido. A fla
 JWT_ENFORCEMENT_MODE controla o rollout seguro:
   - off:     comportamento legado silencioso;
   - shadow:  registra a requisição sem JWT mas permite (medição de impacto);
-  - enforce: exige o token e bloqueia (403) quando ausente.
+  - enforce: exige o token e bloqueia (AuthenticationError → HTTP 401) quando ausente.
 
 Um Bearer token válido sempre é aceito, em qualquer modo. A verificação de
 consistência entre body/query/token é independente do modo.
