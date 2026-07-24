@@ -210,7 +210,7 @@ class _HorizontalBarChart extends StatelessWidget {
                 final label = entries[i].key;
                 final short = label.length > 8 ? '${label.substring(0, 7)}…' : label;
                 return SideTitleWidget(
-                  axisSide: meta.axisSide,
+                  meta: meta,
                   child: Text(
                     short,
                     style: const TextStyle(fontSize: 9),
