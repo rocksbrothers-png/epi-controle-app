@@ -20,6 +20,22 @@ except ModuleNotFoundError:
     bcrypt = None
 
 
+class AuthenticationError(PermissionError):
+    """Falha de AUTENTICAÇÃO (token ausente/inválido/expirado, sessão não
+    identificada) — deve virar HTTP 401, não 403.
+
+    Subclasse de PermissionError para compatibilidade: handlers que só capturam
+    `except PermissionError` continuam pegando estes casos (como 403); handlers
+    que querem distinguir capturam `AuthenticationError` ANTES e respondem 401.
+    O 401 é o que dispara o refresh automático do token no cliente Flutter
+    (o interceptor só reemite o access token via /api/auth/refresh em 401);
+    quando isto era 403, o refresh nunca ocorria e o app mostrava "Sem conexão".
+
+    PermissionError "puro" continua reservado para falha de AUTORIZAÇÃO
+    (usuário autenticado, mas sem permissão para a ação) → HTTP 403.
+    """
+
+
 def validate_password_strength(password):
     raw = str(password or '').strip()
     if len(raw) < 6:
@@ -74,29 +90,29 @@ def parse_bearer_token(handler):
     if not auth_header:
         return ''
     if not auth_header.lower().startswith('bearer '):
-        raise PermissionError('Formato de Authorization inválido.')
+        raise AuthenticationError('Formato de Authorization inválido.')
     return auth_header.split(' ', 1)[1].strip()
 
 
 def decode_jwt_token(token, msg_token_absent='Token ausente.', msg_token_invalid='Token inválido.'):
     raw = str(token or '').strip()
     if not raw:
-        raise PermissionError(msg_token_absent)
+        raise AuthenticationError(msg_token_absent)
     parts = raw.split('.')
     if len(parts) != 3:
-        raise PermissionError(msg_token_invalid)
+        raise AuthenticationError(msg_token_invalid)
     header_segment, payload_segment, signature_segment = parts
     signing_input = f'{header_segment}.{payload_segment}'.encode('utf-8')
     expected_signature = hmac.new(JWT_SECRET.encode('utf-8'), signing_input, hashlib.sha256).digest()
     provided_signature = _jwt_b64decode(signature_segment)
     if not hmac.compare_digest(expected_signature, provided_signature):
-        raise PermissionError(msg_token_invalid)
+        raise AuthenticationError(msg_token_invalid)
     try:
         payload = json.loads(_jwt_b64decode(payload_segment).decode('utf-8'))
     except json.JSONDecodeError:
-        raise PermissionError(msg_token_invalid)
+        raise AuthenticationError(msg_token_invalid)
     if int(payload.get('exp', 0)) < int(datetime.now(UTC).timestamp()):
-        raise PermissionError('Sessão expirada. Faça login novamente.')
+        raise AuthenticationError('Sessão expirada. Faça login novamente.')
     return payload
 
 
@@ -109,7 +125,7 @@ def decode_token_of_type(token, expected_type, *, msg_token_invalid='Token invá
     payload = decode_jwt_token(token, msg_token_invalid=msg_token_invalid)
     token_type = str(payload.get('type') or 'access')
     if token_type != expected_type:
-        raise PermissionError(msg_token_invalid)
+        raise AuthenticationError(msg_token_invalid)
     return payload
 
 
@@ -140,7 +156,7 @@ def _enforce_jwt_presence(handler, parsed, actor_user_id):
     except Exception:  # pragma: no cover - logging nunca deve derrubar a request
         pass
     if mode == 'enforce':
-        raise PermissionError('Autenticação por token (JWT Bearer) obrigatória.')
+        raise AuthenticationError('Autenticação por token (JWT Bearer) obrigatória.')
 
 
 def resolve_actor_user_id(handler, parsed, payload=None):
@@ -154,11 +170,11 @@ def resolve_actor_user_id(handler, parsed, payload=None):
         token_actor = str(claims.get('sub', '')).strip()
     actor_candidates = [item for item in (body_actor, query_actor, token_actor) if str(item).strip()]
     if not actor_candidates:
-        raise PermissionError('Sessão inválida: usuário não informado.')
+        raise AuthenticationError('Sessão inválida: usuário não informado.')
     actor_user_id = actor_candidates[0]
     for candidate in actor_candidates[1:]:
         if str(candidate) != str(actor_user_id):
-            raise PermissionError('Dados de autenticação inconsistentes.')
+            raise AuthenticationError('Dados de autenticação inconsistentes.')
     # F-04: mede/aplica a exigência de JWT quando o actor não veio de um token.
     if not token_actor:
         _enforce_jwt_presence(handler, parsed, actor_user_id)
