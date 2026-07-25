@@ -86,6 +86,18 @@ def provision_pending_tenant(connection, payload):
     validated['active'] = 0
     company_id = create_company(connection, validated)
 
+    # Estrutura organizacional escolhida no onboarding (single_cnpj, multi_cnpj,
+    # holding, group, joint_venture, consortium, other). Persistida na tenant
+    # para orientar o fluxo de cadastro de CNPJs (único vs. lote vs. JV).
+    if payload.get('org_structure_type'):
+        from core.schema import _table_columns
+        from modules.legal_entities.service import normalize_org_structure_type
+        if 'org_structure_type' in _table_columns(connection, 'companies'):
+            connection.execute(
+                'UPDATE companies SET org_structure_type = ? WHERE id = ?',
+                (normalize_org_structure_type(payload.get('org_structure_type')), int(company_id)),
+            )
+
     # Senha placeholder aleatória e inutilizável — a real é gerada na ativação.
     placeholder = hash_password(secrets.token_urlsafe(24))
     cursor = connection.execute(
