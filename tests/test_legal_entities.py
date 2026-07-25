@@ -229,10 +229,8 @@ class _FakeHandler:
 
 
 def _patch(monkeypatch, conn, actor):
-    monkeypatch.setattr(routes, 'get_connection', lambda: type('C', (), {
-        '__enter__': lambda s: conn, '__exit__': lambda s, *a: None, 'close': lambda s: None,
-    })())
-    # closing() usa .close(); devolvemos a própria conn e neutralizamos close.
+    # routes usam `with closing(get_connection())`, que chama .close(); o wrapper
+    # devolve a própria conn de teste e neutraliza o close.
     monkeypatch.setattr(routes, 'get_connection', lambda: _NoCloseConn(conn))
     monkeypatch.setattr(routes, 'resolve_actor_user_id', lambda *a, **k: actor['id'])
     monkeypatch.setattr(routes, 'authorize_action', lambda *a, **k: actor)

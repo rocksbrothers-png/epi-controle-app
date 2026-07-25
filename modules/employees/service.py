@@ -165,8 +165,8 @@ def update_employee(connection, employee_id, payload, *, actor):
 
 
 def get_employee_by_id(connection, employee_id):
-    from core.schema import _table_columns
-    legal_entity_col = ', legal_entity_id' if 'legal_entity_id' in _table_columns(connection, 'employees') else ''
+    from epi_backend.db import table_columns
+    legal_entity_col = ', legal_entity_id' if 'legal_entity_id' in table_columns(connection, 'employees') else ''
     row = connection.execute(
         'SELECT id, company_id, unit_id, employee_id_code, cpf, name, email, whatsapp, '
         'preferred_contact_channel, sector, role_name, admission_date, schedule_type, '
@@ -265,7 +265,7 @@ def apply_current_unit_allocation(connection, employees):
 
 def fetch_employees(connection, actor=None):
     from core.archival import NON_OPERATIONAL_STATUSES, lifecycle_enabled
-    from core.schema import _table_columns, _table_exists
+    from epi_backend.db import table_columns as _table_columns, table_exists as _table_exists
     lifecycle = lifecycle_enabled(connection, 'employees')
     status_field = ', employees.status' if lifecycle else ''
     # O vínculo com CNPJ (LegalEntity) é opcional durante a janela de migração e

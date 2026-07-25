@@ -50,10 +50,10 @@ def legal_entities_ready(connection) -> bool:
     vínculo em employees). Durante a janela de migração — e em fixtures de
     schema parcial — o vínculo é ignorado silenciosamente, preservando total
     retrocompatibilidade com o fluxo de CNPJ único."""
-    from core.schema import _table_columns, _table_exists
+    from epi_backend.db import table_columns, table_exists
     return (
-        _table_exists(connection, 'legal_entities')
-        and 'legal_entity_id' in _table_columns(connection, 'employees')
+        table_exists(connection, 'legal_entities')
+        and 'legal_entity_id' in table_columns(connection, 'employees')
     )
 
 

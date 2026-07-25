@@ -571,6 +571,8 @@ def provision_tenant_structure(connection, company_id, payload):
                 (legal_entity_id, int(unit_id)),
             )
         except Exception:
+            # Vínculo unidade↔CNPJ é conveniência não-crítica: se a coluna ainda
+            # não existir (janela de migração), o provisionamento não deve falhar.
             pass
     details.append({'field': 'Unidade matriz', 'before': '', 'after': f'Matriz (id {unit_id})'})
 

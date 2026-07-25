@@ -52,8 +52,8 @@ def get_employee_by_id(connection, employee_id):
 def _employee_legal_entity_column(connection) -> str:
     """`, legal_entity_id` quando a coluna Multi-CNPJ existir; vazio caso
     contrário (janela de migração / schema parcial)."""
-    from core.schema import _table_columns
-    return ', legal_entity_id' if 'legal_entity_id' in _table_columns(connection, 'employees') else ''
+    from epi_backend.db import table_columns
+    return ', legal_entity_id' if 'legal_entity_id' in table_columns(connection, 'employees') else ''
 
 
 def get_unit_by_id(connection, unit_id):

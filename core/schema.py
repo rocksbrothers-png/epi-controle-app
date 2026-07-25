@@ -188,49 +188,15 @@ def _classify_db_error(error) -> str:
 
 
 def _table_exists(connection, table) -> bool:
-    table_name = str(table or '').strip()
-    if not table_name:
-        return False
-    try:
-        if _is_sqlite_connection(connection):
-            row = connection.execute(
-                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ? LIMIT 1",
-                (table_name,),
-            ).fetchone()
-            return row is not None
-        row = connection.execute(
-            "SELECT 1 FROM information_schema.tables "
-            "WHERE table_name = ? LIMIT 1",
-            (table_name,),
-        ).fetchone()
-        return row is not None
-    except Exception:
-        return False
+    # Implementação canônica vive em epi_backend.db (camada de baixo nível, sem
+    # ciclos). Mantido aqui como alias para os chamadores internos de schema.
+    from epi_backend.db import table_exists as _db_table_exists
+    return _db_table_exists(connection, table)
 
 
 def _table_columns(connection, table) -> set:
-    table_name = str(table or '').strip()
-    if not table_name:
-        return set()
-    try:
-        if _is_sqlite_connection(connection):
-            rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
-            return {str(row['name'] if isinstance(row, dict) else row[1]) for row in rows}
-        rows = connection.execute(
-            "SELECT column_name FROM information_schema.columns WHERE table_name = ?",
-            (table_name,),
-        ).fetchall()
-        result = set()
-        for row in rows:
-            if isinstance(row, dict):
-                result.add(str(row.get('column_name') or ''))
-            elif hasattr(row, 'keys'):
-                result.add(str(row['column_name']))
-            else:
-                result.add(str(row[0]))
-        return {item for item in result if item}
-    except Exception:
-        return set()
+    from epi_backend.db import table_columns as _db_table_columns
+    return _db_table_columns(connection, table)
 
 
 def _col_exists(connection, table, column) -> bool:

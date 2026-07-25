@@ -90,9 +90,9 @@ def provision_pending_tenant(connection, payload):
     # holding, group, joint_venture, consortium, other). Persistida na tenant
     # para orientar o fluxo de cadastro de CNPJs (único vs. lote vs. JV).
     if payload.get('org_structure_type'):
-        from core.schema import _table_columns
+        from epi_backend.db import table_columns
         from modules.legal_entities.service import normalize_org_structure_type
-        if 'org_structure_type' in _table_columns(connection, 'companies'):
+        if 'org_structure_type' in table_columns(connection, 'companies'):
             connection.execute(
                 'UPDATE companies SET org_structure_type = ? WHERE id = ?',
                 (normalize_org_structure_type(payload.get('org_structure_type')), int(company_id)),
