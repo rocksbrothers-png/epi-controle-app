@@ -69,6 +69,18 @@
         </div>
       </div>
 
+      <label class="field" for="org_structure_type">Como sua organização está estruturada?</label>
+      <select id="org_structure_type" name="org_structure_type" required>
+        <option value="single_cnpj">Empresa com um único CNPJ</option>
+        <option value="multi_cnpj">Empresa com múltiplos CNPJs</option>
+        <option value="holding">Holding</option>
+        <option value="group">Grupo Empresarial</option>
+        <option value="joint_venture">Joint Venture</option>
+        <option value="consortium">Consórcio</option>
+        <option value="other">Outro</option>
+      </select>
+      <p class="hint" id="org-structure-hint">O CNPJ informado acima será cadastrado como matriz. Você poderá adicionar os demais CNPJs depois, um a um ou por importação de planilha.</p>
+
       <label class="field" for="user_limit">Limite de usuários</label>
       <input id="user_limit" name="user_limit" type="number" min="1" step="1" required />
       <p class="hint" id="user-limit-hint"></p>

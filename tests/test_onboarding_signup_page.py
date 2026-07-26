@@ -63,3 +63,30 @@ def test_cadastro_route_is_registered():
 
     routes.register_routes(_Router())
     assert ('GET', '/cadastro', routes.handle_get_signup_page) in calls
+
+
+# ── Estrutura organizacional (Multi-CNPJ / Joint Venture) ────────────────────
+
+def test_signup_page_offers_all_org_structure_options():
+    """A etapa 'Como sua organização está estruturada?' precisa expor todas as
+    opções previstas, senão o cliente não consegue declarar holding/JV/consórcio."""
+    from pathlib import Path
+
+    from epi_backend.config import BASE_DIR
+
+    html = (Path(BASE_DIR) / 'cadastro.html').read_text(encoding='utf-8')
+    assert 'org_structure_type' in html
+    assert 'Como sua organização está estruturada?' in html
+    for value in ('single_cnpj', 'multi_cnpj', 'holding', 'group',
+                  'joint_venture', 'consortium', 'other'):
+        assert f'value="{value}"' in html, value
+
+
+def test_signup_page_sends_org_structure_in_payload():
+    """O select não pode ficar órfão: o JS precisa enviá-lo no signup."""
+    from pathlib import Path
+
+    from epi_backend.config import BASE_DIR
+
+    js = (Path(BASE_DIR) / 'js' / 'cadastro.js').read_text(encoding='utf-8')
+    assert "org_structure_type: $('org_structure_type').value" in js
