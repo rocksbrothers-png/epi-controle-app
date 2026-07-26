@@ -273,6 +273,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get legalEntityMunicipalityLabel => 'Municipio';
 
   @override
+  String get legalEntitiesImport => 'Importar hoja de cálculo';
+
+  @override
+  String get legalEntitiesImportHint => 'Copie las filas de la hoja (incluida la de encabezado) y péguelas abajo. Acepta columnas en portugués o inglés.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importación finalizada';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1231,6 +1240,15 @@ class AppLocalizationsEsEs extends AppLocalizationsEs {
 
   @override
   String get legalEntityMunicipalityLabel => 'Municipio';
+
+  @override
+  String get legalEntitiesImport => 'Importar hoja de cálculo';
+
+  @override
+  String get legalEntitiesImportHint => 'Copie las filas de la hoja (incluida la de encabezado) y péguelas abajo. Acepta columnas en portugués o inglés.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importación finalizada';
 
   @override
   String get employeeAdmissionLabel => 'Fecha de ingreso';

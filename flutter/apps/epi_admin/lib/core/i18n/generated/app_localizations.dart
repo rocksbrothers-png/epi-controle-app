@@ -636,6 +636,24 @@ abstract class AppLocalizations {
   /// **'Município'**
   String get legalEntityMunicipalityLabel;
 
+  /// No description provided for @legalEntitiesImport.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Importar planilha'**
+  String get legalEntitiesImport;
+
+  /// No description provided for @legalEntitiesImportHint.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.'**
+  String get legalEntitiesImportHint;
+
+  /// No description provided for @legalEntitiesImportResult.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Importação concluída'**
+  String get legalEntitiesImportResult;
+
   /// No description provided for @employeeAdmissionLabel.
   ///
   /// In pt_BR, this message translates to:

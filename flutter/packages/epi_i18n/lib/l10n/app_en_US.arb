@@ -514,5 +514,8 @@
   "legalEntityDeactivateHint": "Legal history is preserved. The tax ID stops being used in new operations.",
   "legalEntityShowInactive": "Show inactive",
   "legalEntitiesEmpty": "No tax IDs registered.",
-  "legalEntityMunicipalityLabel": "Municipality"
+  "legalEntityMunicipalityLabel": "Municipality",
+  "legalEntitiesImport": "Import spreadsheet",
+  "legalEntitiesImportHint": "Copy the spreadsheet rows (including the header row) and paste below. Accepts Portuguese or English columns.",
+  "legalEntitiesImportResult": "Import finished"
 }

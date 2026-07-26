@@ -517,5 +517,8 @@
   "legalEntityDeactivateHint": "O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.",
   "legalEntityShowInactive": "Mostrar inativos",
   "legalEntitiesEmpty": "Nenhum CNPJ cadastrado.",
-  "legalEntityMunicipalityLabel": "Município"
+  "legalEntityMunicipalityLabel": "Município",
+  "legalEntitiesImport": "Importar planilha",
+  "legalEntitiesImportHint": "Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.",
+  "legalEntitiesImportResult": "Importação concluída"
 }
