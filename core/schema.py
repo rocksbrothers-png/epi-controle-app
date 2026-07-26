@@ -1525,6 +1525,8 @@ def ensure_epi_operational_tables(connection) -> None:
     _safe_add_column(connection, 'purchase_request_items', 'approval_decided_by_user_id', "INTEGER")
     _safe_add_column(connection, 'purchase_request_items', 'approval_decided_by_name', "TEXT NOT NULL DEFAULT ''")
     _safe_add_column(connection, 'purchase_request_items', 'approval_decided_at', "TEXT NOT NULL DEFAULT ''")
+    # CNPJ emissor do pedido (Multi-CNPJ). NULL = pedido da empresa (histórico).
+    _safe_add_column(connection, 'purchase_orders', 'legal_entity_id', 'INTEGER')
     # Colunas para revisão operacional do Admin e sugestões ao Comprador
     _safe_add_column(connection, 'purchase_orders', 'admin_review_by_user_id', "INTEGER")
     _safe_add_column(connection, 'purchase_orders', 'admin_review_by_name', "TEXT NOT NULL DEFAULT ''")
@@ -2254,6 +2256,8 @@ def ensure_legal_entities(connection) -> None:
     _safe_add_column(connection, 'companies', 'stock_control_scope', "TEXT NOT NULL DEFAULT 'company'")
 
     # Vínculo do colaborador e da unidade ao CNPJ (nullable: retrocompatível).
+    # A coluna equivalente em purchase_orders é adicionada por
+    # ensure_procurement_supplier_tables, que é quem cria essa tabela.
     _safe_add_column(connection, 'employees', 'legal_entity_id', 'INTEGER')
     _safe_add_column(connection, 'units', 'legal_entity_id', 'INTEGER')
     try:
