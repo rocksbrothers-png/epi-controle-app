@@ -93,6 +93,9 @@ async function onSubmit(event) {
       name: $('name').value.trim(),
       legal_name: $('legal_name').value.trim(),
       cnpj: $('cnpj').value.trim(),
+      // Estrutura organizacional (Multi-CNPJ / JV): orienta o cadastro dos
+      // demais CNPJs depois da ativação. O CNPJ acima vira a matriz.
+      org_structure_type: $('org_structure_type').value,
       plan_name: $('plan_name').value,
       user_limit: Number($('user_limit').value || 0),
       owner_name: $('owner_name').value.trim(),
