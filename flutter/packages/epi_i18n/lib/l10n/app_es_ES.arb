@@ -87,6 +87,7 @@
   "employeeSectorLabel": "Área",
   "employeeRoleLabel": "Cargo",
   "employeeUnitLabel": "Unidad",
+  "employeeLegalEntityLabel": "CNPJ",
   "employeeAdmissionLabel": "Fecha de ingreso",
   "employeeScheduleLabel": "Turno",
   "employeeStatusActive": "Activo",

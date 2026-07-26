@@ -564,6 +564,12 @@ abstract class AppLocalizations {
   /// **'Unidade'**
   String get employeeUnitLabel;
 
+  /// No description provided for @employeeLegalEntityLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CNPJ'**
+  String get employeeLegalEntityLabel;
+
   /// No description provided for @employeeAdmissionLabel.
   ///
   /// In pt_BR, this message translates to:

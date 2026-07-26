@@ -87,6 +87,7 @@
   "employeeSectorLabel": "Avdeling",
   "employeeRoleLabel": "Stilling",
   "employeeUnitLabel": "Enhet",
+  "employeeLegalEntityLabel": "CNPJ",
   "employeeAdmissionLabel": "Ansettelsesdato",
   "employeeScheduleLabel": "Arbeidsplan",
   "employeeStatusActive": "Aktiv",

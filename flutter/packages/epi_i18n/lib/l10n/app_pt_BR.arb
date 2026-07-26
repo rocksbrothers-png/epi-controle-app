@@ -117,6 +117,7 @@
   "employeeSectorLabel": "Setor",
   "employeeRoleLabel": "Função",
   "employeeUnitLabel": "Unidade",
+  "employeeLegalEntityLabel": "CNPJ",
   "employeeAdmissionLabel": "Admissão",
   "employeeScheduleLabel": "Escala",
   "employeeStatusActive": "Ativo",

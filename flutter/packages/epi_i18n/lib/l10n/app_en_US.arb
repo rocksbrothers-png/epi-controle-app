@@ -114,6 +114,7 @@
   "employeeSectorLabel": "Department",
   "employeeRoleLabel": "Job title",
   "employeeUnitLabel": "Unit",
+  "employeeLegalEntityLabel": "Tax ID (CNPJ)",
   "employeeAdmissionLabel": "Hire date",
   "employeeScheduleLabel": "Schedule",
   "employeeStatusActive": "Active",

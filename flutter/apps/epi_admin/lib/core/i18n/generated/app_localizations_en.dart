@@ -237,6 +237,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get employeeUnitLabel => 'Unidade';
 
   @override
+  String get employeeLegalEntityLabel => 'Tax ID (CNPJ)';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1159,6 +1162,9 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get employeeUnitLabel => 'Unit';
+
+  @override
+  String get employeeLegalEntityLabel => 'Tax ID (CNPJ)';
 
   @override
   String get employeeAdmissionLabel => 'Hire date';

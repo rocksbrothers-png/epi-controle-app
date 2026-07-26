@@ -283,6 +283,7 @@ def build_bootstrap(connection, actor):
     from modules.settings.service import canary_evaluate_visibility_dataset
     from modules.units.service import fetch_units
     from modules.employees.service import fetch_employees, fetch_employee_movements
+    from modules.legal_entities.service import fetch_legal_entities
     from modules.epis.service import fetch_epis
     from modules.deliveries.service import fetch_deliveries
     from modules.feedback.service import fetch_feedbacks
@@ -389,6 +390,14 @@ def build_bootstrap(connection, actor):
         'company_audit_logs': _safe_bootstrap_section('company_audit_logs', lambda: fetch_company_audit_logs(connection, actor), [], warnings, actor, connection=connection),
         'ficha_audit_logs': _safe_bootstrap_section('ficha_audit_logs', lambda: fetch_ficha_epi_audit_logs(connection, actor, {}), [], warnings, actor, connection=connection),
         'users': users_list,
+        # CNPJs (LegalEntity) visíveis ao ator — alimentam o filtro em cascata do
+        # dashboard (Empresa → CNPJ → Unidade → Setor) e o seletor de CNPJ no
+        # cadastro de colaborador. Já vem escopado por papel.
+        'legal_entities': _safe_bootstrap_section(
+            'legal_entities',
+            lambda: fetch_legal_entities(connection, actor),
+            [], warnings, actor, connection=connection,
+        ),
         'units': units,
         'employees': employees,
         'employee_movements': _safe_bootstrap_section('employee_movements', lambda: fetch_employee_movements(connection, actor), [], warnings, actor, connection=connection),
