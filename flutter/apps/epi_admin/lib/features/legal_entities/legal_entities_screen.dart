@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:epi_admin/core/i18n/generated/app_localizations.dart';
 import '../../core/bloc/legal_entities_cubit.dart';
+import 'paste_import_dialog.dart';
 
 /// Gestão dos CNPJs (LegalEntity) da empresa — Multi-CNPJ / Joint Venture.
 ///
@@ -35,6 +36,18 @@ class _LegalEntitiesBody extends StatelessWidget {
       ),
     );
     if (saved == true && context.mounted) cubit.load();
+  }
+
+  Future<void> _openImport(BuildContext context) async {
+    final cubit = context.read<LegalEntitiesCubit>();
+    await showDialog<bool>(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: cubit,
+        child: const PasteImportDialog(),
+      ),
+    );
+    if (context.mounted) cubit.load();
   }
 
   Future<void> _confirmDeactivate(BuildContext context, LegalEntity entity) async {
@@ -77,6 +90,11 @@ class _LegalEntitiesBody extends StatelessWidget {
           appBar: AppBar(
             title: Text(l10n.legalEntitiesTitle),
             actions: [
+              IconButton(
+                tooltip: l10n.legalEntitiesImport,
+                icon: const Icon(Icons.upload_file_outlined),
+                onPressed: () => _openImport(ctx),
+              ),
               IconButton(
                 tooltip: l10n.legalEntityShowInactive,
                 icon: Icon(state.showInactive

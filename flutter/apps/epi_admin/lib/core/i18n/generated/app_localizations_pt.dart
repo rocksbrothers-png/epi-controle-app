@@ -273,6 +273,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get legalEntityMunicipalityLabel => 'Município';
 
   @override
+  String get legalEntitiesImport => 'Importar planilha';
+
+  @override
+  String get legalEntitiesImportHint => 'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importação concluída';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1230,6 +1239,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get legalEntityMunicipalityLabel => 'Município';
+
+  @override
+  String get legalEntitiesImport => 'Importar planilha';
+
+  @override
+  String get legalEntitiesImportHint => 'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importação concluída';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';

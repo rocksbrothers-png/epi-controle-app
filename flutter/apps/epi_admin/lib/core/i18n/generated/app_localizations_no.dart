@@ -273,6 +273,15 @@ class AppLocalizationsNo extends AppLocalizations {
   String get legalEntityMunicipalityLabel => 'Kommune';
 
   @override
+  String get legalEntitiesImport => 'Importer regneark';
+
+  @override
+  String get legalEntitiesImportHint => 'Kopier radene fra regnearket (med overskriftsraden) og lim inn nedenfor. Godtar kolonner på portugisisk eller engelsk.';
+
+  @override
+  String get legalEntitiesImportResult => 'Import fullført';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1231,6 +1240,15 @@ class AppLocalizationsNoNo extends AppLocalizationsNo {
 
   @override
   String get legalEntityMunicipalityLabel => 'Kommune';
+
+  @override
+  String get legalEntitiesImport => 'Importer regneark';
+
+  @override
+  String get legalEntitiesImportHint => 'Kopier radene fra regnearket (med overskriftsraden) og lim inn nedenfor. Godtar kolonner på portugisisk eller engelsk.';
+
+  @override
+  String get legalEntitiesImportResult => 'Import fullført';
 
   @override
   String get employeeAdmissionLabel => 'Ansettelsesdato';

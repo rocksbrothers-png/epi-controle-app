@@ -273,6 +273,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legalEntityMunicipalityLabel => 'Municipality';
 
   @override
+  String get legalEntitiesImport => 'Import spreadsheet';
+
+  @override
+  String get legalEntitiesImportHint => 'Copy the spreadsheet rows (including the header row) and paste below. Accepts Portuguese or English columns.';
+
+  @override
+  String get legalEntitiesImportResult => 'Import finished';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1231,6 +1240,15 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get legalEntityMunicipalityLabel => 'Municipality';
+
+  @override
+  String get legalEntitiesImport => 'Import spreadsheet';
+
+  @override
+  String get legalEntitiesImportHint => 'Copy the spreadsheet rows (including the header row) and paste below. Accepts Portuguese or English columns.';
+
+  @override
+  String get legalEntitiesImportResult => 'Import finished';
 
   @override
   String get employeeAdmissionLabel => 'Hire date';
