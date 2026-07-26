@@ -240,6 +240,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get employeeLegalEntityLabel => 'Tax ID (CNPJ)';
 
   @override
+  String get legalEntitiesTitle => 'Tax IDs (CNPJ)';
+
+  @override
+  String get legalEntitiesNew => 'New tax ID';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Legal name';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Trade name';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inactive';
+
+  @override
+  String get legalEntityDeactivate => 'Deactivate tax ID';
+
+  @override
+  String get legalEntityDeactivateHint => 'Legal history is preserved. The tax ID stops being used in new operations.';
+
+  @override
+  String get legalEntityShowInactive => 'Show inactive';
+
+  @override
+  String get legalEntitiesEmpty => 'No tax IDs registered.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Municipality';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1165,6 +1198,39 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get employeeLegalEntityLabel => 'Tax ID (CNPJ)';
+
+  @override
+  String get legalEntitiesTitle => 'Tax IDs (CNPJ)';
+
+  @override
+  String get legalEntitiesNew => 'New tax ID';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Legal name';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Trade name';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inactive';
+
+  @override
+  String get legalEntityDeactivate => 'Deactivate tax ID';
+
+  @override
+  String get legalEntityDeactivateHint => 'Legal history is preserved. The tax ID stops being used in new operations.';
+
+  @override
+  String get legalEntityShowInactive => 'Show inactive';
+
+  @override
+  String get legalEntitiesEmpty => 'No tax IDs registered.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Municipality';
 
   @override
   String get employeeAdmissionLabel => 'Hire date';

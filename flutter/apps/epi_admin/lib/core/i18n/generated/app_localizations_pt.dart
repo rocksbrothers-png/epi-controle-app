@@ -240,6 +240,39 @@ class AppLocalizationsPt extends AppLocalizations {
   String get employeeLegalEntityLabel => 'CNPJ';
 
   @override
+  String get legalEntitiesTitle => 'CNPJs';
+
+  @override
+  String get legalEntitiesNew => 'Novo CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Razão social';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nome fantasia';
+
+  @override
+  String get legalEntityTypeLabel => 'Tipo';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inativo';
+
+  @override
+  String get legalEntityDeactivate => 'Inativar CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
+
+  @override
+  String get legalEntityShowInactive => 'Mostrar inativos';
+
+  @override
+  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Município';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1164,6 +1197,39 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get employeeLegalEntityLabel => 'CNPJ';
+
+  @override
+  String get legalEntitiesTitle => 'CNPJs';
+
+  @override
+  String get legalEntitiesNew => 'Novo CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Razão social';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nome fantasia';
+
+  @override
+  String get legalEntityTypeLabel => 'Tipo';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inativo';
+
+  @override
+  String get legalEntityDeactivate => 'Inativar CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
+
+  @override
+  String get legalEntityShowInactive => 'Mostrar inativos';
+
+  @override
+  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Município';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';

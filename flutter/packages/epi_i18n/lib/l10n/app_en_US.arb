@@ -503,5 +503,16 @@
   "handoverUnitLabel": "Unit",
   "handoverDeliveryDateLabel": "Delivery date",
   "handoverReceiverNameLabel": "Receiver name (optional)",
-  "handoverScanAgain": "New handover"
+  "handoverScanAgain": "New handover",
+  "legalEntitiesTitle": "Tax IDs (CNPJ)",
+  "legalEntitiesNew": "New tax ID",
+  "legalEntityLegalNameLabel": "Legal name",
+  "legalEntityTradeNameLabel": "Trade name",
+  "legalEntityTypeLabel": "Type",
+  "legalEntityInactiveBadge": "Inactive",
+  "legalEntityDeactivate": "Deactivate tax ID",
+  "legalEntityDeactivateHint": "Legal history is preserved. The tax ID stops being used in new operations.",
+  "legalEntityShowInactive": "Show inactive",
+  "legalEntitiesEmpty": "No tax IDs registered.",
+  "legalEntityMunicipalityLabel": "Municipality"
 }

@@ -240,6 +240,39 @@ class AppLocalizationsNo extends AppLocalizations {
   String get employeeLegalEntityLabel => 'CNPJ';
 
   @override
+  String get legalEntitiesTitle => 'CNPJ';
+
+  @override
+  String get legalEntitiesNew => 'Ny CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Juridisk navn';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Handelsnavn';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inaktiv';
+
+  @override
+  String get legalEntityDeactivate => 'Deaktiver CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'Juridisk historikk bevares. CNPJ brukes ikke i nye operasjoner.';
+
+  @override
+  String get legalEntityShowInactive => 'Vis inaktive';
+
+  @override
+  String get legalEntitiesEmpty => 'Ingen CNPJ registrert.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Kommune';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1165,6 +1198,39 @@ class AppLocalizationsNoNo extends AppLocalizationsNo {
 
   @override
   String get employeeLegalEntityLabel => 'CNPJ';
+
+  @override
+  String get legalEntitiesTitle => 'CNPJ';
+
+  @override
+  String get legalEntitiesNew => 'Ny CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Juridisk navn';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Handelsnavn';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inaktiv';
+
+  @override
+  String get legalEntityDeactivate => 'Deaktiver CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'Juridisk historikk bevares. CNPJ brukes ikke i nye operasjoner.';
+
+  @override
+  String get legalEntityShowInactive => 'Vis inaktive';
+
+  @override
+  String get legalEntitiesEmpty => 'Ingen CNPJ registrert.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Kommune';
 
   @override
   String get employeeAdmissionLabel => 'Ansettelsesdato';
