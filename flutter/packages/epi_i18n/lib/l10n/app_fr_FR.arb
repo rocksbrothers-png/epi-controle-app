@@ -87,6 +87,7 @@
   "employeeSectorLabel": "Département",
   "employeeRoleLabel": "Poste",
   "employeeUnitLabel": "Unité",
+  "employeeLegalEntityLabel": "CNPJ",
   "employeeAdmissionLabel": "Date d'embauche",
   "employeeScheduleLabel": "Planning",
   "employeeStatusActive": "Actif",

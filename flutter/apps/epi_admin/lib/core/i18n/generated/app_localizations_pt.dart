@@ -237,6 +237,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get employeeUnitLabel => 'Unidade';
 
   @override
+  String get employeeLegalEntityLabel => 'CNPJ';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1158,6 +1161,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get employeeUnitLabel => 'Unidade';
+
+  @override
+  String get employeeLegalEntityLabel => 'CNPJ';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';

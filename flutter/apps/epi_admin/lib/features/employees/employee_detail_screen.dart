@@ -69,6 +69,17 @@ class EmployeeDetailScreen extends StatelessWidget {
                 _DetailRow(label: l10n.employeeRoleLabel, value: employee.role!),
               if (employee.unitName != null)
                 _DetailRow(label: l10n.employeeUnitLabel, value: employee.unitName!),
+              // Vínculo jurídico (CNPJ) do contrato de trabalho. Ausente
+              // enquanto o schema Multi-CNPJ não estiver provisionado.
+              if (employee.legalEntityCnpj != null &&
+                  employee.legalEntityCnpj!.isNotEmpty)
+                _DetailRow(
+                  label: l10n.employeeLegalEntityLabel,
+                  value: employee.legalEntityName == null ||
+                          employee.legalEntityName!.isEmpty
+                      ? employee.legalEntityCnpj!
+                      : '${employee.legalEntityName!} — ${employee.legalEntityCnpj!}',
+                ),
               if (employee.admissionDate != null)
                 _DetailRow(
                   label: l10n.employeeAdmissionLabel,
