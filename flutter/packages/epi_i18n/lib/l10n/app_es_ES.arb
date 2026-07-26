@@ -476,5 +476,16 @@
   "handoverUnitLabel": "Unidad",
   "handoverDeliveryDateLabel": "Fecha de entrega",
   "handoverReceiverNameLabel": "Nombre de quien recibe (opcional)",
-  "handoverScanAgain": "Nueva conferencia"
+  "handoverScanAgain": "Nueva conferencia",
+  "legalEntitiesTitle": "CNPJ",
+  "legalEntitiesNew": "Nuevo CNPJ",
+  "legalEntityLegalNameLabel": "Razón social",
+  "legalEntityTradeNameLabel": "Nombre comercial",
+  "legalEntityTypeLabel": "Tipo",
+  "legalEntityInactiveBadge": "Inactivo",
+  "legalEntityDeactivate": "Desactivar CNPJ",
+  "legalEntityDeactivateHint": "El historial jurídico se conserva. El CNPJ deja de usarse en nuevas operaciones.",
+  "legalEntityShowInactive": "Mostrar inactivos",
+  "legalEntitiesEmpty": "Ningún CNPJ registrado.",
+  "legalEntityMunicipalityLabel": "Municipio"
 }

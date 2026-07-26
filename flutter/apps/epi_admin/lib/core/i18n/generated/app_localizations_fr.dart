@@ -240,6 +240,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get employeeLegalEntityLabel => 'CNPJ';
 
   @override
+  String get legalEntitiesTitle => 'CNPJ';
+
+  @override
+  String get legalEntitiesNew => 'Nouveau CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Raison sociale';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nom commercial';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inactif';
+
+  @override
+  String get legalEntityDeactivate => 'Désactiver le CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'L\'historique juridique est conservé. Le CNPJ n\'est plus utilisé dans les nouvelles opérations.';
+
+  @override
+  String get legalEntityShowInactive => 'Afficher les inactifs';
+
+  @override
+  String get legalEntitiesEmpty => 'Aucun CNPJ enregistré.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Municipalité';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1166,6 +1199,39 @@ class AppLocalizationsFrFr extends AppLocalizationsFr {
 
   @override
   String get employeeLegalEntityLabel => 'CNPJ';
+
+  @override
+  String get legalEntitiesTitle => 'CNPJ';
+
+  @override
+  String get legalEntitiesNew => 'Nouveau CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Raison sociale';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nom commercial';
+
+  @override
+  String get legalEntityTypeLabel => 'Type';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inactif';
+
+  @override
+  String get legalEntityDeactivate => 'Désactiver le CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint => 'L\'historique juridique est conservé. Le CNPJ n\'est plus utilisé dans les nouvelles opérations.';
+
+  @override
+  String get legalEntityShowInactive => 'Afficher les inactifs';
+
+  @override
+  String get legalEntitiesEmpty => 'Aucun CNPJ enregistré.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Municipalité';
 
   @override
   String get employeeAdmissionLabel => 'Date d\'embauche';

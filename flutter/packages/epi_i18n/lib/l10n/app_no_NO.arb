@@ -476,5 +476,16 @@
   "handoverUnitLabel": "Enhet",
   "handoverDeliveryDateLabel": "Leveringsdato",
   "handoverReceiverNameLabel": "Mottakerens navn (valgfritt)",
-  "handoverScanAgain": "Ny kontroll"
+  "handoverScanAgain": "Ny kontroll",
+  "legalEntitiesTitle": "CNPJ",
+  "legalEntitiesNew": "Ny CNPJ",
+  "legalEntityLegalNameLabel": "Juridisk navn",
+  "legalEntityTradeNameLabel": "Handelsnavn",
+  "legalEntityTypeLabel": "Type",
+  "legalEntityInactiveBadge": "Inaktiv",
+  "legalEntityDeactivate": "Deaktiver CNPJ",
+  "legalEntityDeactivateHint": "Juridisk historikk bevares. CNPJ brukes ikke i nye operasjoner.",
+  "legalEntityShowInactive": "Vis inaktive",
+  "legalEntitiesEmpty": "Ingen CNPJ registrert.",
+  "legalEntityMunicipalityLabel": "Kommune"
 }

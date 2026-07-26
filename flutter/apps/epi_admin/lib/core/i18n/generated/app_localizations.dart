@@ -570,6 +570,72 @@ abstract class AppLocalizations {
   /// **'CNPJ'**
   String get employeeLegalEntityLabel;
 
+  /// No description provided for @legalEntitiesTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CNPJs'**
+  String get legalEntitiesTitle;
+
+  /// No description provided for @legalEntitiesNew.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Novo CNPJ'**
+  String get legalEntitiesNew;
+
+  /// No description provided for @legalEntityLegalNameLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Razão social'**
+  String get legalEntityLegalNameLabel;
+
+  /// No description provided for @legalEntityTradeNameLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Nome fantasia'**
+  String get legalEntityTradeNameLabel;
+
+  /// No description provided for @legalEntityTypeLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Tipo'**
+  String get legalEntityTypeLabel;
+
+  /// No description provided for @legalEntityInactiveBadge.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Inativo'**
+  String get legalEntityInactiveBadge;
+
+  /// No description provided for @legalEntityDeactivate.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Inativar CNPJ'**
+  String get legalEntityDeactivate;
+
+  /// No description provided for @legalEntityDeactivateHint.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.'**
+  String get legalEntityDeactivateHint;
+
+  /// No description provided for @legalEntityShowInactive.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Mostrar inativos'**
+  String get legalEntityShowInactive;
+
+  /// No description provided for @legalEntitiesEmpty.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Nenhum CNPJ cadastrado.'**
+  String get legalEntitiesEmpty;
+
+  /// No description provided for @legalEntityMunicipalityLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Município'**
+  String get legalEntityMunicipalityLabel;
+
   /// No description provided for @employeeAdmissionLabel.
   ///
   /// In pt_BR, this message translates to:
