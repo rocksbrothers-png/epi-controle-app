@@ -517,5 +517,10 @@
   "legalEntityMunicipalityLabel": "Municipality",
   "legalEntitiesImport": "Import spreadsheet",
   "legalEntitiesImportHint": "Copy the spreadsheet rows (including the header row) and paste below. Accepts Portuguese or English columns.",
-  "legalEntitiesImportResult": "Import finished"
+  "legalEntitiesImportResult": "Import finished",
+  "dashboardFilterLegalEntity": "Tax ID (CNPJ)",
+  "dashboardFilterUnit": "Unit",
+  "dashboardFilterSector": "Sector",
+  "dashboardFilterAll": "All",
+  "dashboardFilterClear": "Clear filters"
 }

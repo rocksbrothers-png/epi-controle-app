@@ -490,5 +490,10 @@
   "legalEntityMunicipalityLabel": "Kommune",
   "legalEntitiesImport": "Importer regneark",
   "legalEntitiesImportHint": "Kopier radene fra regnearket (med overskriftsraden) og lim inn nedenfor. Godtar kolonner på portugisisk eller engelsk.",
-  "legalEntitiesImportResult": "Import fullført"
+  "legalEntitiesImportResult": "Import fullført",
+  "dashboardFilterLegalEntity": "CNPJ",
+  "dashboardFilterUnit": "Enhet",
+  "dashboardFilterSector": "Sektor",
+  "dashboardFilterAll": "Alle",
+  "dashboardFilterClear": "Tøm filtre"
 }

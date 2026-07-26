@@ -282,6 +282,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get legalEntitiesImportResult => 'Importation terminée';
 
   @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unité';
+
+  @override
+  String get dashboardFilterSector => 'Secteur';
+
+  @override
+  String get dashboardFilterAll => 'Tous';
+
+  @override
+  String get dashboardFilterClear => 'Effacer les filtres';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1250,6 +1265,21 @@ class AppLocalizationsFrFr extends AppLocalizationsFr {
 
   @override
   String get legalEntitiesImportResult => 'Importation terminée';
+
+  @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unité';
+
+  @override
+  String get dashboardFilterSector => 'Secteur';
+
+  @override
+  String get dashboardFilterAll => 'Tous';
+
+  @override
+  String get dashboardFilterClear => 'Effacer les filtres';
 
   @override
   String get employeeAdmissionLabel => 'Date d\'embauche';

@@ -490,5 +490,10 @@
   "legalEntityMunicipalityLabel": "Municipio",
   "legalEntitiesImport": "Importar hoja de cálculo",
   "legalEntitiesImportHint": "Copie las filas de la hoja (incluida la de encabezado) y péguelas abajo. Acepta columnas en portugués o inglés.",
-  "legalEntitiesImportResult": "Importación finalizada"
+  "legalEntitiesImportResult": "Importación finalizada",
+  "dashboardFilterLegalEntity": "CNPJ",
+  "dashboardFilterUnit": "Unidad",
+  "dashboardFilterSector": "Sector",
+  "dashboardFilterAll": "Todos",
+  "dashboardFilterClear": "Limpiar filtros"
 }

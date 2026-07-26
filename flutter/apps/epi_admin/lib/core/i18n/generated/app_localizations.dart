@@ -654,6 +654,36 @@ abstract class AppLocalizations {
   /// **'Importação concluída'**
   String get legalEntitiesImportResult;
 
+  /// No description provided for @dashboardFilterLegalEntity.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CNPJ'**
+  String get dashboardFilterLegalEntity;
+
+  /// No description provided for @dashboardFilterUnit.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Unidade'**
+  String get dashboardFilterUnit;
+
+  /// No description provided for @dashboardFilterSector.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Setor'**
+  String get dashboardFilterSector;
+
+  /// No description provided for @dashboardFilterAll.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Todos'**
+  String get dashboardFilterAll;
+
+  /// No description provided for @dashboardFilterClear.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Limpar filtros'**
+  String get dashboardFilterClear;
+
   /// No description provided for @employeeAdmissionLabel.
   ///
   /// In pt_BR, this message translates to:

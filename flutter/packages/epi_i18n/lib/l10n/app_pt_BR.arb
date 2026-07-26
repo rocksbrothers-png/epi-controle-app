@@ -520,5 +520,10 @@
   "legalEntityMunicipalityLabel": "Município",
   "legalEntitiesImport": "Importar planilha",
   "legalEntitiesImportHint": "Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.",
-  "legalEntitiesImportResult": "Importação concluída"
+  "legalEntitiesImportResult": "Importação concluída",
+  "dashboardFilterLegalEntity": "CNPJ",
+  "dashboardFilterUnit": "Unidade",
+  "dashboardFilterSector": "Setor",
+  "dashboardFilterAll": "Todos",
+  "dashboardFilterClear": "Limpar filtros"
 }
