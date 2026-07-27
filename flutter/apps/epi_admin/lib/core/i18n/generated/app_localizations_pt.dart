@@ -21,6 +21,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
+  String get reportsExportPdf => 'Exportar PDF';
+
+  @override
+  String get feedbackForward => 'Encaminhar';
+
+  @override
+  String get feedbackReject => 'Rejeitar';
+
+  @override
+  String get feedbackApprove => 'Aprovar';
+
+  @override
+  String get feedbackJustification => 'Justificativa';
+
+  @override
+  String get feedbackRejectReason => 'Motivo da rejeição';
+
+  @override
   String get confirm => 'Confirmar';
 
   @override
@@ -228,6 +246,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get employeeCodeLabel => 'Matrícula';
 
   @override
+  String get employeeCpfLabel => 'CPF';
+
+  @override
   String get employeeSectorLabel => 'Setor';
 
   @override
@@ -238,81 +259,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get employeeLegalEntityLabel => 'CNPJ';
-
-  @override
-  String get legalEntitiesTitle => 'CNPJs';
-
-  @override
-  String get legalEntitiesNew => 'Novo CNPJ';
-
-  @override
-  String get legalEntityLegalNameLabel => 'Razão social';
-
-  @override
-  String get legalEntityTradeNameLabel => 'Nome fantasia';
-
-  @override
-  String get legalEntityTypeLabel => 'Tipo';
-
-  @override
-  String get legalEntityInactiveBadge => 'Inativo';
-
-  @override
-  String get legalEntityDeactivate => 'Inativar CNPJ';
-
-  @override
-  String get legalEntityDeactivateHint => 'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
-
-  @override
-  String get legalEntityShowInactive => 'Mostrar inativos';
-
-  @override
-  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
-
-  @override
-  String get legalEntityMunicipalityLabel => 'Município';
-
-  @override
-  String get legalEntitiesImport => 'Importar planilha';
-
-  @override
-  String get legalEntitiesImportHint => 'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
-
-  @override
-  String get legalEntitiesImportResult => 'Importação concluída';
-
-  @override
-  String get dashboardFilterLegalEntity => 'CNPJ';
-
-  @override
-  String get dashboardFilterUnit => 'Unidade';
-
-  @override
-  String get dashboardFilterSector => 'Setor';
-
-  @override
-  String get dashboardFilterAll => 'Todos';
-
-  @override
-  String get dashboardFilterClear => 'Limpar filtros';
-
-  @override
-  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
-
-  @override
-  String get legalEntityTransferHint => 'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
-
-  @override
-  String get legalEntityTransferReason => 'Justificativa';
-
-  @override
-  String get legalEntityTransferTarget => 'Novo CNPJ';
-
-  @override
-  String get legalEntityTransferAction => 'Transferir';
-
-  @override
-  String get legalEntityTransferHistory => 'Histórico de vínculo';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';
@@ -348,6 +294,30 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get epiCaLabel => 'CA';
+
+  @override
+  String get epiSectorLabel => 'Setor';
+
+  @override
+  String get epiSectionLabel => 'Seção do EPI';
+
+  @override
+  String get epiModelLabel => 'Modelo/referência';
+
+  @override
+  String get epiManufacturerLabel => 'Fabricante';
+
+  @override
+  String get epiSupplierLabel => 'Fornecedor';
+
+  @override
+  String get epiUnitMeasureLabel => 'Unidade de medida';
+
+  @override
+  String get epiValidityDateLabel => 'Data de validade';
+
+  @override
+  String get epiManufacturerValidityLabel => 'Validade (meses)';
 
   @override
   String get epiCaExpiryLabel => 'Vencimento CA';
@@ -460,7 +430,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get returnSuccess => 'Devolução registrada com sucesso.';
 
   @override
-  String get returnOfflineQueued => 'Devolução salva — será sincronizada quando houver conexão.';
+  String get returnOfflineQueued =>
+      'Devolução salva — será sincronizada quando houver conexão.';
 
   @override
   String get recordsTitle => 'Fichas';
@@ -485,6 +456,47 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get purchasesTitle => 'Compras';
+
+  @override
+  String get purchaseOrdersTitle => 'Ordens de Compra';
+
+  @override
+  String get poApprove => 'Aprovar';
+
+  @override
+  String get poReceive => 'Receber';
+
+  @override
+  String get poQuantityReceived => 'Qtd. recebida';
+
+  @override
+  String get poReceiveNotes => 'Observação';
+
+  @override
+  String get poManufacturerValidity => 'Validade do fabricante';
+
+  @override
+  String get poManufacturerValidityHint => 'Informar data';
+
+  @override
+  String get poManufacturerValidityRequired =>
+      'Informe a validade do fabricante de todos os EPIs recebidos.';
+
+  @override
+  String get poOcrDateNotFound =>
+      'Não foi possível identificar a data. Tente novamente.';
+
+  @override
+  String get poOcrCameraFailed => 'Falha na leitura por câmera.';
+
+  @override
+  String get poPickDate => 'Selecionar data';
+
+  @override
+  String get poReadDateCamera => 'Ler data por câmera (OCR)';
+
+  @override
+  String get poCheck => 'Conferir';
 
   @override
   String get purchasesNew => 'Novo Pedido';
@@ -789,7 +801,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String deliveryStockAvailable(int qty) {
-    return 'Estoque: ${qty}';
+    return 'Estoque: $qty';
   }
 
   @override
@@ -800,7 +812,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String deliveryDateValue(String date) {
-    return 'Data: ${date}';
+    return 'Data: $date';
   }
 
   @override
@@ -808,7 +820,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String returnDeliveredInfo(String date, int qty) {
-    return 'Entregue em ${date} · Qtd: ${qty}';
+    return 'Entregue em $date · Qtd: $qty';
   }
 
   @override
@@ -831,12 +843,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String returnDeliveryDateInfo(String date) {
-    return 'Entrega: ${date}';
+    return 'Entrega: $date';
   }
 
   @override
   String returnQuantityInfo(int qty) {
-    return 'Quantidade: ${qty}';
+    return 'Quantidade: $qty';
   }
 
   @override
@@ -865,7 +877,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String purchaseItemsCount(int count) {
-    return '${count} itens';
+    return '$count itens';
   }
 
   @override
@@ -884,10 +896,253 @@ class AppLocalizationsPt extends AppLocalizations {
   String get purchaseStatusCancelled => 'Cancelado';
 
   @override
+  String get suppliersTitle => 'Fornecedores';
+
+  @override
+  String get supplierNew => 'Novo fornecedor';
+
+  @override
+  String get supplierEdit => 'Editar fornecedor';
+
+  @override
+  String get supplierCnpjLabel => 'CNPJ';
+
+  @override
+  String get supplierPhoneLabel => 'Telefone';
+
+  @override
+  String get supplierPaymentTermsLabel => 'Condições de pagamento';
+
+  @override
+  String get supplierIntegrationLevelLabel => 'Nível de integração';
+
+  @override
+  String get supplierInactiveLabel => 'Inativo';
+
+  @override
+  String get supplierCatalogTitle => 'Catálogo do fornecedor';
+
+  @override
+  String get catalogNewProduct => 'Novo produto';
+
+  @override
+  String get catalogSkuLabel => 'SKU';
+
+  @override
+  String get catalogDescriptionLabel => 'Descrição';
+
+  @override
+  String get catalogLastPriceLabel => 'Último preço';
+
+  @override
+  String get catalogLeadTimeLabel => 'Prazo (dias)';
+
+  @override
+  String get quotesTitle => 'Cotações';
+
+  @override
+  String get quotesNew => 'Nova cotação';
+
+  @override
+  String get quotesSelectSuppliers => 'Selecione os fornecedores';
+
+  @override
+  String get quoteSendEmail => 'Enviar por e-mail';
+
+  @override
+  String get quoteSendPortal => 'Enviar pelo portal';
+
+  @override
+  String get quoteAnswerAction => 'Registrar resposta';
+
+  @override
+  String get quoteSelectWinner => 'Selecionar vencedora';
+
+  @override
+  String get quoteComparisonTitle => 'Comparação de cotações';
+
+  @override
+  String get quoteFreightLabel => 'Frete';
+
+  @override
+  String get quoteUnitPriceLabel => 'Preço unitário';
+
+  @override
+  String get quoteDeclinedLabel => 'Recusado';
+
+  @override
+  String get quoteBestPriceLabel => 'Melhor preço';
+
+  @override
+  String get quoteBestLeadTimeLabel => 'Melhor prazo';
+
+  @override
+  String get quoteCreatePo => 'Gerar PO a partir da cotação vencedora?';
+
+  @override
+  String get poSupplierActionsTitle => 'Fornecedor e entrega';
+
+  @override
+  String get poSendToSupplier => 'Enviar ao fornecedor';
+
+  @override
+  String get poPortalLinkAction => 'Enviar link do portal';
+
+  @override
+  String get poRegisterConfirmation => 'Registrar confirmação';
+
+  @override
+  String get poTrackingTitle => 'Acompanhamento';
+
+  @override
+  String get poDeliveryForecastLabel => 'Previsão de entrega';
+
+  @override
+  String get poCarrierLabel => 'Transportadora';
+
+  @override
+  String get poTrackingCodeLabel => 'Código de rastreio';
+
+  @override
+  String get commentLabel => 'Comentário';
+
+  @override
+  String get actionSentSuccess => 'Enviado com sucesso';
+
+  @override
+  String get myCompanyTitle => 'Minha Empresa';
+
+  @override
+  String get myCompanySubtitle =>
+      'Dados, identidade visual e domínio da sua empresa';
+
+  @override
+  String get myCompanySaved => 'Configurações da empresa salvas com sucesso.';
+
+  @override
+  String get myCompanyLoadError =>
+      'Não foi possível carregar os dados da empresa.';
+
+  @override
+  String get myCompanyContractSection => 'Contrato (somente leitura)';
+
+  @override
+  String get myCompanyPlan => 'Plano';
+
+  @override
+  String get myCompanyUserLimit => 'Limite de usuários';
+
+  @override
+  String get myCompanyLicense => 'Licença';
+
+  @override
+  String get myCompanyRegistrationSection => 'Dados cadastrais';
+
+  @override
+  String get myCompanyName => 'Nome fantasia';
+
+  @override
+  String get myCompanyLegalName => 'Razão social';
+
+  @override
+  String get myCompanyCnpj => 'CNPJ';
+
+  @override
+  String get myCompanyStateRegistration => 'Inscrição estadual';
+
+  @override
+  String get myCompanyMunicipalRegistration => 'Inscrição municipal';
+
+  @override
+  String get myCompanyAddress => 'Endereço';
+
+  @override
+  String get myCompanyPhone => 'Telefone';
+
+  @override
+  String get myCompanyWhatsapp => 'WhatsApp';
+
+  @override
+  String get myCompanyEmail => 'E-mail institucional';
+
+  @override
+  String get myCompanyWebsite => 'Website';
+
+  @override
+  String get myCompanyIdentitySection => 'Identidade e tema';
+
+  @override
+  String get myCompanyDisplayName => 'Nome exibido no sistema';
+
+  @override
+  String get myCompanyInstitutionalMessage => 'Mensagem institucional';
+
+  @override
+  String get myCompanyPrimaryColor => 'Cor principal (hex)';
+
+  @override
+  String get myCompanySecondaryColor => 'Cor secundária (hex)';
+
+  @override
+  String get myCompanyPreferencesSection => 'Preferências';
+
+  @override
+  String get myCompanyTimezone => 'Fuso horário';
+
+  @override
+  String get myCompanySave => 'Salvar configurações da empresa';
+
+  @override
+  String get myCompanyDomainsSection => 'Domínios';
+
+  @override
+  String get myCompanyDomainField => 'Domínio';
+
+  @override
+  String get myCompanyDomainTypePlatform => 'Subdomínio da plataforma';
+
+  @override
+  String get myCompanyDomainTypeCustomSub => 'Subdomínio personalizado';
+
+  @override
+  String get myCompanyDomainTypeCustom => 'Domínio personalizado';
+
+  @override
+  String get myCompanyDomainAdd => 'Registrar domínio';
+
+  @override
+  String get myCompanyDomainVerify => 'Verificar';
+
+  @override
+  String get myCompanyDomainDelete => 'Remover';
+
+  @override
+  String get myCompanyDomainPending => 'Pendente';
+
+  @override
+  String get myCompanyDomainVerified => 'Verificado';
+
+  @override
+  String get myCompanyDomainFailed => 'Falhou';
+
+  @override
+  String get myCompanyDomainPrimary => 'Principal';
+
+  @override
+  String get myCompanyDomainCname => 'Aponte o CNAME para';
+
+  @override
+  String get myCompanyDomainTxt => 'Crie o registro TXT';
+
+  @override
+  String get myCompanyDomainToken => 'Valor do TXT';
+
+  @override
   String get epiArchiveBlockTitle => 'Arquivar com bloqueio de saldo';
 
   @override
-  String get epiArchiveBlockBody => 'Este EPI possui saldo disponível ou vínculos vivos. Ao confirmar, o saldo disponível será movido para Estoque Bloqueado (rastreável) e o EPI será arquivado.';
+  String get epiArchiveBlockBody =>
+      'Este EPI possui saldo disponível ou vínculos vivos. Ao confirmar, o saldo disponível será movido para Estoque Bloqueado (rastreável) e o EPI será arquivado.';
 
   @override
   String get epiArchiveBlockConfirm => 'Bloquear saldo e arquivar';
@@ -974,7 +1229,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get handoverNotFound => 'Entrega não encontrada para este código.';
 
   @override
-  String get handoverConfirmError => 'Não foi possível confirmar o recebimento.';
+  String get handoverConfirmError =>
+      'Não foi possível confirmar o recebimento.';
 
   @override
   String get handoverEmployeeLabel => 'Colaborador';
@@ -1003,6 +1259,102 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get handoverScanAgain => 'Nova conferência';
 
+  @override
+  String get legalEntitiesTitle => 'CNPJs';
+
+  @override
+  String get legalEntitiesNew => 'Novo CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Razão social';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nome fantasia';
+
+  @override
+  String get legalEntityTypeLabel => 'Tipo';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inativo';
+
+  @override
+  String get legalEntityDeactivate => 'Inativar CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint =>
+      'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
+
+  @override
+  String get legalEntityShowInactive => 'Mostrar inativos';
+
+  @override
+  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Município';
+
+  @override
+  String get legalEntitiesImport => 'Importar planilha';
+
+  @override
+  String get legalEntitiesImportHint =>
+      'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importação concluída';
+
+  @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unidade';
+
+  @override
+  String get dashboardFilterSector => 'Setor';
+
+  @override
+  String get dashboardFilterAll => 'Todos';
+
+  @override
+  String get dashboardFilterClear => 'Limpar filtros';
+
+  @override
+  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
+
+  @override
+  String get legalEntityTransferHint =>
+      'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
+
+  @override
+  String get legalEntityTransferReason => 'Justificativa';
+
+  @override
+  String get legalEntityTransferTarget => 'Novo CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transferir';
+
+  @override
+  String get legalEntityTransferHistory => 'Histórico de vínculo';
+
+  @override
+  String get myCompanyStockScope => 'Consolidar saldos de estoque por';
+
+  @override
+  String get myCompanyStockScopeHint =>
+      'Esta configuração altera apenas a visualização consolidada dos saldos. Entradas, reservas, saídas, entregas e demais movimentações permanecem vinculadas ao estoque de cada unidade.';
+
+  @override
+  String get myCompanyStockScopeUnit => 'Unidade';
+
+  @override
+  String get myCompanyStockScopeLegalEntity => 'CNPJ';
+
+  @override
+  String get myCompanyStockScopeCompany => 'Empresa';
+
+  @override
+  String get navLegalEntities => 'CNPJs';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1020,6 +1372,24 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get cancel => 'Cancelar';
+
+  @override
+  String get reportsExportPdf => 'Exportar PDF';
+
+  @override
+  String get feedbackForward => 'Encaminhar';
+
+  @override
+  String get feedbackReject => 'Rejeitar';
+
+  @override
+  String get feedbackApprove => 'Aprovar';
+
+  @override
+  String get feedbackJustification => 'Justificativa';
+
+  @override
+  String get feedbackRejectReason => 'Motivo da rejeição';
 
   @override
   String get confirm => 'Confirmar';
@@ -1229,6 +1599,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get employeeCodeLabel => 'Matrícula';
 
   @override
+  String get employeeCpfLabel => 'CPF';
+
+  @override
   String get employeeSectorLabel => 'Setor';
 
   @override
@@ -1239,81 +1612,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get employeeLegalEntityLabel => 'CNPJ';
-
-  @override
-  String get legalEntitiesTitle => 'CNPJs';
-
-  @override
-  String get legalEntitiesNew => 'Novo CNPJ';
-
-  @override
-  String get legalEntityLegalNameLabel => 'Razão social';
-
-  @override
-  String get legalEntityTradeNameLabel => 'Nome fantasia';
-
-  @override
-  String get legalEntityTypeLabel => 'Tipo';
-
-  @override
-  String get legalEntityInactiveBadge => 'Inativo';
-
-  @override
-  String get legalEntityDeactivate => 'Inativar CNPJ';
-
-  @override
-  String get legalEntityDeactivateHint => 'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
-
-  @override
-  String get legalEntityShowInactive => 'Mostrar inativos';
-
-  @override
-  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
-
-  @override
-  String get legalEntityMunicipalityLabel => 'Município';
-
-  @override
-  String get legalEntitiesImport => 'Importar planilha';
-
-  @override
-  String get legalEntitiesImportHint => 'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
-
-  @override
-  String get legalEntitiesImportResult => 'Importação concluída';
-
-  @override
-  String get dashboardFilterLegalEntity => 'CNPJ';
-
-  @override
-  String get dashboardFilterUnit => 'Unidade';
-
-  @override
-  String get dashboardFilterSector => 'Setor';
-
-  @override
-  String get dashboardFilterAll => 'Todos';
-
-  @override
-  String get dashboardFilterClear => 'Limpar filtros';
-
-  @override
-  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
-
-  @override
-  String get legalEntityTransferHint => 'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
-
-  @override
-  String get legalEntityTransferReason => 'Justificativa';
-
-  @override
-  String get legalEntityTransferTarget => 'Novo CNPJ';
-
-  @override
-  String get legalEntityTransferAction => 'Transferir';
-
-  @override
-  String get legalEntityTransferHistory => 'Histórico de vínculo';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';
@@ -1349,6 +1647,30 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get epiCaLabel => 'CA';
+
+  @override
+  String get epiSectorLabel => 'Setor';
+
+  @override
+  String get epiSectionLabel => 'Seção do EPI';
+
+  @override
+  String get epiModelLabel => 'Modelo/referência';
+
+  @override
+  String get epiManufacturerLabel => 'Fabricante';
+
+  @override
+  String get epiSupplierLabel => 'Fornecedor';
+
+  @override
+  String get epiUnitMeasureLabel => 'Unidade de medida';
+
+  @override
+  String get epiValidityDateLabel => 'Data de validade';
+
+  @override
+  String get epiManufacturerValidityLabel => 'Validade (meses)';
 
   @override
   String get epiCaExpiryLabel => 'Vencimento CA';
@@ -1461,7 +1783,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get returnSuccess => 'Devolução registrada com sucesso.';
 
   @override
-  String get returnOfflineQueued => 'Devolução salva — será sincronizada quando houver conexão.';
+  String get returnOfflineQueued =>
+      'Devolução salva — será sincronizada quando houver conexão.';
 
   @override
   String get recordsTitle => 'Fichas';
@@ -1486,6 +1809,47 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get purchasesTitle => 'Compras';
+
+  @override
+  String get purchaseOrdersTitle => 'Ordens de Compra';
+
+  @override
+  String get poApprove => 'Aprovar';
+
+  @override
+  String get poReceive => 'Receber';
+
+  @override
+  String get poQuantityReceived => 'Qtd. recebida';
+
+  @override
+  String get poReceiveNotes => 'Observação';
+
+  @override
+  String get poManufacturerValidity => 'Validade do fabricante';
+
+  @override
+  String get poManufacturerValidityHint => 'Informar data';
+
+  @override
+  String get poManufacturerValidityRequired =>
+      'Informe a validade do fabricante de todos os EPIs recebidos.';
+
+  @override
+  String get poOcrDateNotFound =>
+      'Não foi possível identificar a data. Tente novamente.';
+
+  @override
+  String get poOcrCameraFailed => 'Falha na leitura por câmera.';
+
+  @override
+  String get poPickDate => 'Selecionar data';
+
+  @override
+  String get poReadDateCamera => 'Ler data por câmera (OCR)';
+
+  @override
+  String get poCheck => 'Conferir';
 
   @override
   String get purchasesNew => 'Novo Pedido';
@@ -1790,7 +2154,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String deliveryStockAvailable(int qty) {
-    return 'Estoque: ${qty}';
+    return 'Estoque: $qty';
   }
 
   @override
@@ -1801,7 +2165,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String deliveryDateValue(String date) {
-    return 'Data: ${date}';
+    return 'Data: $date';
   }
 
   @override
@@ -1809,7 +2173,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String returnDeliveredInfo(String date, int qty) {
-    return 'Entregue em ${date} · Qtd: ${qty}';
+    return 'Entregue em $date · Qtd: $qty';
   }
 
   @override
@@ -1832,12 +2196,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String returnDeliveryDateInfo(String date) {
-    return 'Entrega: ${date}';
+    return 'Entrega: $date';
   }
 
   @override
   String returnQuantityInfo(int qty) {
-    return 'Quantidade: ${qty}';
+    return 'Quantidade: $qty';
   }
 
   @override
@@ -1866,7 +2230,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String purchaseItemsCount(int count) {
-    return '${count} itens';
+    return '$count itens';
   }
 
   @override
@@ -1883,4 +2247,465 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get purchaseStatusCancelled => 'Cancelado';
+
+  @override
+  String get suppliersTitle => 'Fornecedores';
+
+  @override
+  String get supplierNew => 'Novo fornecedor';
+
+  @override
+  String get supplierEdit => 'Editar fornecedor';
+
+  @override
+  String get supplierCnpjLabel => 'CNPJ';
+
+  @override
+  String get supplierPhoneLabel => 'Telefone';
+
+  @override
+  String get supplierPaymentTermsLabel => 'Condições de pagamento';
+
+  @override
+  String get supplierIntegrationLevelLabel => 'Nível de integração';
+
+  @override
+  String get supplierInactiveLabel => 'Inativo';
+
+  @override
+  String get supplierCatalogTitle => 'Catálogo do fornecedor';
+
+  @override
+  String get catalogNewProduct => 'Novo produto';
+
+  @override
+  String get catalogSkuLabel => 'SKU';
+
+  @override
+  String get catalogDescriptionLabel => 'Descrição';
+
+  @override
+  String get catalogLastPriceLabel => 'Último preço';
+
+  @override
+  String get catalogLeadTimeLabel => 'Prazo (dias)';
+
+  @override
+  String get quotesTitle => 'Cotações';
+
+  @override
+  String get quotesNew => 'Nova cotação';
+
+  @override
+  String get quotesSelectSuppliers => 'Selecione os fornecedores';
+
+  @override
+  String get quoteSendEmail => 'Enviar por e-mail';
+
+  @override
+  String get quoteSendPortal => 'Enviar pelo portal';
+
+  @override
+  String get quoteAnswerAction => 'Registrar resposta';
+
+  @override
+  String get quoteSelectWinner => 'Selecionar vencedora';
+
+  @override
+  String get quoteComparisonTitle => 'Comparação de cotações';
+
+  @override
+  String get quoteFreightLabel => 'Frete';
+
+  @override
+  String get quoteUnitPriceLabel => 'Preço unitário';
+
+  @override
+  String get quoteDeclinedLabel => 'Recusado';
+
+  @override
+  String get quoteBestPriceLabel => 'Melhor preço';
+
+  @override
+  String get quoteBestLeadTimeLabel => 'Melhor prazo';
+
+  @override
+  String get quoteCreatePo => 'Gerar PO a partir da cotação vencedora?';
+
+  @override
+  String get poSupplierActionsTitle => 'Fornecedor e entrega';
+
+  @override
+  String get poSendToSupplier => 'Enviar ao fornecedor';
+
+  @override
+  String get poPortalLinkAction => 'Enviar link do portal';
+
+  @override
+  String get poRegisterConfirmation => 'Registrar confirmação';
+
+  @override
+  String get poTrackingTitle => 'Acompanhamento';
+
+  @override
+  String get poDeliveryForecastLabel => 'Previsão de entrega';
+
+  @override
+  String get poCarrierLabel => 'Transportadora';
+
+  @override
+  String get poTrackingCodeLabel => 'Código de rastreio';
+
+  @override
+  String get commentLabel => 'Comentário';
+
+  @override
+  String get actionSentSuccess => 'Enviado com sucesso';
+
+  @override
+  String get myCompanyTitle => 'Minha Empresa';
+
+  @override
+  String get myCompanySubtitle =>
+      'Dados, identidade visual e domínio da sua empresa';
+
+  @override
+  String get myCompanySaved => 'Configurações da empresa salvas com sucesso.';
+
+  @override
+  String get myCompanyLoadError =>
+      'Não foi possível carregar os dados da empresa.';
+
+  @override
+  String get myCompanyContractSection => 'Contrato (somente leitura)';
+
+  @override
+  String get myCompanyPlan => 'Plano';
+
+  @override
+  String get myCompanyUserLimit => 'Limite de usuários';
+
+  @override
+  String get myCompanyLicense => 'Licença';
+
+  @override
+  String get myCompanyRegistrationSection => 'Dados cadastrais';
+
+  @override
+  String get myCompanyName => 'Nome fantasia';
+
+  @override
+  String get myCompanyLegalName => 'Razão social';
+
+  @override
+  String get myCompanyCnpj => 'CNPJ';
+
+  @override
+  String get myCompanyStateRegistration => 'Inscrição estadual';
+
+  @override
+  String get myCompanyMunicipalRegistration => 'Inscrição municipal';
+
+  @override
+  String get myCompanyAddress => 'Endereço';
+
+  @override
+  String get myCompanyPhone => 'Telefone';
+
+  @override
+  String get myCompanyWhatsapp => 'WhatsApp';
+
+  @override
+  String get myCompanyEmail => 'E-mail institucional';
+
+  @override
+  String get myCompanyWebsite => 'Website';
+
+  @override
+  String get myCompanyIdentitySection => 'Identidade e tema';
+
+  @override
+  String get myCompanyDisplayName => 'Nome exibido no sistema';
+
+  @override
+  String get myCompanyInstitutionalMessage => 'Mensagem institucional';
+
+  @override
+  String get myCompanyPrimaryColor => 'Cor principal (hex)';
+
+  @override
+  String get myCompanySecondaryColor => 'Cor secundária (hex)';
+
+  @override
+  String get myCompanyPreferencesSection => 'Preferências';
+
+  @override
+  String get myCompanyTimezone => 'Fuso horário';
+
+  @override
+  String get myCompanySave => 'Salvar configurações da empresa';
+
+  @override
+  String get myCompanyDomainsSection => 'Domínios';
+
+  @override
+  String get myCompanyDomainField => 'Domínio';
+
+  @override
+  String get myCompanyDomainTypePlatform => 'Subdomínio da plataforma';
+
+  @override
+  String get myCompanyDomainTypeCustomSub => 'Subdomínio personalizado';
+
+  @override
+  String get myCompanyDomainTypeCustom => 'Domínio personalizado';
+
+  @override
+  String get myCompanyDomainAdd => 'Registrar domínio';
+
+  @override
+  String get myCompanyDomainVerify => 'Verificar';
+
+  @override
+  String get myCompanyDomainDelete => 'Remover';
+
+  @override
+  String get myCompanyDomainPending => 'Pendente';
+
+  @override
+  String get myCompanyDomainVerified => 'Verificado';
+
+  @override
+  String get myCompanyDomainFailed => 'Falhou';
+
+  @override
+  String get myCompanyDomainPrimary => 'Principal';
+
+  @override
+  String get myCompanyDomainCname => 'Aponte o CNAME para';
+
+  @override
+  String get myCompanyDomainTxt => 'Crie o registro TXT';
+
+  @override
+  String get myCompanyDomainToken => 'Valor do TXT';
+
+  @override
+  String get epiArchiveBlockTitle => 'Arquivar com bloqueio de saldo';
+
+  @override
+  String get epiArchiveBlockBody =>
+      'Este EPI possui saldo disponível ou vínculos vivos. Ao confirmar, o saldo disponível será movido para Estoque Bloqueado (rastreável) e o EPI será arquivado.';
+
+  @override
+  String get epiArchiveBlockConfirm => 'Bloquear saldo e arquivar';
+
+  @override
+  String get epiArchiveReasonLabel => 'Motivo do arquivamento (auditoria)';
+
+  @override
+  String get epiArchiveReasonRequired => 'Informe o motivo para prosseguir.';
+
+  @override
+  String get epiArchiveBlockableLabel => 'Saldo a bloquear';
+
+  @override
+  String get epiArchiveLiveLinksTitle => 'Vínculos vivos';
+
+  @override
+  String get epiArchiveAvailable => 'Disponível';
+
+  @override
+  String get epiArchiveInTransit => 'Em trânsito';
+
+  @override
+  String get epiArchiveInPossession => 'Em posse';
+
+  @override
+  String get epiArchivePendingRequests => 'Requisições abertas';
+
+  @override
+  String get epiArchivePendingPurchase => 'Compras abertas';
+
+  @override
+  String get dashboardComplianceTitle => 'Conformidade de estoque';
+
+  @override
+  String get dashboardComplianceAllOk => 'Estoque em conformidade';
+
+  @override
+  String get complianceCaExpired => 'CA vencido';
+
+  @override
+  String get complianceCaExpiring => 'CA a vencer';
+
+  @override
+  String get complianceProductExpired => 'Produto vencido';
+
+  @override
+  String get complianceProductExpiring => 'Produto a vencer';
+
+  @override
+  String get complianceMissingManufacture => 'Sem fabricação';
+
+  @override
+  String get complianceMissingLot => 'Sem lote';
+
+  @override
+  String get complianceAdminBlocked => 'Bloqueado';
+
+  @override
+  String get handoverTitle => 'Conferência de entrega';
+
+  @override
+  String get handoverPrompt => 'Escaneie o QR da entrega ou informe o código.';
+
+  @override
+  String get handoverCodeLabel => 'Código da entrega';
+
+  @override
+  String get handoverLookupButton => 'Buscar entrega';
+
+  @override
+  String get handoverScanButton => 'Escanear QR';
+
+  @override
+  String get handoverConfirmButton => 'Confirmar recebimento';
+
+  @override
+  String get handoverConfirmedTitle => 'Recebimento confirmado';
+
+  @override
+  String get handoverAlreadyConfirmed => 'Esta entrega já foi confirmada.';
+
+  @override
+  String get handoverNotFound => 'Entrega não encontrada para este código.';
+
+  @override
+  String get handoverConfirmError =>
+      'Não foi possível confirmar o recebimento.';
+
+  @override
+  String get handoverEmployeeLabel => 'Colaborador';
+
+  @override
+  String get handoverEpiLabel => 'EPI';
+
+  @override
+  String get handoverQuantityLabel => 'Quantidade';
+
+  @override
+  String get handoverSectorLabel => 'Setor';
+
+  @override
+  String get handoverRoleLabel => 'Função';
+
+  @override
+  String get handoverUnitLabel => 'Unidade';
+
+  @override
+  String get handoverDeliveryDateLabel => 'Data da entrega';
+
+  @override
+  String get handoverReceiverNameLabel => 'Nome de quem recebe (opcional)';
+
+  @override
+  String get handoverScanAgain => 'Nova conferência';
+
+  @override
+  String get legalEntitiesTitle => 'CNPJs';
+
+  @override
+  String get legalEntitiesNew => 'Novo CNPJ';
+
+  @override
+  String get legalEntityLegalNameLabel => 'Razão social';
+
+  @override
+  String get legalEntityTradeNameLabel => 'Nome fantasia';
+
+  @override
+  String get legalEntityTypeLabel => 'Tipo';
+
+  @override
+  String get legalEntityInactiveBadge => 'Inativo';
+
+  @override
+  String get legalEntityDeactivate => 'Inativar CNPJ';
+
+  @override
+  String get legalEntityDeactivateHint =>
+      'O histórico jurídico é preservado. O CNPJ deixa de ser usado em novas operações.';
+
+  @override
+  String get legalEntityShowInactive => 'Mostrar inativos';
+
+  @override
+  String get legalEntitiesEmpty => 'Nenhum CNPJ cadastrado.';
+
+  @override
+  String get legalEntityMunicipalityLabel => 'Município';
+
+  @override
+  String get legalEntitiesImport => 'Importar planilha';
+
+  @override
+  String get legalEntitiesImportHint =>
+      'Copie as linhas da planilha (com a linha de cabeçalho) e cole abaixo. Aceita colunas em português ou inglês.';
+
+  @override
+  String get legalEntitiesImportResult => 'Importação concluída';
+
+  @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unidade';
+
+  @override
+  String get dashboardFilterSector => 'Setor';
+
+  @override
+  String get dashboardFilterAll => 'Todos';
+
+  @override
+  String get dashboardFilterClear => 'Limpar filtros';
+
+  @override
+  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
+
+  @override
+  String get legalEntityTransferHint =>
+      'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
+
+  @override
+  String get legalEntityTransferReason => 'Justificativa';
+
+  @override
+  String get legalEntityTransferTarget => 'Novo CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transferir';
+
+  @override
+  String get legalEntityTransferHistory => 'Histórico de vínculo';
+
+  @override
+  String get myCompanyStockScope => 'Consolidar saldos de estoque por';
+
+  @override
+  String get myCompanyStockScopeHint =>
+      'Esta configuração altera apenas a visualização consolidada dos saldos. Entradas, reservas, saídas, entregas e demais movimentações permanecem vinculadas ao estoque de cada unidade.';
+
+  @override
+  String get myCompanyStockScopeUnit => 'Unidade';
+
+  @override
+  String get myCompanyStockScopeLegalEntity => 'CNPJ';
+
+  @override
+  String get myCompanyStockScopeCompany => 'Empresa';
+
+  @override
+  String get navLegalEntities => 'CNPJs';
 }
