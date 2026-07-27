@@ -282,6 +282,39 @@ class AppLocalizationsPt extends AppLocalizations {
   String get legalEntitiesImportResult => 'Importação concluída';
 
   @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unidade';
+
+  @override
+  String get dashboardFilterSector => 'Setor';
+
+  @override
+  String get dashboardFilterAll => 'Todos';
+
+  @override
+  String get dashboardFilterClear => 'Limpar filtros';
+
+  @override
+  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
+
+  @override
+  String get legalEntityTransferHint => 'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
+
+  @override
+  String get legalEntityTransferReason => 'Justificativa';
+
+  @override
+  String get legalEntityTransferTarget => 'Novo CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transferir';
+
+  @override
+  String get legalEntityTransferHistory => 'Histórico de vínculo';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1248,6 +1281,39 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get legalEntitiesImportResult => 'Importação concluída';
+
+  @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Unidade';
+
+  @override
+  String get dashboardFilterSector => 'Setor';
+
+  @override
+  String get dashboardFilterAll => 'Todos';
+
+  @override
+  String get dashboardFilterClear => 'Limpar filtros';
+
+  @override
+  String get legalEntityTransferTitle => 'Transferir vínculo jurídico';
+
+  @override
+  String get legalEntityTransferHint => 'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.';
+
+  @override
+  String get legalEntityTransferReason => 'Justificativa';
+
+  @override
+  String get legalEntityTransferTarget => 'Novo CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transferir';
+
+  @override
+  String get legalEntityTransferHistory => 'Histórico de vínculo';
 
   @override
   String get employeeAdmissionLabel => 'Admissão';

@@ -490,5 +490,16 @@
   "legalEntityMunicipalityLabel": "Municipio",
   "legalEntitiesImport": "Importar hoja de cálculo",
   "legalEntitiesImportHint": "Copie las filas de la hoja (incluida la de encabezado) y péguelas abajo. Acepta columnas en portugués o inglés.",
-  "legalEntitiesImportResult": "Importación finalizada"
+  "legalEntitiesImportResult": "Importación finalizada",
+  "dashboardFilterLegalEntity": "CNPJ",
+  "dashboardFilterUnit": "Unidad",
+  "dashboardFilterSector": "Sector",
+  "dashboardFilterAll": "Todos",
+  "dashboardFilterClear": "Limpiar filtros",
+  "legalEntityTransferTitle": "Transferir vínculo jurídico",
+  "legalEntityTransferHint": "El CNPJ es el vínculo del contrato laboral y no cambia al transferir de unidad. Este cambio se audita y exige justificación.",
+  "legalEntityTransferReason": "Justificación",
+  "legalEntityTransferTarget": "Nuevo CNPJ",
+  "legalEntityTransferAction": "Transferir",
+  "legalEntityTransferHistory": "Historial de vínculo"
 }
