@@ -522,5 +522,11 @@
   "dashboardFilterUnit": "Unit",
   "dashboardFilterSector": "Sector",
   "dashboardFilterAll": "All",
-  "dashboardFilterClear": "Clear filters"
+  "dashboardFilterClear": "Clear filters",
+  "legalEntityTransferTitle": "Transfer legal entity",
+  "legalEntityTransferHint": "The tax ID is the employment contract link and does not change on unit transfers. This change is audited and requires a justification.",
+  "legalEntityTransferReason": "Justification",
+  "legalEntityTransferTarget": "New tax ID",
+  "legalEntityTransferAction": "Transfer",
+  "legalEntityTransferHistory": "Legal entity history"
 }

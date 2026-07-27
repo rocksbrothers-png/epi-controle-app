@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/api/api_client.dart';
+import 'legal_entity_transfer_dialog.dart';
 
 class EmployeeDetailScreen extends StatelessWidget {
   const EmployeeDetailScreen({super.key, required this.employee});
@@ -79,6 +80,9 @@ class EmployeeDetailScreen extends StatelessWidget {
                           employee.legalEntityName!.isEmpty
                       ? employee.legalEntityCnpj!
                       : '${employee.legalEntityName!} — ${employee.legalEntityCnpj!}',
+                  // Alterar o vínculo jurídico é processo administrativo
+                  // auditado — nunca edição comum de cadastro.
+                  trailing: _LegalEntityTransferButton(employee: employee),
                 ),
               if (employee.admissionDate != null)
                 _DetailRow(
@@ -333,9 +337,12 @@ class _DetailSection extends StatelessWidget {
 // ── _DetailRow ────────────────────────────────────────────────────────────────
 
 class _DetailRow extends StatelessWidget {
-  const _DetailRow({required this.label, required this.value});
+  const _DetailRow({required this.label, required this.value, this.trailing});
   final String label;
   final String value;
+
+  /// Ação opcional à direita da linha (ex.: transferência de vínculo jurídico).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -360,8 +367,43 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
           ),
+          if (trailing != null) trailing!,
         ],
       ),
+    );
+  }
+}
+
+/// Botão que abre o processo administrativo de transferência de CNPJ.
+///
+/// Fica no detalhe (e não no formulário de edição) porque a alteração do
+/// vínculo jurídico não é edição de cadastro: exige justificativa e gera
+/// auditoria.
+class _LegalEntityTransferButton extends StatelessWidget {
+  const _LegalEntityTransferButton({required this.employee});
+  final Employee employee;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return IconButton(
+      tooltip: l10n.legalEntityTransferTitle,
+      icon: const Icon(Icons.swap_horiz_rounded),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final done = await showDialog<bool>(
+          context: context,
+          builder: (_) => LegalEntityTransferDialog(
+            employeeId: employee.id,
+            currentLegalEntityId: employee.legalEntityId,
+          ),
+        );
+        if (done == true) {
+          messenger.showSnackBar(
+            SnackBar(content: Text(l10n.legalEntityTransferTitle)),
+          );
+        }
+      },
     );
   }
 }

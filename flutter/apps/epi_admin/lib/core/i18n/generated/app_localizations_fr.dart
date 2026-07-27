@@ -297,6 +297,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashboardFilterClear => 'Effacer les filtres';
 
   @override
+  String get legalEntityTransferTitle => 'Transférer le lien juridique';
+
+  @override
+  String get legalEntityTransferHint => 'Le CNPJ est le lien du contrat de travail et ne change pas lors d\'un transfert d\'unité. Ce changement est audité et exige une justification.';
+
+  @override
+  String get legalEntityTransferReason => 'Justification';
+
+  @override
+  String get legalEntityTransferTarget => 'Nouveau CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transférer';
+
+  @override
+  String get legalEntityTransferHistory => 'Historique du lien';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1280,6 +1298,24 @@ class AppLocalizationsFrFr extends AppLocalizationsFr {
 
   @override
   String get dashboardFilterClear => 'Effacer les filtres';
+
+  @override
+  String get legalEntityTransferTitle => 'Transférer le lien juridique';
+
+  @override
+  String get legalEntityTransferHint => 'Le CNPJ est le lien du contrat de travail et ne change pas lors d\'un transfert d\'unité. Ce changement est audité et exige une justification.';
+
+  @override
+  String get legalEntityTransferReason => 'Justification';
+
+  @override
+  String get legalEntityTransferTarget => 'Nouveau CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Transférer';
+
+  @override
+  String get legalEntityTransferHistory => 'Historique du lien';
 
   @override
   String get employeeAdmissionLabel => 'Date d\'embauche';

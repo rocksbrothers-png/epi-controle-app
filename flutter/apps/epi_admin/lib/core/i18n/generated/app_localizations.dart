@@ -684,6 +684,42 @@ abstract class AppLocalizations {
   /// **'Limpar filtros'**
   String get dashboardFilterClear;
 
+  /// No description provided for @legalEntityTransferTitle.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Transferir vínculo jurídico'**
+  String get legalEntityTransferTitle;
+
+  /// No description provided for @legalEntityTransferHint.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'O CNPJ é o vínculo do contrato de trabalho e não muda em transferência de unidade. Esta alteração é auditada e exige justificativa.'**
+  String get legalEntityTransferHint;
+
+  /// No description provided for @legalEntityTransferReason.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Justificativa'**
+  String get legalEntityTransferReason;
+
+  /// No description provided for @legalEntityTransferTarget.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Novo CNPJ'**
+  String get legalEntityTransferTarget;
+
+  /// No description provided for @legalEntityTransferAction.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Transferir'**
+  String get legalEntityTransferAction;
+
+  /// No description provided for @legalEntityTransferHistory.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Histórico de vínculo'**
+  String get legalEntityTransferHistory;
+
   /// No description provided for @employeeAdmissionLabel.
   ///
   /// In pt_BR, this message translates to:

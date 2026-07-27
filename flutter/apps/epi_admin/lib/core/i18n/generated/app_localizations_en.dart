@@ -297,6 +297,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardFilterClear => 'Clear filters';
 
   @override
+  String get legalEntityTransferTitle => 'Transfer legal entity';
+
+  @override
+  String get legalEntityTransferHint => 'The tax ID is the employment contract link and does not change on unit transfers. This change is audited and requires a justification.';
+
+  @override
+  String get legalEntityTransferReason => 'Justification';
+
+  @override
+  String get legalEntityTransferTarget => 'New tax ID';
+
+  @override
+  String get legalEntityTransferAction => 'Transfer';
+
+  @override
+  String get legalEntityTransferHistory => 'Legal entity history';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1279,6 +1297,24 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get dashboardFilterClear => 'Clear filters';
+
+  @override
+  String get legalEntityTransferTitle => 'Transfer legal entity';
+
+  @override
+  String get legalEntityTransferHint => 'The tax ID is the employment contract link and does not change on unit transfers. This change is audited and requires a justification.';
+
+  @override
+  String get legalEntityTransferReason => 'Justification';
+
+  @override
+  String get legalEntityTransferTarget => 'New tax ID';
+
+  @override
+  String get legalEntityTransferAction => 'Transfer';
+
+  @override
+  String get legalEntityTransferHistory => 'Legal entity history';
 
   @override
   String get employeeAdmissionLabel => 'Hire date';

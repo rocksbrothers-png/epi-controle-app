@@ -495,5 +495,11 @@
   "dashboardFilterUnit": "Enhet",
   "dashboardFilterSector": "Sektor",
   "dashboardFilterAll": "Alle",
-  "dashboardFilterClear": "Tøm filtre"
+  "dashboardFilterClear": "Tøm filtre",
+  "legalEntityTransferTitle": "Overfør juridisk tilknytning",
+  "legalEntityTransferHint": "CNPJ er tilknytningen til arbeidsavtalen og endres ikke ved enhetsoverføring. Endringen revideres og krever en begrunnelse.",
+  "legalEntityTransferReason": "Begrunnelse",
+  "legalEntityTransferTarget": "Ny CNPJ",
+  "legalEntityTransferAction": "Overfør",
+  "legalEntityTransferHistory": "Tilknytningshistorikk"
 }

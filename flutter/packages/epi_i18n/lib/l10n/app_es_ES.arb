@@ -495,5 +495,11 @@
   "dashboardFilterUnit": "Unidad",
   "dashboardFilterSector": "Sector",
   "dashboardFilterAll": "Todos",
-  "dashboardFilterClear": "Limpiar filtros"
+  "dashboardFilterClear": "Limpiar filtros",
+  "legalEntityTransferTitle": "Transferir vínculo jurídico",
+  "legalEntityTransferHint": "El CNPJ es el vínculo del contrato laboral y no cambia al transferir de unidad. Este cambio se audita y exige justificación.",
+  "legalEntityTransferReason": "Justificación",
+  "legalEntityTransferTarget": "Nuevo CNPJ",
+  "legalEntityTransferAction": "Transferir",
+  "legalEntityTransferHistory": "Historial de vínculo"
 }
