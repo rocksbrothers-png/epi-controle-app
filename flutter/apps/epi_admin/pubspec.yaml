@@ -26,7 +26,7 @@ dependencies:
     path: ../../packages/epi_api
 
   # State management
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
 
   # Navigation
@@ -47,13 +47,13 @@ dependencies:
   sqflite: ^2.3.3
 
   # Conectividade
-  connectivity_plus: ^6.0.5
+  connectivity_plus: ^7.3.1
 
   # QR Scanner
   mobile_scanner: ^7.4.0
 
   # Assinatura digital
-  signature: ^5.5.0
+  signature: ^6.3.0
 
   # Câmera / fotos
   image_picker: ^1.1.2
@@ -79,7 +79,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.13
   retrofit_generator: ^10.2.6
   drift_dev: ^2.20.3

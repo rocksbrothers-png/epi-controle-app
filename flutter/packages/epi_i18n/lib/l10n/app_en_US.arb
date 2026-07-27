@@ -517,5 +517,16 @@
   "legalEntityMunicipalityLabel": "Municipality",
   "legalEntitiesImport": "Import spreadsheet",
   "legalEntitiesImportHint": "Copy the spreadsheet rows (including the header row) and paste below. Accepts Portuguese or English columns.",
-  "legalEntitiesImportResult": "Import finished"
+  "legalEntitiesImportResult": "Import finished",
+  "dashboardFilterLegalEntity": "Tax ID (CNPJ)",
+  "dashboardFilterUnit": "Unit",
+  "dashboardFilterSector": "Sector",
+  "dashboardFilterAll": "All",
+  "dashboardFilterClear": "Clear filters",
+  "legalEntityTransferTitle": "Transfer legal entity",
+  "legalEntityTransferHint": "The tax ID is the employment contract link and does not change on unit transfers. This change is audited and requires a justification.",
+  "legalEntityTransferReason": "Justification",
+  "legalEntityTransferTarget": "New tax ID",
+  "legalEntityTransferAction": "Transfer",
+  "legalEntityTransferHistory": "Legal entity history"
 }

@@ -282,6 +282,39 @@ class AppLocalizationsNo extends AppLocalizations {
   String get legalEntitiesImportResult => 'Import fullført';
 
   @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Enhet';
+
+  @override
+  String get dashboardFilterSector => 'Sektor';
+
+  @override
+  String get dashboardFilterAll => 'Alle';
+
+  @override
+  String get dashboardFilterClear => 'Tøm filtre';
+
+  @override
+  String get legalEntityTransferTitle => 'Overfør juridisk tilknytning';
+
+  @override
+  String get legalEntityTransferHint => 'CNPJ er tilknytningen til arbeidsavtalen og endres ikke ved enhetsoverføring. Endringen revideres og krever en begrunnelse.';
+
+  @override
+  String get legalEntityTransferReason => 'Begrunnelse';
+
+  @override
+  String get legalEntityTransferTarget => 'Ny CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Overfør';
+
+  @override
+  String get legalEntityTransferHistory => 'Tilknytningshistorikk';
+
+  @override
   String get employeeAdmissionLabel => 'Admissão';
 
   @override
@@ -1249,6 +1282,39 @@ class AppLocalizationsNoNo extends AppLocalizationsNo {
 
   @override
   String get legalEntitiesImportResult => 'Import fullført';
+
+  @override
+  String get dashboardFilterLegalEntity => 'CNPJ';
+
+  @override
+  String get dashboardFilterUnit => 'Enhet';
+
+  @override
+  String get dashboardFilterSector => 'Sektor';
+
+  @override
+  String get dashboardFilterAll => 'Alle';
+
+  @override
+  String get dashboardFilterClear => 'Tøm filtre';
+
+  @override
+  String get legalEntityTransferTitle => 'Overfør juridisk tilknytning';
+
+  @override
+  String get legalEntityTransferHint => 'CNPJ er tilknytningen til arbeidsavtalen og endres ikke ved enhetsoverføring. Endringen revideres og krever en begrunnelse.';
+
+  @override
+  String get legalEntityTransferReason => 'Begrunnelse';
+
+  @override
+  String get legalEntityTransferTarget => 'Ny CNPJ';
+
+  @override
+  String get legalEntityTransferAction => 'Overfør';
+
+  @override
+  String get legalEntityTransferHistory => 'Tilknytningshistorikk';
 
   @override
   String get employeeAdmissionLabel => 'Ansettelsesdato';
