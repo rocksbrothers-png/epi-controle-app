@@ -126,9 +126,13 @@ class AuthCubit extends Cubit<AuthState> {
     final permissions = await ApiClient.getPermissions();
     final context = await ApiClient.getSessionContext();
     try {
+      // local_auth 3.x achatou `AuthenticationOptions` em parâmetros nomeados.
+      // `biometricOnly: false` continua explícito de propósito: é o que permite
+      // cair para PIN/padrão do aparelho quando a biometria não está disponível
+      // — sem isso o usuário ficaria travado fora do app.
       final ok = await localAuth.authenticate(
         localizedReason: localizedReason,
-        options: const AuthenticationOptions(biometricOnly: false),
+        biometricOnly: false,
       );
       if (ok) {
         emit(AuthAuthenticated(
