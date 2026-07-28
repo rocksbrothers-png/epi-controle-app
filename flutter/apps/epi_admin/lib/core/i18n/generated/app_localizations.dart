@@ -65,7 +65,7 @@ import 'app_localizations_pt.dart' deferred as app_localizations_pt;
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -88,11 +88,11 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -105,7 +105,7 @@ abstract class AppLocalizations {
     Locale('no'),
     Locale('no', 'NO'),
     Locale('pt'),
-    Locale('pt', 'BR')
+    Locale('pt', 'BR'),
   ];
 
   /// Nome da aplicação
@@ -2747,6 +2747,66 @@ abstract class AppLocalizations {
   /// In pt_BR, this message translates to:
   /// **'Pessoa jurídica que responde pelas operações e pelo estoque desta unidade.'**
   String get unitLegalEntityHint;
+
+  /// No description provided for @employeeEmploymentTypeLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Tipo de Vínculo'**
+  String get employeeEmploymentTypeLabel;
+
+  /// No description provided for @employeeSourceCompanyLabel.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Empresa de Origem'**
+  String get employeeSourceCompanyLabel;
+
+  /// No description provided for @employeeSourceCompanyHint.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Nome da empresa de origem do colaborador'**
+  String get employeeSourceCompanyHint;
+
+  /// No description provided for @employmentTypeClt.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'CLT'**
+  String get employmentTypeClt;
+
+  /// No description provided for @employmentTypeOutsourced.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Terceirizado'**
+  String get employmentTypeOutsourced;
+
+  /// No description provided for @employmentTypeTemporary.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Temporário'**
+  String get employmentTypeTemporary;
+
+  /// No description provided for @employmentTypeServiceProvider.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Prestador de Serviço'**
+  String get employmentTypeServiceProvider;
+
+  /// No description provided for @employmentTypeApprentice.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Menor Aprendiz'**
+  String get employmentTypeApprentice;
+
+  /// No description provided for @employmentTypeTrainee.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Praticante'**
+  String get employmentTypeTrainee;
+
+  /// No description provided for @employmentTypeIntern.
+  ///
+  /// In pt_BR, this message translates to:
+  /// **'Estagiário'**
+  String get employmentTypeIntern;
 }
 
 class _AppLocalizationsDelegate
@@ -2774,7 +2834,8 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
         switch (locale.countryCode) {
           case 'US':
             return app_localizations_en.loadLibrary().then(
-                (dynamic _) => app_localizations_en.AppLocalizationsEnUs());
+              (dynamic _) => app_localizations_en.AppLocalizationsEnUs(),
+            );
         }
         break;
       }
@@ -2783,7 +2844,8 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
         switch (locale.countryCode) {
           case 'ES':
             return app_localizations_es.loadLibrary().then(
-                (dynamic _) => app_localizations_es.AppLocalizationsEsEs());
+              (dynamic _) => app_localizations_es.AppLocalizationsEsEs(),
+            );
         }
         break;
       }
@@ -2792,7 +2854,8 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
         switch (locale.countryCode) {
           case 'FR':
             return app_localizations_fr.loadLibrary().then(
-                (dynamic _) => app_localizations_fr.AppLocalizationsFrFr());
+              (dynamic _) => app_localizations_fr.AppLocalizationsFrFr(),
+            );
         }
         break;
       }
@@ -2801,7 +2864,8 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
         switch (locale.countryCode) {
           case 'NO':
             return app_localizations_no.loadLibrary().then(
-                (dynamic _) => app_localizations_no.AppLocalizationsNoNo());
+              (dynamic _) => app_localizations_no.AppLocalizationsNoNo(),
+            );
         }
         break;
       }
@@ -2810,7 +2874,8 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
         switch (locale.countryCode) {
           case 'BR':
             return app_localizations_pt.loadLibrary().then(
-                (dynamic _) => app_localizations_pt.AppLocalizationsPtBr());
+              (dynamic _) => app_localizations_pt.AppLocalizationsPtBr(),
+            );
         }
         break;
       }
@@ -2819,30 +2884,31 @@ Future<AppLocalizations> lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':
-      return app_localizations_en
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_en.AppLocalizationsEn());
+      return app_localizations_en.loadLibrary().then(
+        (dynamic _) => app_localizations_en.AppLocalizationsEn(),
+      );
     case 'es':
-      return app_localizations_es
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_es.AppLocalizationsEs());
+      return app_localizations_es.loadLibrary().then(
+        (dynamic _) => app_localizations_es.AppLocalizationsEs(),
+      );
     case 'fr':
-      return app_localizations_fr
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_fr.AppLocalizationsFr());
+      return app_localizations_fr.loadLibrary().then(
+        (dynamic _) => app_localizations_fr.AppLocalizationsFr(),
+      );
     case 'no':
-      return app_localizations_no
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_no.AppLocalizationsNo());
+      return app_localizations_no.loadLibrary().then(
+        (dynamic _) => app_localizations_no.AppLocalizationsNo(),
+      );
     case 'pt':
-      return app_localizations_pt
-          .loadLibrary()
-          .then((dynamic _) => app_localizations_pt.AppLocalizationsPt());
+      return app_localizations_pt.loadLibrary().then(
+        (dynamic _) => app_localizations_pt.AppLocalizationsPt(),
+      );
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }
