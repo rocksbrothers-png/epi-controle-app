@@ -2361,6 +2361,7 @@ def ensure_stock_reservations(connection) -> None:
             epi_id INTEGER NOT NULL,
             request_id INTEGER,
             quantity INTEGER NOT NULL,
+            consumed_quantity INTEGER NOT NULL DEFAULT 0,
             status TEXT NOT NULL DEFAULT 'active',
             glove_size TEXT NOT NULL DEFAULT 'N/A',
             size TEXT NOT NULL DEFAULT 'N/A',
@@ -2390,6 +2391,12 @@ def ensure_stock_reservations(connection) -> None:
             connection.execute(statement)
         except Exception as _e:  # noqa: BLE001 - índice é otimização, não requisito
             structured_log('warning', 'db.col_skip', error=str(_e))
+    # Consumo **parcial**: a entrega é sempre de uma unidade etiquetada, e uma
+    # solicitação de 3 gera 3 entregas contra a mesma reserva. Sem esta coluna
+    # só havia consumir tudo (liberando peças ainda prometidas) ou nada
+    # (mantendo promessa já cumprida). A reserva original permanece intacta —
+    # o quanto já saiu é registrado ao lado, e não subtraído dela.
+    _safe_add_column(connection, 'stock_reservations', 'consumed_quantity', 'INTEGER NOT NULL DEFAULT 0')
 
 
 def ensure_stock_replenishment_needs(connection) -> None:

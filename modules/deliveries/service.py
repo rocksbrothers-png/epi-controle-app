@@ -200,12 +200,68 @@ def create_delivery_service(
         }
     )
     if str(payload.get('request_id', '')).strip():
+        consume_request_reservation(
+            connection,
+            request_id=int(payload['request_id']),
+            company_id=int(payload['company_id']),
+            unit_id=delivery_unit_id,
+            epi_id=int(epi['id']),
+            quantity=quantity,
+            delivery_id=int(cursor.lastrowid),
+        )
         connection.execute(
             "UPDATE epi_requests SET status = 'entregue', delivery_id = ?, last_updated_at = ? WHERE id = ?",
             (int(cursor.lastrowid), datetime.now(UTC).isoformat(), int(payload['request_id']))
         )
     connection.commit()
     return int(cursor.lastrowid)
+
+
+def consume_request_reservation(
+    connection, *, request_id, company_id, unit_id, epi_id, quantity, delivery_id
+):
+    """Abate da reserva o que acabou de sair fisicamente.
+
+    Sem isto a reserva ficava ``active`` para sempre: o estoque físico caía na
+    entrega e a promessa continuava de pé, então **a mesma peça era subtraída
+    duas vezes** do saldo livre. Depois de algumas entregas a unidade parecia
+    sem estoque tendo prateleira cheia.
+
+    Roda na mesma transação da baixa de propósito: reserva consumida sem
+    entrega (ou o contrário) deixa o saldo errado, e é justamente o par que
+    precisa ser indivisível.
+
+    Silencioso quando não há reserva — entrega direta de estoque, sem
+    solicitação prévia, é caminho legítimo e não tem o que abater.
+    """
+    from modules.stock.reservations import (
+        ReservationNotActive,
+        consume_reservation,
+        reservation_for_request,
+        reservations_ready,
+    )
+
+    if not reservations_ready(connection):
+        return None
+    reservation = reservation_for_request(connection, request_id)
+    if not reservation:
+        return None
+    # A reserva pertence a uma unidade e a um EPI. Abater a reserva errada
+    # devolveria saldo livre a quem não entregou nada — pior que não abater.
+    if (
+        int(reservation.get('company_id') or 0) != int(company_id)
+        or int(reservation.get('unit_id') or 0) != int(unit_id)
+        or int(reservation.get('epi_id') or 0) != int(epi_id)
+    ):
+        return None
+    try:
+        return consume_reservation(
+            connection, int(reservation['id']), quantity=int(quantity), delivery_id=delivery_id
+        )
+    except ReservationNotActive:
+        # Corrida com outra entrega da mesma solicitação: a peça já saiu e já
+        # foi abatida. Recusar a entrega aqui seria pior — ela é real.
+        return None
 
 
 def _safe_split_name(full_name):
