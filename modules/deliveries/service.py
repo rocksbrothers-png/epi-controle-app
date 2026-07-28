@@ -4,6 +4,11 @@ import secrets
 from datetime import datetime
 
 from epi_backend.db import row_to_dict
+from modules.deliveries.evidence import (
+    QR_HANDOVER,
+    SIGNATURE_HANDWRITTEN,
+    record_evidence,
+)
 from modules.epis.validity import is_expired
 from modules.stock.service import apply_effective_size_fields
 
@@ -209,6 +214,25 @@ def create_delivery_service(
             'signature_comment': signature_comment
         }
     )
+    if signature_data:
+        # A assinatura passa a existir também como evidência: a coluna
+        # continua sendo a fonte do conteúdo, e aqui fica o registro
+        # auditável de quem assinou, quando e de onde.
+        record_evidence(
+            connection,
+            company_id=int(payload['company_id']),
+            delivery_id=int(cursor.lastrowid),
+            kind=SIGNATURE_HANDWRITTEN,
+            content=signature_data,
+            content_ref='deliveries.signature_data',
+            provider='app',
+            actor_user_id=int(actor['id']),
+            actor_name=str(actor.get('full_name') or ''),
+            subject_name=signature_name,
+            client_ip=str(client_ip or ''),
+            notes=signature_comment,
+            collected_at=signature_at,
+        )
     if str(payload.get('request_id', '')).strip():
         consume_request_reservation(
             connection,
@@ -412,6 +436,24 @@ def confirm_delivery_handover(connection, token, actor, *, signature_name='', si
             (confirmer or MSG_SIGNED_DIGITALLY, signature_data, str(client_ip or ''), now,
              str(signature_comment or ''), delivery_id)
         )
+    # A conferência pelo QR é uma segunda evidência da mesma entrega — o motivo
+    # de existir uma tabela em vez de mais colunas: assinatura no ato e
+    # conferência depois coexistem, cada uma com seu momento e seu responsável.
+    record_evidence(
+        connection,
+        company_id=int(row['company_id']),
+        delivery_id=delivery_id,
+        kind=QR_HANDOVER,
+        content=signature_data or token,
+        content_ref='deliveries.handover_token',
+        provider='qr',
+        actor_user_id=int(actor['id']) if actor else None,
+        actor_name=str((actor or {}).get('full_name') or ''),
+        subject_name=confirmer,
+        client_ip=str(client_ip or ''),
+        notes=str(signature_comment or ''),
+        collected_at=now,
+    )
     connection.execute(
         "UPDATE epi_requests SET status = 'entregue', last_updated_at = ? "
         "WHERE delivery_id = ? AND LOWER(COALESCE(status, '')) <> 'entregue'",

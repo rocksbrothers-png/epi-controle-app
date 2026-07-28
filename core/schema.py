@@ -901,6 +901,64 @@ def ensure_delivery_handover_columns(connection) -> None:
         structured_log('warning', 'db.col_skip', error=str(_e))
 
 
+def ensure_delivery_evidence(connection) -> None:
+    """Registro de evidências da entrega — append-only.
+
+    Hoje a prova de que o EPI foi entregue mora em colunas soltas na própria
+    entrega (``signature_name``, ``signature_data``, ``signature_ip``,
+    ``signature_at``, ``signature_comment``). Isso comporta **uma** assinatura e
+    nada mais: não há onde registrar biometria, foto do recebimento, aceite no
+    portal ou a conferência pelo QR — e não há como ter duas evidências da mesma
+    entrega, que é o caso quando a assinatura é colhida no ato e a conferência
+    acontece depois.
+
+    Três decisões que valem explicar:
+
+    1. **Append-only.** Evidência não se edita nem se apaga; correção é uma
+       linha nova. Um registro que pode ser alterado depois não prova nada.
+    2. **Guarda o hash, não uma segunda cópia do conteúdo.** A imagem da
+       assinatura já está na entrega; duplicá-la aqui dobraria a exposição de
+       dado pessoal sem ganho. O hash prova integridade e aponta para onde o
+       original vive.
+    3. **Agnóstica de provedor.** ``kind`` e ``provider`` são texto: biometria
+       do aparelho, gov.br ou um provedor contratado entram sem migração. A
+       escolha do provedor é de negócio e não está travada aqui.
+    """
+    connection.executescript(
+        '''
+        CREATE TABLE IF NOT EXISTS delivery_evidence (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            company_id INTEGER NOT NULL,
+            delivery_id INTEGER NOT NULL,
+            kind TEXT NOT NULL,
+            provider TEXT NOT NULL DEFAULT '',
+            collected_at TEXT NOT NULL,
+            actor_user_id INTEGER,
+            actor_name TEXT NOT NULL DEFAULT '',
+            subject_name TEXT NOT NULL DEFAULT '',
+            client_ip TEXT NOT NULL DEFAULT '',
+            content_hash TEXT NOT NULL DEFAULT '',
+            content_ref TEXT NOT NULL DEFAULT '',
+            notes TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
+            FOREIGN KEY (delivery_id) REFERENCES deliveries(id) ON DELETE CASCADE
+        )
+        '''
+    )
+    for statement in (
+        # A consulta quente é "todas as evidências desta entrega, em ordem".
+        'CREATE INDEX IF NOT EXISTS idx_delivery_evidence_delivery '
+        'ON delivery_evidence (delivery_id, collected_at)',
+        'CREATE INDEX IF NOT EXISTS idx_delivery_evidence_company '
+        'ON delivery_evidence (company_id, kind)',
+    ):
+        try:
+            connection.execute(statement)
+        except Exception as _e:  # noqa: BLE001 - índice é otimização, não requisito
+            structured_log('warning', 'db.col_skip', error=str(_e))
+
+
 def ensure_devolution_columns(connection) -> None:
     """Garante estrutura de devoluções de EPI e colunas correlatas."""
     _safe_add_column(connection, 'deliveries', 'returned_date', "TEXT NOT NULL DEFAULT ''")
@@ -3044,6 +3102,7 @@ def init_db():
             ensure_user_columns,
             ensure_delivery_signature_columns,
             ensure_delivery_handover_columns,
+            ensure_delivery_evidence,
             ensure_devolution_columns,
             _ensure_jv_table,
             _ensure_ppe_test_tables,
