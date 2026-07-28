@@ -882,6 +882,23 @@ def ensure_delivery_handover_columns(connection) -> None:
     _safe_add_column(connection, 'deliveries', 'handover_confirmed_by', 'INTEGER')
     _safe_add_column(connection, 'deliveries', 'handover_confirmed_name', "TEXT NOT NULL DEFAULT ''")
     _safe_add_column(connection, 'deliveries', 'handover_reprint_count', 'INTEGER NOT NULL DEFAULT 0')
+    # Chave de idempotência da entrega.
+    #
+    # A fila offline do app reenvia a operação quando a resposta se perde
+    # (timeout, queda de rede). Sem a chave, o reenvio da MESMA entrega batia no
+    # bloqueio do item etiquetado e falhava para sempre: a fila nunca drenava e
+    # o operador via erro numa entrega que, no servidor, tinha dado certo.
+    #
+    # O índice é parcial: entregas antigas (e as que não mandam chave) têm
+    # string vazia, e não podem colidir entre si.
+    _safe_add_column(connection, 'deliveries', 'idempotency_key', "TEXT NOT NULL DEFAULT ''")
+    try:
+        connection.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_deliveries_idempotency "
+            "ON deliveries (company_id, idempotency_key) WHERE idempotency_key <> ''"
+        )
+    except Exception as _e:  # noqa: BLE001 - base sem suporte a índice parcial
+        structured_log('warning', 'db.col_skip', error=str(_e))
 
 
 def ensure_devolution_columns(connection) -> None:

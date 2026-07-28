@@ -51,6 +51,15 @@ def create_delivery_service(
     ensure_ficha_for_delivery,
 ):
     actor = authorize_action(connection, resolve_actor_user_id(), 'deliveries:create', int(payload['company_id']))
+    # Antes de qualquer escrita: se esta entrega já foi registrada, devolve a
+    # original. Reenvio da fila offline é reenvio da mesma entrega, não de uma
+    # nova — e o operador precisa receber sucesso, não um erro sobre um item
+    # que ele mesmo acabou de entregar.
+    existing_id = find_delivery_by_idempotency_key(
+        connection, company_id=int(payload['company_id']), key=payload.get('idempotency_key')
+    )
+    if existing_id is not None:
+        return existing_id
     employee = get_employee_by_id(connection, int(payload['employee_id']))
     epi = get_epi_by_id(connection, int(payload['epi_id']))
     ensure_resource_company(actor, employee, 'Colaborador')
@@ -142,15 +151,16 @@ def create_delivery_service(
         (
             'INSERT INTO deliveries (company_id, employee_id, epi_id, quantity, quantity_label, sector, role_name, '
             'delivery_date, next_replacement_date, notes, signature_name, signature_ip, signature_at, signature_data, signature_comment, '
-            'glove_size, size, uniform_size) '
-            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'glove_size, size, uniform_size, idempotency_key) '
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         ),
         (
             payload['company_id'], payload['employee_id'], payload['epi_id'], quantity,
             str(epi.get('unit_measure') or 'unidade'), payload['sector'], payload['role_name'], payload['delivery_date'],
             payload['next_replacement_date'], payload.get('notes', ''), signature_name,
             str(client_ip or ''), signature_at, signature_data, signature_comment,
-            str(stock_item.get('glove_size') or 'N/A'), str(stock_item.get('size') or 'N/A'), str(stock_item.get('uniform_size') or 'N/A')
+            str(stock_item.get('glove_size') or 'N/A'), str(stock_item.get('size') or 'N/A'), str(stock_item.get('uniform_size') or 'N/A'),
+            str(payload.get('idempotency_key') or '').strip()
         )
     )
     new_stock = current_stock - quantity
@@ -215,6 +225,30 @@ def create_delivery_service(
         )
     connection.commit()
     return int(cursor.lastrowid)
+
+
+def find_delivery_by_idempotency_key(connection, *, company_id, key):
+    """Entrega já registrada com esta chave nesta empresa, se houver.
+
+    Escopada por empresa de propósito: a chave é gerada pelo cliente, e uma
+    colisão entre tenants não pode fazer uma empresa enxergar a entrega de
+    outra. Chave vazia significa "sem idempotência" — todo o histórico anterior
+    a esta coluna está assim, e essas entregas não podem colidir entre si.
+    """
+    from epi_backend.db import table_columns
+
+    normalized = str(key or '').strip()
+    if not normalized:
+        return None
+    if 'idempotency_key' not in table_columns(connection, 'deliveries'):
+        return None
+    row = connection.execute(
+        'SELECT id FROM deliveries WHERE company_id = ? AND idempotency_key = ? LIMIT 1',
+        (int(company_id), normalized),
+    ).fetchone()
+    if not row:
+        return None
+    return int(row['id'] if hasattr(row, 'keys') else row[0])
 
 
 def consume_request_reservation(
