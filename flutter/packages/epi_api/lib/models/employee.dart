@@ -5,6 +5,7 @@ class Employee {
     this.code,
     this.sector,
     this.role,
+    this.unitId,
     this.unitName,
     this.admissionDate,
     this.schedule,
@@ -22,6 +23,10 @@ class Employee {
   final String? code;
   final String? sector;
   final String? role;
+
+  /// Unidade operacional atual (`current_unit_id`) — reflete movimentação
+  /// temporária ativa quando houver; senão, a unidade-base do cadastro.
+  final int? unitId;
   final String? unitName;
   final String? admissionDate;
   final String? schedule;
@@ -58,6 +63,8 @@ class Employee {
         code: json['employee_id_code'] as String? ?? json['code'] as String?,
         sector: json['sector'] as String?,
         role: json['role_name'] as String? ?? json['role'] as String?,
+        unitId: (json['current_unit_id'] as num?)?.toInt() ??
+            (json['unit_id'] as num?)?.toInt(),
         unitName: json['current_unit_name'] as String? ??
             json['unit_name'] as String? ??
             json['unit'] as String?,
