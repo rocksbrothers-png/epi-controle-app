@@ -41,6 +41,18 @@ def _parsed(query='actor_user_id=1'):
     return urlparse(f'/api/x?{query}')
 
 
+class _FakeConnection:
+    def close(self):
+        pass
+
+    def commit(self):
+        pass
+
+
+def _fake_connection():
+    return _FakeConnection()
+
+
 BUYER_NO_SCOPE = {'id': 1, 'role': 'buyer', 'company_id': 1, 'linked_employee_id': 10, 'full_name': 'Comprador'}
 BUYER_WITH_SCOPE = {'id': 1, 'role': 'buyer', 'company_id': 1, 'linked_employee_id': 10, 'full_name': 'Comprador'}
 APPROVER_NO_SCOPE = {'id': 2, 'role': 'approver', 'company_id': 1, 'linked_employee_id': 20, 'full_name': 'Aprovador'}
@@ -73,7 +85,7 @@ def test_actor_has_no_purchase_unit_scope_false_for_admin_roles():
 
 def _patch_purchases(monkeypatch, actor, *, purchase_scope=None, scope_unit_id=None):
     import modules.purchases.routes as routes
-    monkeypatch.setattr(routes, 'get_connection', lambda: type('C', (), {'close': lambda self: None})())
+    monkeypatch.setattr(routes, 'get_connection', _fake_connection)
     monkeypatch.setattr(routes, 'resolve_actor_user_id', lambda *a, **k: actor['id'])
     monkeypatch.setattr(routes, 'authorize_action', lambda *a, **k: actor)
     monkeypatch.setattr(routes, 'actor_operational_unit_id', lambda *a, **k: scope_unit_id)
@@ -181,7 +193,7 @@ def test_fetch_purchase_pendencies_filters_by_purchase_scope_units():
 
 def _patch_reports(monkeypatch, actor, *, purchase_scope=None, scope_unit_id=None, fetch_items=None):
     import modules.reports.routes as routes
-    monkeypatch.setattr(routes, 'get_connection', lambda: type('C', (), {'close': lambda self: None})())
+    monkeypatch.setattr(routes, 'get_connection', _fake_connection)
     monkeypatch.setattr(routes, 'resolve_actor_user_id', lambda *a, **k: actor['id'])
     monkeypatch.setattr(routes, 'authorize_action', lambda *a, **k: actor)
     monkeypatch.setattr(routes, 'actor_operational_unit_id', lambda *a, **k: scope_unit_id)
@@ -227,7 +239,7 @@ def test_post_report_requests_approver_wrong_unit_rejected(monkeypatch):
 
 def test_post_report_requests_approver_own_unit_allowed(monkeypatch):
     routes = _patch_reports(monkeypatch, APPROVER_NO_SCOPE, purchase_scope=[5])
-    monkeypatch.setattr(routes, 'get_connection', lambda: type('C', (), {'close': lambda self: None, 'commit': lambda self: None})())
+    monkeypatch.setattr(routes, 'get_connection', _fake_connection)
     monkeypatch.setattr(routes, 'create_report_request', lambda *a, **k: None)
     h = _FakeHandler(path='/api/report-requests')
     h.command = 'POST'
@@ -245,7 +257,7 @@ def test_stock_movements_report_empty_for_buyer_without_links(monkeypatch):
     def _boom(*_a, **_k):
         raise AssertionError('fetch should not run')
 
-    monkeypatch.setattr(routes, 'get_connection', lambda: type('C', (), {'close': lambda self: None})())
+    monkeypatch.setattr(routes, 'get_connection', _fake_connection)
     monkeypatch.setattr(routes, 'resolve_actor_user_id', lambda *a, **k: BUYER_NO_SCOPE['id'])
     monkeypatch.setattr(routes, 'authorize_action', lambda *a, **k: BUYER_NO_SCOPE)
     monkeypatch.setattr(routes, 'actor_operational_unit_id', lambda *a, **k: None)
