@@ -32,6 +32,11 @@ final class AuthAuthenticated extends AuthState {
   /// senha e bloqueia a navegação para as demais rotas privadas.
   final bool mustChangePassword;
 
+  /// Visibilidade estrutural por módulo (menu/rotas/deep links) — atalho
+  /// para `sessionContext.moduleVisibility`, no mesmo padrão de
+  /// [permissions] (que também espelha `sessionContext.permissions`).
+  bool isModuleVisible(String module) => sessionContext.isModuleVisible(module);
+
   @override
   List<Object?> get props =>
       [token, user, permissions, sessionContext, mustChangePassword];

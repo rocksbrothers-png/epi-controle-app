@@ -29,11 +29,13 @@ class EpiAdminApp extends StatefulWidget {
 class _EpiAdminAppState extends State<EpiAdminApp> {
   final _isAuthenticated = ValueNotifier<bool>(false);
   final _permissions     = ValueNotifier<List<String>>(const []);
+  final _moduleVisibility = ValueNotifier<Map<String, bool>>(const {});
   final _mustChangePassword = ValueNotifier<bool>(false);
   final _authCubit       = AuthCubit();
   late final _router     = buildRouter(
     isAuthenticated: _isAuthenticated,
     permissions: _permissions,
+    moduleVisibility: _moduleVisibility,
     mustChangePassword: _mustChangePassword,
     localeProvider: widget.localeProvider,
     themeNotifier: widget.themeNotifier,
@@ -48,6 +50,9 @@ class _EpiAdminAppState extends State<EpiAdminApp> {
       _permissions.value = state is AuthAuthenticated
           ? state.permissions
           : const [];
+      _moduleVisibility.value = state is AuthAuthenticated
+          ? state.sessionContext.moduleVisibility
+          : const {};
       _mustChangePassword.value =
           state is AuthAuthenticated && state.mustChangePassword;
     });
@@ -60,6 +65,7 @@ class _EpiAdminAppState extends State<EpiAdminApp> {
     _authCubit.close();
     _isAuthenticated.dispose();
     _permissions.dispose();
+    _moduleVisibility.dispose();
     _mustChangePassword.dispose();
     super.dispose();
   }
