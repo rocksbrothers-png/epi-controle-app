@@ -10,7 +10,7 @@ from core.repository import authorize_action
 from modules.employees.service import actor_operational_unit_id
 from core.security import resolve_actor_user_id
 from epi_backend.http_utils import require_fields, send_bytes, send_json
-from modules.purchases.service import get_actor_purchase_unit_scope
+from modules.purchases.service import actor_has_no_purchase_unit_scope, get_actor_purchase_unit_scope
 from modules.reports.service import (
     build_report_pdf,
     create_report_request,
@@ -56,6 +56,8 @@ def handle_get_report_requests(handler, parsed, payload, match):
             raise PermissionError('Perfil sem empresa vinculada para consultar solicitações de relatório.')
         scope_unit_id = actor_operational_unit_id(connection, actor)
         purchase_scope = get_actor_purchase_unit_scope(connection, actor)
+        if actor_has_no_purchase_unit_scope(actor, scope_unit_id, purchase_scope):
+            return send_json(handler, 200, {'items': []})
         clauses, params = [], []
         if company_id:
             clauses.append('rr.company_id = %s')
@@ -84,10 +86,11 @@ def handle_post_report_requests(handler, parsed, payload, match):
             raise PermissionError('Apenas Aprovadores e Administradores podem solicitar relatórios.')
         purchase_scope = get_actor_purchase_unit_scope(connection, actor)
         unit_id = payload.get('unit_id')
+        if actor.get('role') == 'approver':
+            if not unit_id or not purchase_scope or int(unit_id) not in purchase_scope:
+                raise PermissionError('Aprovador só pode solicitar relatório para unidades que administra.')
         if unit_id:
             unit_id = int(unit_id)
-            if purchase_scope and unit_id not in purchase_scope:
-                raise PermissionError('Aprovador só pode solicitar relatório para unidades que administra.')
         company_id = actor.get('company_id')
         if not company_id and unit_id:
             # master_admin não tem empresa própria — deriva da unidade escolhida.
