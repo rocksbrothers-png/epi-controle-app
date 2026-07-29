@@ -40,6 +40,7 @@ class LoginResponse {
     required this.user,
     this.refreshToken,
     this.permissions = const [],
+    this.moduleVisibility = const {},
     this.mustChangePassword = false,
   });
 
@@ -53,6 +54,11 @@ class LoginResponse {
   /// (que não existe), deixando o RBAC do app sem permissões.
   final List<String> permissions;
 
+  /// Visibilidade estrutural por módulo (menu/rotas/deep links) — regra
+  /// padrão + configuração do Administrador Geral, já clampada pela
+  /// permissão técnica. Consumida pelo NavigationPolicy.
+  final Map<String, dynamic> moduleVisibility;
+
   /// Credencial temporária provisionada por admin: exige troca no 1º acesso.
   /// Vem no topo da resposta (e espelhada em `user.must_change_password`).
   final bool mustChangePassword;
@@ -62,6 +68,7 @@ class LoginResponse {
         user: _asMap(json['user']),
         refreshToken: json['refresh_token'] as String?,
         permissions: _parsePermissions(json['permissions']),
+        moduleVisibility: _asMap(json['module_visibility']),
         mustChangePassword: _asBool(json['must_change_password']) ||
             _asBool(_asMap(json['user'])['must_change_password']),
       );
@@ -89,10 +96,15 @@ class RefreshResponse {
 
 /// Identidade do usuário a partir de `GET /api/auth/me` (envelope `data`).
 class AuthIdentity {
-  const AuthIdentity({required this.user, this.permissions = const []});
+  const AuthIdentity({
+    required this.user,
+    this.permissions = const [],
+    this.moduleVisibility = const {},
+  });
 
   final Map<String, dynamic> user;
   final List<String> permissions;
+  final Map<String, dynamic> moduleVisibility;
 
   /// Desembrulha o envelope `{success, data:{user, permissions}}`; tolera
   /// também o formato plano `{user, permissions}` por robustez.
@@ -101,6 +113,7 @@ class AuthIdentity {
     return AuthIdentity(
       user: _asMap(data['user']),
       permissions: _parsePermissions(data['permissions']),
+      moduleVisibility: _asMap(data['module_visibility']),
     );
   }
 }
