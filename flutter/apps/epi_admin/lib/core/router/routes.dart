@@ -22,6 +22,7 @@ abstract final class Routes {
   static const users       = '/users';
   static const units       = '/units';
   static const legalEntities = '/legal-entities';
+  static const outsourcedCompanies = '/outsourced-companies';
   static const portal      = '/portal';
   static const qr          = '/qr';
   static const feedback     = '/feedback';
@@ -52,6 +53,7 @@ abstract final class Routes {
     users,
     units,
     legalEntities,
+    outsourcedCompanies,
     portal,
     qr,
     feedback,

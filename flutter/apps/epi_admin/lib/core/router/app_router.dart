@@ -25,6 +25,7 @@ import '../../features/deliveries/handover_conference_screen.dart';
 import '../../features/users/users_screen.dart';
 import '../../features/units/units_screen.dart';
 import '../../features/legal_entities/legal_entities_screen.dart';
+import '../../features/outsourced_companies/outsourced_companies_screen.dart';
 import '../../features/feedback/feedback_screen.dart';
 import '../i18n/locale_provider.dart';
 import '../i18n/theme_mode_notifier.dart';
@@ -205,6 +206,10 @@ GoRouter buildRouter({
               ),
               companyName: s.uri.queryParameters['company_name'],
             ),
+          ),
+          GoRoute(
+            path: Routes.outsourcedCompanies,
+            builder: (c, s) => const OutsourcedCompaniesScreen(),
           ),
           GoRoute(
             path: Routes.feedback,
