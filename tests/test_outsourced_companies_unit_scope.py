@@ -22,8 +22,8 @@ import sqlite3
 
 import pytest
 
+import core.repository as repository
 from core.permissions import PERMISSIONS
-from core.repository import authorize_action_any
 from core.schema import (
     ensure_employee_simplified_registration_columns,
     ensure_legal_entities,
@@ -170,7 +170,6 @@ def test_authorize_action_any_succeeds_with_either_permission(monkeypatch):
     # com um require_actor de teste, como os demais testes de rota deste
     # módulo (test_outsourced_pr6_routes.py) isolam authorize_action/
     # authorize_action_any da camada HTTP.
-    import core.repository as repository
     actors = {
         1: {'id': 1, 'role': 'general_admin', 'company_id': 1},
         2: {'id': 2, 'role': 'admin', 'company_id': 1},
@@ -178,19 +177,18 @@ def test_authorize_action_any_succeeds_with_either_permission(monkeypatch):
     monkeypatch.setattr(repository, 'require_actor', lambda _conn, uid: actors[int(uid)])
     from core.permissions import PERM_EMPLOYEES_CREATE, PERM_EMPLOYEES_CREATE_SIMPLIFIED
     actions = (PERM_EMPLOYEES_CREATE, PERM_EMPLOYEES_CREATE_SIMPLIFIED)
-    general_admin_actor = authorize_action_any(None, 1, actions)
+    general_admin_actor = repository.authorize_action_any(None, 1, actions)
     assert general_admin_actor['role'] == 'general_admin'
-    local_admin_actor = authorize_action_any(None, 2, actions)
+    local_admin_actor = repository.authorize_action_any(None, 2, actions)
     assert local_admin_actor['role'] == 'admin'
 
 
 def test_authorize_action_any_raises_when_no_permission_matches(monkeypatch):
-    import core.repository as repository
     actor = {'id': 3, 'role': 'buyer', 'company_id': 1}
     monkeypatch.setattr(repository, 'require_actor', lambda _conn, uid: actor)
     from core.permissions import PERM_EMPLOYEES_CREATE, PERM_EMPLOYEES_CREATE_SIMPLIFIED
     with pytest.raises(PermissionError):
-        authorize_action_any(None, 3, (PERM_EMPLOYEES_CREATE, PERM_EMPLOYEES_CREATE_SIMPLIFIED))
+        repository.authorize_action_any(None, 3, (PERM_EMPLOYEES_CREATE, PERM_EMPLOYEES_CREATE_SIMPLIFIED))
 
 
 # ── Gate real de módulo por Unidade (backend, não só menu) ─────────────────

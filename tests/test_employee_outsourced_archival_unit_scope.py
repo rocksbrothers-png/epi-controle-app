@@ -26,7 +26,7 @@ from core.schema import (
     ensure_outsourced_companies,
     ensure_outsourced_company_archival_lifecycle_columns,
 )
-from modules.employees.routes import _load_employee_for_lifecycle
+import modules.employees.routes as employees_routes
 from modules.employees.service import create_employee_outsourced_simplified
 from modules.settings.service import save_module_visibility
 
@@ -41,7 +41,6 @@ def _sqlite_detection(monkeypatch):
     # _load_employee_for_lifecycle é chamado direto (sem handler/parsed HTTP
     # reais) — mesmo padrão de isolamento de resolve_actor_user_id usado em
     # tests/test_outsourced_pr6_routes.py.
-    import modules.employees.routes as employees_routes
     monkeypatch.setattr(employees_routes, 'resolve_actor_user_id', lambda _h, _p, payload: payload['actor_user_id'])
     # require_actor() passa por enforce_company_block_rules (contagem de
     # usuários faturáveis via COUNT(*) sem alias) — incompatível com o
@@ -209,7 +208,7 @@ class _Match:
 
 
 def _load(conn, entity_id, actor_user_id, permission, outsourced_alternative):
-    return _load_employee_for_lifecycle(
+    return employees_routes._load_employee_for_lifecycle(
         conn, None, None, {'actor_user_id': actor_user_id}, _Match(entity_id),
         permission, outsourced_alternative=outsourced_alternative,
     )

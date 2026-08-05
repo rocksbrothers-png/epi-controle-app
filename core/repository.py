@@ -287,7 +287,7 @@ def authorize_action_any(connection, actor_user_id, actions, company_id=None):
     dentro do próprio escopo). Levanta o erro da última permissão tentada
     quando nenhuma é concedida."""
     actor = require_actor(connection, actor_user_id)
-    error = None
+    error = PermissionError('Nenhuma permissão informada.')
     for action in actions:
         try:
             ensure_permission(actor, action)
