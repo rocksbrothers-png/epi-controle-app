@@ -571,6 +571,8 @@
   "outsourcedCompanyKindServiceProvider": "Service Provider",
   "outsourcedCompanyKindOther": "Other",
   "outsourcedCompanyResponsibilityLabel": "PPE Supply Responsibility",
+  "outsourcedCompanyUnitLabel": "Unit",
+  "outsourcedCompanyUnitAll": "All units (default)",
   "outsourcedCompanyStatusLabel": "Status",
   "outsourcedCompanySave": "Save",
   "outsourcedCompanyCancel": "Cancel",
