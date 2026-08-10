@@ -922,9 +922,14 @@ testadas no harness — mesmo padrão do restante do módulo.
 
 ## 13. Extensão — Reutilização de Colaborador entre Unidades, CNPJ opcional/obrigatório por estágio e arquivamento local (pessoa)
 
-**Status desta seção: proposta em avaliação — nenhum código deste escopo foi
-escrito. Implementação aguarda aprovação explícita da arquitetura descrita
-aqui.**
+**Status desta seção (atualizado — rodada 8): PR A implementado e
+mergeado** (`create_employee`/`update_employee`/
+`create_employee_outsourced_simplified` já não exigem CNPJ do tenant para
+colaborador terceirizado — epi-controle-app#188/epi-controle#852,
+revisado em 3 rodadas de Codex antes do merge). **PRs B-E continuam
+propostos, nenhum código escrito** — implementação de cada um aguarda
+autorização explícita do usuário, PR a PR, seguindo o desenho revisado
+nas §13.19-§13.26.
 
 ### 13.1 Contexto — dois problemas reais, um padrão já testado
 
@@ -2324,3 +2329,50 @@ ainda não implementado — incorporados aqui, não em código. O quarto (D6)
 foi a primeira vez nesta revisão que verificação direta descartou um
 achado em vez de confirmá-lo — registrado para manter o padrão de nunca
 aceitar afirmação sem checar contra o código real, nas duas direções.
+
+### 13.26 Revisão automatizada (Codex) — rodada 8
+
+Oitava rodada, disparada pelo merge-commit que atualizou os PRs #181/#846
+com a `main` (PR A + fix de CI). Dois achados.
+
+**Achado de documentação, corrigido.** O status desta seção (topo do §13)
+ainda dizia "nenhum código deste escopo foi escrito", contradizendo o
+próprio §13.15/§13.17 (PR A implementado) e o estado real do repositório
+(PR A mergeado). Corrigido acima: PR A distinguido como implementado,
+PRs B-E seguem propostos.
+
+**Achado confirmado, mesma classe do token único de portal já registrada
+(P1) — segundo chamador independente.** `handle_post_ficha_finalize`
+(`modules/ficha/routes.py:190-238`, verificado linha a linha) já tem sua
+própria checagem de Unidade, correta e mais específica que a genérica:
+`if int(ficha['unit_id']) != int(scope_unit_id): raise PermissionError(...)`
+— usa `ficha['unit_id']` (autoritativo, gravado no período) para decidir
+se o ator pode finalizar *aquele período*. Logo depois, a rota chama
+**também** `ensure_actor_employee_scope(connection, actor, employee)` — a
+mesma função que o PR D amplia por OR — e, ao final, chama
+`upsert_employee_portal_link`, que sobrescreve **o único token de portal
+do colaborador** (`modules/portal/service.py:462-472` — mesma tabela,
+mesma limitação de "um token por pessoa" já identificada para as rotas
+diretas de portal em §13.21/§13.22, aqui alcançada por um caminho
+diferente). Dois problemas distintos, não um só:
+
+1. **Checagem duplicada e potencialmente conflitante.** Se a Unidade B
+   tem o período **dela própria** para finalizar (`ficha['unit_id'] ==
+   scope_unit_id`, checagem já correta) mas o colaborador já foi
+   transferido e sua Unidade atual é A, `ensure_actor_employee_scope` sem
+   ampliação rejeitaria B mesmo a checagem específica já tendo provado que
+   B tem o direito histórico correto sobre *aquele período*. Ajuste: esta
+   rota passa a confiar na checagem já feita contra `ficha['unit_id']`
+   como autorização suficiente — a chamada a `ensure_actor_employee_scope`
+   aqui é redundante (quando concorda) ou incorreta (quando diverge), não
+   deve ser uma segunda porta com critério próprio.
+2. **Efeito colateral entre Unidades no token único.** Independente de
+   como a checagem acima for resolvida, finalizar um período **legítimo**
+   de B sobrescreve o token de portal que A possa ter emitido/entregue ao
+   colaborador — invalidando o acesso de A sem relação nenhuma com a ação
+   de B. Mesma limitação estrutural já registrada, agora com uma segunda
+   rota de acesso confirmada. Ajuste do PR D: `employee_portal_links`
+   passa a ser por (colaborador, Unidade) em vez de um único registro por
+   colaborador, ou a emissão/rotação do token deixa de ser efeito
+   colateral da finalização — vira ação própria, explícita, fora do fluxo
+   de finalizar período.
