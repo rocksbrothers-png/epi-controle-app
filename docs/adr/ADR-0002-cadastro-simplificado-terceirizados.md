@@ -1162,13 +1162,15 @@ colaboradores e só alguns atendem cada contrato/Unidade específica.
 ### 13.7 Impacto no Multi-CNPJ — a correção do alerta de bloqueio (D3)
 
 Correção proposta, mínima e isolada: `create_employee_outsourced_simplified`
-e `update_employee_outsourced_simplified` (`modules/employees/service.py`)
-param de importar/chamar `resolve_employee_legal_entity_id` e param de
-incluir `legal_entity_id` nas colunas gravadas — pelo mesmo motivo que
-`empresa_origem`/`outsourced_company_id` já ficam de fora do fluxo CLT,
-`legal_entity_id` fica de fora do fluxo terceirizado. `employees.legal_entity_id`
-permanece `NULL` para toda linha **nova** com `outsourced_company_id`
-preenchido.
+(`modules/employees/service.py`) para de importar/chamar
+`resolve_employee_legal_entity_id` e de incluir `legal_entity_id` nas
+colunas gravadas — pelo mesmo motivo que `empresa_origem`/
+`outsourced_company_id` já ficam de fora do fluxo CLT, `legal_entity_id`
+fica de fora do fluxo terceirizado. **Correção de precisão**:
+`update_employee_outsourced_simplified` nunca chamou esse resolver (só
+`create_...` chamava) — nada a remover lá; a implementação real (PR A)
+toca só a função de criação. `employees.legal_entity_id` permanece `NULL`
+para toda linha **nova** com `outsourced_company_id` preenchido.
 
 **Dado legado precisa de migração, não só a remoção da chamada (achado da
 revisão Codex, §13.19).** `resolve_employee_legal_entity_id` já gravava um
