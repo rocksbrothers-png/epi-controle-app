@@ -1028,8 +1028,8 @@
     "purgeSummaryIntro": "ATENÇÃO: exclusão definitiva e irreversível. Os seguintes registros históricos serão removidos:",
     "purgeSummaryOutro": "O registro de auditoria desta operação será preservado permanentemente.",
     "purgeJustification": "Justificativa obrigatória da exclusão definitiva (mínimo 10 caracteres):",
-    "purgeConfirmName": "Digite o nome exato da unidade para confirmar:",
-    "purgeDone": "Unidade excluída definitivamente. O registro da operação foi gravado na auditoria.",
+    "purgeConfirmName": "Digite o nome exato para confirmar:",
+    "purgeDone": "Registro excluído definitivamente. A operação foi gravada na auditoria.",
     "legalEntity": "CNPJ responsável",
     "tableLegalEntity": "CNPJ"
   },
