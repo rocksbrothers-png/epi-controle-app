@@ -94,3 +94,8 @@ Os commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-
   de só a própria unidade. `general_admin`/`registry_admin` continuam sem
   restrição (administram múltiplos CNPJs). Corrigido em web (`dashboard.js`/
   `dashboard-scope.js`) e Flutter (`DashboardCubit`/`DashboardScreen`).
+- CI — `Build Android APK (debug)`/`Integration (Android emulator)` falhavam
+  sempre: `flutter.yml` usa `channel: stable` sem fixar versão, e o Flutter
+  `stable` atual (3.47.0) exige Android Gradle Plugin ≥ 8.11.1, enquanto
+  `android/settings.gradle` fixava 8.9.1. Atualizado para 8.11.1 — dentro do
+  Gradle (8.14) e do JDK (17) já usados pelo projeto, sem exigir outro bump.
