@@ -209,6 +209,9 @@ class _HorizontalBarChart extends StatelessWidget {
                 if (i < 0 || i >= entries.length) return const SizedBox();
                 final label = entries[i].key;
                 final short = label.length > 8 ? '${label.substring(0, 7)}…' : label;
+                // fl_chart 1.x: `SideTitleWidget` recebe o `TitleMeta` inteiro
+                // (`meta`) no lugar de `axisSide` — o widget passou a derivar o
+                // lado do eixo a partir dele.
                 return SideTitleWidget(
                   meta: meta,
                   child: Text(
