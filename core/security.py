@@ -36,6 +36,33 @@ class AuthenticationError(PermissionError):
     """
 
 
+class PasswordChangeRequiredError(PermissionError):
+    """Senha temporária ainda não trocada — HTTP 403 com código próprio.
+
+    Mesmo padrão de `AuthenticationError`: subclasse de `PermissionError` para
+    que handlers que só capturam `except PermissionError` continuem cobrindo o
+    caso, e capturada ANTES dele por quem precisa distinguir.
+
+    O código próprio existe porque o cliente precisa diferenciar "você não tem
+    permissão para isto" — onde insistir não adianta — de "troque a senha e
+    tudo volta a funcionar". Sem essa distinção o app mostraria erro de
+    permissão para um estado que o próprio usuário resolve em duas telas.
+
+    Não é `AuthenticationError`: o usuário ESTÁ autenticado, o token é válido, e
+    devolver 401 dispararia o refresh automático do Flutter num laço que jamais
+    resolveria — o refresh reemite o token, e o bloqueio continua.
+    """
+
+    CODE = 'PASSWORD_CHANGE_REQUIRED'
+    MESSAGE = (
+        'Sua senha temporária ainda não foi trocada. '
+        'Defina uma nova senha para continuar.'
+    )
+
+    def __init__(self, message=None):
+        super().__init__(message or self.MESSAGE)
+
+
 def validate_password_strength(password):
     raw = str(password or '').strip()
     if len(raw) < 6:

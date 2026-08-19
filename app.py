@@ -88,6 +88,7 @@ from core.security import (
     resolve_actor_user_id,
     validate_password_strength,
     verify_password,
+    PasswordChangeRequiredError,
 )
 from epi_backend.unit_jv_lifecycle import (
     ensure_unit_joint_venture_periods_table,
@@ -902,6 +903,15 @@ class EpiHandler(SimpleHTTPRequestHandler):
             structured_log('warning', 'http.authentication_error', method='GET', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
+        except PasswordChangeRequiredError as exc:
+            # ANTES de PermissionError: é subclasse dele, e sem esta ordem o
+            # cliente receberia um 403 genérico, sem como distinguir "sem
+            # permissão" de "troque a senha e tudo volta".
+            structured_log('warning', 'http.password_change_required', path=parsed.path, user_error=str(exc))
+            return send_json(self, 403, {
+                'error': str(exc),
+                'code': PasswordChangeRequiredError.CODE,
+            })
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='GET', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -963,6 +973,15 @@ class EpiHandler(SimpleHTTPRequestHandler):
             structured_log('warning', 'http.authentication_error', method='POST', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
+        except PasswordChangeRequiredError as exc:
+            # ANTES de PermissionError: é subclasse dele, e sem esta ordem o
+            # cliente receberia um 403 genérico, sem como distinguir "sem
+            # permissão" de "troque a senha e tudo volta".
+            structured_log('warning', 'http.password_change_required', path=parsed.path, user_error=str(exc))
+            return send_json(self, 403, {
+                'error': str(exc),
+                'code': PasswordChangeRequiredError.CODE,
+            })
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='POST', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -1000,6 +1019,15 @@ class EpiHandler(SimpleHTTPRequestHandler):
             structured_log('warning', 'http.authentication_error', method='PUT', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
+        except PasswordChangeRequiredError as exc:
+            # ANTES de PermissionError: é subclasse dele, e sem esta ordem o
+            # cliente receberia um 403 genérico, sem como distinguir "sem
+            # permissão" de "troque a senha e tudo volta".
+            structured_log('warning', 'http.password_change_required', path=parsed.path, user_error=str(exc))
+            return send_json(self, 403, {
+                'error': str(exc),
+                'code': PasswordChangeRequiredError.CODE,
+            })
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='PUT', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
@@ -1031,6 +1059,15 @@ class EpiHandler(SimpleHTTPRequestHandler):
             structured_log('warning', 'http.authentication_error', method='DELETE', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
+        except PasswordChangeRequiredError as exc:
+            # ANTES de PermissionError: é subclasse dele, e sem esta ordem o
+            # cliente receberia um 403 genérico, sem como distinguir "sem
+            # permissão" de "troque a senha e tudo volta".
+            structured_log('warning', 'http.password_change_required', path=parsed.path, user_error=str(exc))
+            return send_json(self, 403, {
+                'error': str(exc),
+                'code': PasswordChangeRequiredError.CODE,
+            })
         except PermissionError as exc:
             structured_log('warning', 'http.permission_error', method='DELETE', path=parsed.path, error=str(exc))
             return forbidden(self, str(exc))
