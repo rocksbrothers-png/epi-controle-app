@@ -30,6 +30,7 @@ from modules.stock.service import (
     fetch_validity_overview,
     set_stock_item_status,
     fetch_epi_size_balance,
+    is_stock_critical,
     fetch_stock_movements,
     get_stock_item_for_reprint,
     get_unit_stock,
@@ -38,6 +39,7 @@ from modules.stock.service import (
     parse_int_flexible,
     parse_stock_qr_lookup_value,
     resolve_item_size,
+    resolve_minimum_stock,
     set_epi_minimum_stock,
     upsert_unit_stock,
 )
@@ -559,11 +561,51 @@ def handle_get_stock_epis(handler, parsed, payload, match):
                 target_unit_joint_venture_name=target_unit_jv_name,
             ):
                 continue
-            stock_unit_id = int(unit_filter or 0)
-            stock_row = get_unit_stock(connection, int(epi['company_id']), stock_unit_id, int(epi['id'])) if stock_unit_id else None
             item = dict(epi)
-            item['stock'] = int((stock_row or {}).get('quantity') or (item.get('stock') or 0))
-            size_rows = fetch_epi_size_balance(connection, int(epi['company_id']), stock_unit_id, int(epi['id'])) if stock_unit_id else []
+            # ── Estoque corporativo × estoque da unidade ─────────────────────
+            # São grandezas DIFERENTES e ficam em campos diferentes. Antes havia
+            # aqui um fallback por truthiness:
+            #
+            #   item['stock'] = (stock_row or {}).get('quantity') or item['stock']
+            #
+            # que devolvia o saldo da unidade — exceto quando ele era 0, porque
+            # zero é falsy e caía no total da empresa. Uma unidade sem estoque
+            # exibia o número da empresa inteira, e o mesmo campo mudava de
+            # significado conforme o valor. Nunca reintroduzir esse padrão.
+            #
+            # `stock` (legado) segue com o valor CORPORATIVO, igual a
+            # `company_stock_quantity`, até os consumidores migrarem.
+            company_stock = int(item.get('stock') or 0)
+
+            stock_unit_id = int(unit_filter or 0)
+            if stock_unit_id:
+                stock_row = get_unit_stock(
+                    connection, int(epi['company_id']), stock_unit_id, int(epi['id'])
+                )
+                # Sem linha em unit_epi_stock a unidade tem zero, não "sem dado":
+                # o EPI é visível para ela e o saldo é conhecido.
+                unit_stock = int((stock_row or {}).get('quantity') or 0)
+                size_rows = fetch_epi_size_balance(
+                    connection, int(epi['company_id']), stock_unit_id, int(epi['id'])
+                )
+            else:
+                # Nenhuma unidade resolvida (master_admin/general_admin sem
+                # seleção): `None`, não 0. Zero afirmaria "esta unidade não tem
+                # estoque"; None diz "não há unidade".
+                unit_stock = None
+                size_rows = []
+
+            minimum_stock = resolve_minimum_stock(item.get('minimum_stock'))
+            item['minimum_stock'] = minimum_stock
+            item['company_stock_quantity'] = company_stock
+            item['unit_stock_quantity'] = unit_stock
+            item['unit_scope_id'] = stock_unit_id or None
+            # Criticidade é CORPORATIVA: `minimum_stock` vive em `epis`, na
+            # empresa. Comparar contra o saldo de uma unidade marcaria como
+            # crítico todo EPI cujo estoque esteja distribuído. Mínimo por
+            # unidade é outra frente (issue #259).
+            item['is_company_stock_critical'] = is_stock_critical(company_stock, minimum_stock)
+            item['stock'] = company_stock
             item['size_balances'] = size_rows
             items.append(item)
         items = canary_evaluate_visibility_dataset(connection, actor, endpoint_name='/api/stock/epis', dataset_name='epis', legacy_items=items)
