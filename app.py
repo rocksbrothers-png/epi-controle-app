@@ -902,6 +902,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
                 return result
             return super().do_GET()
         except AuthenticationError as exc:
+            # ANTES de PermissionError, de quem é subclasse: sem esta ordem a
+            # falha de autenticação viraria 403 e o cliente nunca renovaria o
+            # token (#337).
             structured_log('warning', 'http.authentication_error', method='GET', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
@@ -973,6 +976,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
                 return result
             return not_found(self)
         except AuthenticationError as exc:
+            # ANTES de PermissionError, de quem é subclasse: sem esta ordem a
+            # falha de autenticação viraria 403 e o cliente nunca renovaria o
+            # token (#337).
             structured_log('warning', 'http.authentication_error', method='POST', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
@@ -1020,6 +1026,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             if result is not None:
                 return result
         except AuthenticationError as exc:
+            # ANTES de PermissionError, de quem é subclasse: sem esta ordem a
+            # falha de autenticação viraria 403 e o cliente nunca renovaria o
+            # token (#337).
             structured_log('warning', 'http.authentication_error', method='PUT', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return
@@ -1061,6 +1070,9 @@ class EpiHandler(SimpleHTTPRequestHandler):
             if result is not None:
                 return result
         except AuthenticationError as exc:
+            # ANTES de PermissionError, de quem é subclasse: sem esta ordem a
+            # falha de autenticação viraria 403 e o cliente nunca renovaria o
+            # token (#337).
             structured_log('warning', 'http.authentication_error', method='DELETE', path=parsed.path, error=str(exc))
             unauthorized(self, str(exc))
             return

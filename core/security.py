@@ -32,7 +32,10 @@ class AuthenticationError(PermissionError):
     quando isto era 403, o refresh nunca ocorria e o app mostrava "Sem conexão".
 
     PermissionError "puro" continua reservado para falha de AUTORIZAÇÃO
-    (usuário autenticado, mas sem permissão para a ação) → HTTP 403.
+    (usuário autenticado, mas sem permissão para a ação) → HTTP 403. Inclui o
+    conflito de identidade de `resolve_actor_user_id`: token válido cujo `sub`
+    diverge do `actor_user_id` pedido é tentativa de personificação, não falta
+    de credencial (#337).
     """
 
 
@@ -201,7 +204,13 @@ def resolve_actor_user_id(handler, parsed, payload=None):
     actor_user_id = actor_candidates[0]
     for candidate in actor_candidates[1:]:
         if str(candidate) != str(actor_user_id):
-            raise AuthenticationError('Dados de autenticação inconsistentes.')
+            # 403, não 401 (#337). Aqui o servidor SABE quem é o usuário: o token
+            # é válido e foi decodificado acima. O que ele recusa é a tentativa
+            # de operar como OUTRA identidade — isso é autorização, não
+            # autenticação. Como 401 o cliente Flutter gastaria um refresh que
+            # jamais corrigiria o caso: o `actor_user_id` divergente está no
+            # corpo/query da request, não no token que o refresh reemite.
+            raise PermissionError('Dados de autenticação inconsistentes.')
     # F-04: mede/aplica a exigência de JWT quando o actor não veio de um token.
     if not token_actor:
         _enforce_jwt_presence(handler, parsed, actor_user_id)
