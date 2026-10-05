@@ -54,6 +54,10 @@ def hash_token(raw):
 
 def ensure_checkout_session_tables(connection):
     """Cria a tabela de sessões de checkout (idempotente; SQLite e PostgreSQL)."""
+    # Tabela + índices num único script idempotente. `CREATE [UNIQUE] INDEX IF
+    # NOT EXISTS` é suportado tanto no SQLite (testes) quanto no PostgreSQL, então
+    # não precisa do padrão ALTER-tolerante das tabelas que evoluíram de schemas
+    # antigos — não há try/except aqui.
     connection.executescript(
         '''
         CREATE TABLE IF NOT EXISTS checkout_sessions (
@@ -68,29 +72,12 @@ def ensure_checkout_session_tables(connection):
             expires_at TEXT NOT NULL DEFAULT '',
             consumed_at TEXT
         );
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_checkout_sessions_token
+            ON checkout_sessions(token_hash);
+        CREATE INDEX IF NOT EXISTS idx_checkout_sessions_company
+            ON checkout_sessions(company_id);
         '''
     )
-    # Índice único no hash do token (idempotente em ambos os bancos).
-    try:
-        connection.execute(
-            'CREATE UNIQUE INDEX IF NOT EXISTS idx_checkout_sessions_token '
-            'ON checkout_sessions(token_hash)'
-        )
-    except Exception:
-        try:
-            connection.rollback()
-        except Exception:
-            pass
-    try:
-        connection.execute(
-            'CREATE INDEX IF NOT EXISTS idx_checkout_sessions_company '
-            'ON checkout_sessions(company_id)'
-        )
-    except Exception:
-        try:
-            connection.rollback()
-        except Exception:
-            pass
 
 
 def create_checkout_session(connection, *, company_id, tenant_id='', owner_user_id=None,

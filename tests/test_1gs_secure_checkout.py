@@ -393,7 +393,7 @@ def test_t11_legitimate_end_to_end(monkeypatch):
     monkeypatch.setattr(companies_service, 'get_commercial_settings',
                         lambda _c: default_commercial_settings())
     monkeypatch.setattr(onboarding, 'send_credentials_email', lambda *a, **k: True)
-    posts = _mock_mp(monkeypatch)
+    _mock_mp(monkeypatch)
     cap = _bind_conn(monkeypatch, conn)
 
     signup = onboarding.provision_pending_tenant(conn, {
