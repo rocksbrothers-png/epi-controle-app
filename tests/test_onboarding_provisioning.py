@@ -10,6 +10,7 @@ import sqlite3
 
 import pytest
 
+from core.checkout_sessions import ensure_checkout_session_tables
 from core.security import verify_password
 from modules.commercial.service import default_commercial_settings
 from modules.companies import service as companies_service
@@ -69,6 +70,9 @@ def make_connection():
         )
         '''
     )
+    # O signup agora emite uma capability de checkout (fase 1G-S, #383): o
+    # provisionamento grava a sessão ligada à empresa pendente.
+    ensure_checkout_session_tables(conn)
     return conn
 
 
@@ -221,9 +225,15 @@ def test_webhook_active_status_activates_pending_company(monkeypatch):
     result = onboarding.provision_pending_tenant(conn, _signup_payload())
     company_id = result['company_id']
 
+    # Fase 1G-S (#383): a ativação pelo webhook exige binding server-side válido.
+    # O fluxo real cria a assinatura pelo checkout público, com
+    # origin='public_checkout' (o `company_id` veio do checkout_token, não do
+    # cliente). Sem esse binding o webhook não ativa o tenant — ver o gate em
+    # subscriptions_service.sync_subscription_status.
     subscriptions_service.record_subscription(
         conn, company_id=company_id, plan_key='start', cycle='monthly',
-        payment_method='card', preapproval_id='PRE-123', status='pending', amount=297.0)
+        payment_method='card', preapproval_id='PRE-123', status='pending', amount=297.0,
+        origin='public_checkout')
 
     synced = subscriptions_service.sync_subscription_status(conn, 'PRE-123', 'authorized')
     assert synced is True

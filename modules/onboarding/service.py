@@ -19,6 +19,7 @@ persistida nem devolvida ao frontend — apenas enviada por e-mail ao dono.
 import re
 import secrets
 
+from core.checkout_sessions import create_checkout_session
 from core.security import hash_password
 from epi_backend.http_utils import structured_log
 from modules.companies.service import create_company, validate_company_payload
@@ -107,6 +108,14 @@ def provision_pending_tenant(connection, payload):
     )
     owner_user_id = int(cursor.lastrowid)
 
+    # Capability de checkout: liga o pagamento público a ESTA empresa pendente
+    # server-side (o cliente não escolhe a empresa pelo corpo da requisição —
+    # #383). O token bruto volta UMA vez ao cliente; só o hash é persistido.
+    checkout_token = create_checkout_session(
+        connection, company_id=company_id, tenant_id='',
+        owner_user_id=owner_user_id, plan_key=validated['plan_name'], cycle='',
+    )
+
     structured_log('info', 'onboarding.tenant_provisioned',
                    company_id=company_id, owner_user_id=owner_user_id,
                    plan_name=validated['plan_name'])
@@ -117,6 +126,7 @@ def provision_pending_tenant(connection, payload):
         'plan_name': validated['plan_name'],
         'user_limit': validated['user_limit'],
         'status': 'pending',
+        'checkout_token': checkout_token,
     }
 
 
