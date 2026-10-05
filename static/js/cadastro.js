@@ -75,9 +75,12 @@ function updateUserLimitHint() {
   $('user-limit-hint').textContent = t('users_hint_min').replace('{n}', min);
 }
 
-function goToCheckout(companyId) {
+function goToCheckout(checkoutToken) {
+  // Leva ao checkout a CAPABILITY server-side (checkout_token), não o company_id
+  // cru: a empresa/tenant são resolvidos no backend a partir do token (#383).
   const search = new URLSearchParams({
-    plan: ctx.plan, cycle: ctx.cycle, lang: ctx.lang, company_id: String(companyId),
+    plan: ctx.plan, cycle: ctx.cycle, lang: ctx.lang,
+    checkout_token: String(checkoutToken || ''),
   });
   window.location.href = `/pagamento?${search.toString()}`;
 }
@@ -102,7 +105,7 @@ async function onSubmit(event) {
       owner_email: $('owner_email').value.trim(),
     };
     const data = await postJson(API.signup, payload);
-    goToCheckout(data.company.company_id);
+    goToCheckout(data.company.checkout_token);
   } catch (err) {
     showError(String(err.message || err));
     submitBtn.disabled = false;

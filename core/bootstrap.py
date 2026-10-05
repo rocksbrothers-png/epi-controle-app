@@ -34,6 +34,7 @@ from modules.payments.service import (
     ensure_payment_tables as _ensure_payment_tables,
     ensure_subscription_tables as _ensure_subscription_tables,
 )
+from core.checkout_sessions import ensure_checkout_session_tables as _ensure_checkout_session_tables
 from modules.settings.service import migrate_module_visibility_unit_model as _migrate_module_visibility
 from modules.stock.service import (
     backfill_unit_stock_from_epis as _backfill_stock,
@@ -348,6 +349,7 @@ def init_db():
             _ensure_commercial_tables,
             _ensure_payment_tables,
             _ensure_subscription_tables,
+            _ensure_checkout_session_tables,
             schema.ensure_user_columns,
             schema.ensure_delivery_signature_columns,
             schema.ensure_delivery_handover_columns,

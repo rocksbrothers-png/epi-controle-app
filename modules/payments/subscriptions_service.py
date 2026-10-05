@@ -18,6 +18,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 
+from core.checkout_sessions import VALID_SUBSCRIPTION_ORIGINS as _VALID_SUBSCRIPTION_ORIGINS
 from epi_backend.db import row_to_dict
 from epi_backend.http_utils import structured_log
 from modules.payments import mp_client
@@ -87,8 +88,12 @@ def record_audit(connection, *, subscription_id, action, actor_user_id=None,
 def record_subscription(connection, *, company_id, plan_key, cycle, payment_method,
                         preapproval_id, preapproval_plan_id='', status='pending',
                         amount=0, currency='BRL', tenant_id='', created_by=None,
-                        is_recurring=True, raw=None):
-    """Insere uma assinatura e devolve o dict persistido (com subscription_id)."""
+                        is_recurring=True, raw=None, origin=''):
+    """Insere uma assinatura e devolve o dict persistido (com subscription_id).
+
+    `origin` registra como o binding empresa/tenant foi estabelecido:
+    'public_checkout' (capability de checkout) ou 'authenticated' (ator logado).
+    Vazio = registro legado (anterior ao binding server-side)."""
     now = datetime.now(UTC)
     subscription_id = str(uuid.uuid4())
     norm = normalize_status(status)
@@ -105,8 +110,8 @@ def record_subscription(connection, *, company_id, plan_key, cycle, payment_meth
              payment_method, is_recurring, preapproval_id, preapproval_plan_id,
              status, mp_status, amount, currency, renewal_date, next_payment_date,
              last_payment_date, cancel_date, cancel_reason, created_by, updated_by,
-             created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '', '', ?, ?, ?, ?)
+             origin, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '', '', ?, ?, ?, ?, ?)
         ''',
         (
             int(company_id) if company_id not in (None, '') else None,
@@ -117,6 +122,7 @@ def record_subscription(connection, *, company_id, plan_key, cycle, payment_meth
             renewal_date, next_date,
             int(created_by) if created_by not in (None, '') else None,
             int(created_by) if created_by not in (None, '') else None,
+            str(origin or ''),
             _now_iso(), _now_iso(),
         ),
     )
@@ -159,7 +165,14 @@ def get_subscription(connection, subscription_id):
 
 
 def get_current_subscription(connection, company_id):
-    """Assinatura "vigente" da empresa: prioriza não-cancelada mais recente."""
+    """Assinatura "vigente" da empresa.
+
+    Elegibilidade (fase 1F/1G-S, #383): entre as não-canceladas/expiradas,
+    PREFERE as que têm origem/binding válido ('public_checkout'/'authenticated'),
+    de modo que uma linha sem binding server-side não possa SOMBREAR uma
+    assinatura legítima. Compatibilidade histórica: se a empresa só tem linhas
+    legadas (origin vazio), mantém o comportamento anterior (mais recente
+    não-cancelada), sem invalidar registros pré-binding."""
     rows = connection.execute(
         'SELECT * FROM subscriptions WHERE company_id = ? ORDER BY id DESC',
         (int(company_id),),
@@ -167,9 +180,12 @@ def get_current_subscription(connection, company_id):
     items = [row_to_dict(r) for r in rows]
     if not items:
         return None
-    for item in items:
-        if normalize_status(item.get('status')) not in ('cancelled', 'expired'):
-            return item
+    live = [it for it in items
+            if normalize_status(it.get('status')) not in ('cancelled', 'expired')]
+    if live:
+        bound = [it for it in live
+                 if str(it.get('origin') or '') in _VALID_SUBSCRIPTION_ORIGINS]
+        return (bound or live)[0]
     return items[0]
 
 
@@ -227,7 +243,14 @@ def sync_subscription_status(connection, preapproval_id, mp_status, *, raw=None)
     # Onboarding: quando a assinatura passa a ativa, ativa a empresa pendente e
     # envia as credenciais do dono por e-mail. Idempotente (só age se a empresa
     # ainda estiver pendente); best-effort para nunca quebrar o webhook.
-    if norm == 'active' and item.get('company_id'):
+    #
+    # Gate de binding (fase 1G-S, #383): só ativa o tenant quando a assinatura
+    # tem origem/binding server-side válido. O `company_id` da linha veio do
+    # checkout_token (não do cliente), então a ativação não pode ser dirigida
+    # por uma linha sem binding. O webhook NÃO usa company/tenant do payload do
+    # MP — apenas o persistido na linha local (que veio do binding).
+    if (norm == 'active' and item.get('company_id')
+            and str(item.get('origin') or '') in _VALID_SUBSCRIPTION_ORIGINS):
         try:
             from modules.onboarding import service as onboarding_service
             onboarding_service.activate_tenant_and_notify(connection, item['company_id'])
@@ -324,7 +347,7 @@ def change_plan(connection, *, company_id, plan_id, plan_key, cycle, payer_email
         payment_method='card', preapproval_id=created.get('subscription_id'),
         preapproval_plan_id=str(plan_id), status=created.get('status') or 'pending',
         amount=amount or 0, tenant_id=tenant_id, created_by=actor_user_id,
-        is_recurring=True, raw=created,
+        is_recurring=True, raw=created, origin='authenticated',
     )
     record_audit(connection, subscription_id=new_sub['subscription_id'], action='changed_plan',
                  actor_user_id=actor_user_id, company_id=company_id, tenant_id=tenant_id, ip=ip,
@@ -350,7 +373,7 @@ def reactivate_subscription(connection, *, company_id, plan_id, plan_key, cycle,
         payment_method='card', preapproval_id=created.get('subscription_id'),
         preapproval_plan_id=str(plan_id), status=created.get('status') or 'pending',
         amount=amount or 0, tenant_id=tenant_id, created_by=actor_user_id,
-        is_recurring=True, raw=created,
+        is_recurring=True, raw=created, origin='authenticated',
     )
     record_audit(connection, subscription_id=new_sub['subscription_id'], action='reactivated',
                  actor_user_id=actor_user_id, company_id=company_id, tenant_id=tenant_id, ip=ip,

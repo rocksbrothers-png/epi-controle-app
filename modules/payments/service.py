@@ -114,6 +114,7 @@ def ensure_payment_tables(connection):
 # Aplicadas de forma idempotente para bases criadas antes destes campos.
 # Booleanos usam INTEGER 0/1 por compatibilidade SQLite (testes) / Postgres.
 _SUBSCRIPTION_EVOLUTION_COLUMNS = (
+    ("subscriptions", "origin", "TEXT NOT NULL DEFAULT ''"),
     ("subscriptions", "tenant_id", "TEXT NOT NULL DEFAULT ''"),
     ("subscriptions", "payment_cycle", "TEXT NOT NULL DEFAULT 'monthly'"),
     ("subscriptions", "payment_method", "TEXT NOT NULL DEFAULT 'card'"),
@@ -165,6 +166,7 @@ def ensure_subscription_tables(connection):
             cancel_reason TEXT NOT NULL DEFAULT '',
             created_by INTEGER,
             updated_by INTEGER,
+            origin TEXT NOT NULL DEFAULT '',
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );
@@ -530,6 +532,143 @@ def create_card_subscription(connection, payload):
         'status': status,
         'init_point': str(result.get('init_point') or ''),
         'payment_method': 'subscription',
+    }
+
+
+# ── Checkout público seguro (preço server-side) ───────────────────────────────
+#
+# As funções abaixo atendem o endpoint PÚBLICO de checkout. O preço vem
+# EXCLUSIVAMENTE do catálogo server-side (SUBSCRIPTION_PLANS) e o preapproval_plan
+# do Mercado Pago é resolvido por mapeamento server-side — o cliente NUNCA informa
+# `amount`/`plan_id` (fase 1G-S, #384). A empresa/tenant vêm do checkout_token
+# (binding server-side), nunca do corpo (#383).
+
+def resolve_catalog_plan(plan_key, cycle):
+    """Resolve (preço, rótulo) de um plano comprável a partir do catálogo.
+
+    Levanta ValueError para plano inexistente, ciclo inválido, ciclo sem preço,
+    ou plano `contact_only` (enterprise — não comprável pelo checkout público).
+    """
+    key = str(plan_key or '').strip().lower()
+    cyc = normalize_cycle(cycle)
+    if str(cycle or '').strip().lower() not in ('monthly', 'annual', 'mensal', 'anual',
+                                                'month', 'year', 'yearly'):
+        raise ValueError('Ciclo inválido.')
+    plan = SUBSCRIPTION_PLANS.get(key)
+    if not plan:
+        raise ValueError('Plano inexistente.')
+    if plan.get('contact_only'):
+        raise ValueError('Plano sob consulta (enterprise) não é comprável por este checkout.')
+    amount = (plan.get('prices') or {}).get(cyc)
+    if amount is None:
+        raise ValueError('Ciclo indisponível para este plano.')
+    return {'plan_key': key, 'cycle': cyc, 'amount': float(amount), 'label': plan['label']}
+
+
+def _cycle_recurrence(cycle):
+    """(frequency, frequency_type) do Mercado Pago para o ciclo do catálogo."""
+    return (1, 'years') if normalize_cycle(cycle) == 'annual' else (1, 'months')
+
+
+def create_public_card_subscription(connection, *, plan_key, cycle, payer_email,
+                                    card_token, company_id, external_reference=''):
+    """Cria uma assinatura (preapproval) para o checkout PÚBLICO com preço
+    server-side. `company_id` já vem resolvido do checkout_token (binding)."""
+    plan = resolve_catalog_plan(plan_key, cycle)
+    if not str(payer_email or '').strip():
+        raise ValueError('Campo obrigatório: payer_email')
+    if not str(card_token or '').strip():
+        raise ValueError('Campo obrigatório: card_token')
+
+    mp_plan_id = _mp_plan_ids_by_key(connection).get((plan['plan_key'], plan['cycle']), '')
+    body = {
+        'payer_email': str(payer_email),
+        'card_token_id': str(card_token),
+        'status': 'authorized',
+    }
+    if external_reference:
+        body['external_reference'] = str(external_reference)
+    if mp_plan_id:
+        # Preço vive no preapproval_plan do MP (criado pelo master com o preço
+        # do catálogo). O cliente não o informa: resolvido server-side.
+        body['preapproval_plan_id'] = str(mp_plan_id)
+    else:
+        # Sem preapproval_plan configurado: preço do catálogo server-side.
+        frequency, frequency_type = _cycle_recurrence(plan['cycle'])
+        body['reason'] = f"EPI Controle {plan['label']}"
+        body['auto_recurring'] = {
+            'frequency': frequency,
+            'frequency_type': frequency_type,
+            'transaction_amount': plan['amount'],
+            'currency_id': 'BRL',
+        }
+
+    result = mp_client.post('/preapproval', body)
+    mp_id = str(result.get('id') or '')
+    status = str(result.get('status') or 'pending')
+
+    _record_payment(
+        connection,
+        company_id=company_id, plan_id=plan['plan_key'], mp_payment_id=mp_id,
+        resource_type='preapproval', payer_email=payer_email,
+        payment_method='subscription', amount=plan['amount'], currency='BRL',
+        status=status, status_detail='', external_reference=external_reference,
+        qr_code='', qr_code_base64='', ticket_url=str(result.get('init_point') or ''),
+        raw=result,
+    )
+    return {
+        'subscription_id': mp_id,
+        'status': status,
+        'init_point': str(result.get('init_point') or ''),
+        'payment_method': 'subscription',
+        'preapproval_plan_id': str(mp_plan_id or ''),
+        'amount': plan['amount'],
+        'plan_key': plan['plan_key'],
+        'cycle': plan['cycle'],
+    }
+
+
+def create_public_oneoff_payment(connection, *, method_id, plan_key, cycle,
+                                  company_id, payer_payload, external_reference=''):
+    """Cria um pagamento avulso (Pix/boleto) para o checkout PÚBLICO com preço
+    server-side. `company_id` vem do checkout_token; preço, do catálogo."""
+    plan = resolve_catalog_plan(plan_key, cycle)
+    body = {
+        'transaction_amount': plan['amount'],
+        'description': f"Assinatura EPI Controle — {plan['label']}",
+        'payment_method_id': method_id,
+        'payer': _build_payer(payer_payload),
+    }
+    if external_reference:
+        body['external_reference'] = str(external_reference)
+
+    result = mp_client.post('/v1/payments', body)
+    mp_id = str(result.get('id') or '')
+    status = str(result.get('status') or 'pending')
+    status_detail = str(result.get('status_detail') or '')
+    transaction_data = ((result.get('point_of_interaction') or {}).get('transaction_data') or {})
+    qr_code = str(transaction_data.get('qr_code') or '')
+    qr_code_base64 = str(transaction_data.get('qr_code_base64') or '')
+    ticket_url = str(
+        transaction_data.get('ticket_url')
+        or (result.get('transaction_details') or {}).get('external_resource_url')
+        or ''
+    )
+    _record_payment(
+        connection,
+        company_id=company_id, plan_id=plan['plan_key'], mp_payment_id=mp_id,
+        resource_type='payment', payer_email=payer_payload.get('payer_email'),
+        payment_method=('pix' if method_id == 'pix' else 'boleto'),
+        amount=plan['amount'], currency=str(result.get('currency_id') or 'BRL'),
+        status=status, status_detail=status_detail, external_reference=external_reference,
+        qr_code=qr_code, qr_code_base64=qr_code_base64, ticket_url=ticket_url,
+        raw=result,
+    )
+    return {
+        'payment_id': mp_id, 'status': status, 'status_detail': status_detail,
+        'payment_method': ('pix' if method_id == 'pix' else 'boleto'),
+        'qr_code': qr_code, 'qr_code_base64': qr_code_base64, 'ticket_url': ticket_url,
+        'amount': plan['amount'], 'plan_key': plan['plan_key'], 'cycle': plan['cycle'],
     }
 
 

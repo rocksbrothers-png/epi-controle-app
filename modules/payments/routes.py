@@ -24,11 +24,12 @@ from contextlib import closing
 from pathlib import Path
 from urllib.parse import parse_qs
 
+from core import checkout_sessions
 from core.database import get_connection
 from core.repository import require_actor, require_master_actor
 from core.security import resolve_actor_user_id
 from epi_backend.config import BASE_DIR
-from epi_backend.http_utils import send_bytes, send_json, structured_log
+from epi_backend.http_utils import require_fields, send_bytes, send_json, structured_log
 from modules.payments import service, subscriptions_service
 from modules.payments.mp_client import MercadoPagoError
 
@@ -109,29 +110,76 @@ def handle_post_plan(handler, parsed, payload, match):
         return send_json(handler, 201, {'ok': True, 'plan': result})
 
 
+# ── Checkout público seguro ───────────────────────────────────────────────────
+#
+# Contrato (fase 1F/1G-S, #383/#384): a empresa/tenant vêm EXCLUSIVAMENTE do
+# `checkout_token` (capability server-side emitida no signup); o preço vem do
+# catálogo server-side. O cliente NÃO pode informar empresa, tenant, ator, preço
+# nem o plano do MP — esses campos no corpo geram 400 (falha explícita, nunca
+# ignorados em silêncio).
+
+_FORBIDDEN_AUTHORITY_FIELDS = (
+    'company_id', 'tenant_id', 'actor_user_id', 'created_by', 'amount',
+    'plan_id', 'frequency', 'frequency_type', 'currency',
+)
+
+_PAYER_FIELDS = (
+    'payer_email', 'payer_first_name', 'payer_last_name',
+    'payer_doc_type', 'payer_doc_number',
+)
+
+
+def _reject_authority_fields(payload):
+    present = [f for f in _FORBIDDEN_AUTHORITY_FIELDS if f in (payload or {})]
+    if present:
+        raise ValueError(
+            'Campos não permitidos no checkout público: ' + ', '.join(present)
+            + '. Empresa, tenant e preço são determinados pelo servidor.'
+        )
+
+
+def _server_external_reference(company_id, plan_key, cycle):
+    return f'checkout|company={company_id}|plan={plan_key}|cycle={cycle}'
+
+
 def handle_post_subscription(handler, parsed, payload, match):
     payload = payload or {}
+    _reject_authority_fields(payload)
+    require_fields(payload, ['checkout_token', 'plan_key', 'cycle', 'payer_email', 'card_token'])
+    # Valida o plano/ciclo ANTES de consumir o token (plano inválido → 400 sem
+    # queimar a capability).
+    service.resolve_catalog_plan(payload.get('plan_key'), payload.get('cycle'))
     with closing(get_connection()) as connection:
         try:
-            result = service.create_card_subscription(connection, payload)
-        except MercadoPagoError as exc:
+            binding = checkout_sessions.claim_checkout_session(connection, payload.get('checkout_token'))
+        except checkout_sessions.CheckoutSessionError:
             connection.rollback()
+            raise
+        company_id, tenant_id = binding['company_id'], binding['tenant_id']
+        plan_key = str(payload.get('plan_key') or '')
+        cycle = service.normalize_cycle(payload.get('cycle'))
+        try:
+            result = service.create_public_card_subscription(
+                connection, plan_key=plan_key, cycle=payload.get('cycle'),
+                payer_email=payload.get('payer_email'), card_token=payload.get('card_token'),
+                company_id=company_id,
+                external_reference=_server_external_reference(company_id, plan_key, cycle),
+            )
+        except MercadoPagoError as exc:
+            connection.rollback()  # libera o token para retry legítimo
             return _mp_error_response(handler, exc)
-        # Persiste a assinatura para o ciclo de vida (Minha Assinatura/histórico).
-        # Best-effort: uma falha aqui não invalida a assinatura já criada no MP.
+        # Persiste a assinatura com o binding server-side (origin=public_checkout,
+        # created_by=NULL — origem pública registrada no audit, nunca ator forjado).
         try:
             subscriptions_service.record_subscription(
                 connection,
-                company_id=payload.get('company_id'),
-                plan_key=str(payload.get('plan_key') or payload.get('plan_id') or ''),
-                cycle=service.normalize_cycle(payload.get('cycle')),
-                payment_method='card',
+                company_id=company_id, plan_key=result.get('plan_key') or plan_key,
+                cycle=result.get('cycle') or cycle, payment_method='card',
                 preapproval_id=result.get('subscription_id'),
-                preapproval_plan_id=str(payload.get('plan_id') or ''),
+                preapproval_plan_id=result.get('preapproval_plan_id') or '',
                 status=result.get('status') or 'pending',
-                amount=payload.get('amount') or 0,
-                tenant_id=str(payload.get('tenant_id') or ''),
-                created_by=payload.get('actor_user_id'),
+                amount=result.get('amount') or 0, tenant_id=tenant_id,
+                created_by=None, origin=checkout_sessions.ORIGIN_PUBLIC_CHECKOUT,
                 is_recurring=True, raw=result,
             )
         except Exception as exc:  # pragma: no cover - defensivo
@@ -140,26 +188,40 @@ def handle_post_subscription(handler, parsed, payload, match):
         return send_json(handler, 201, {'ok': True, 'subscription': result})
 
 
-def handle_post_pix(handler, parsed, payload, match):
+def _handle_public_oneoff(handler, parsed, payload, method_id):
+    payload = payload or {}
+    _reject_authority_fields(payload)
+    require_fields(payload, ['checkout_token', 'plan_key', 'cycle', 'payer_email'])
+    service.resolve_catalog_plan(payload.get('plan_key'), payload.get('cycle'))
     with closing(get_connection()) as connection:
         try:
-            result = service.create_pix_payment(connection, payload or {})
+            binding = checkout_sessions.claim_checkout_session(connection, payload.get('checkout_token'))
+        except checkout_sessions.CheckoutSessionError:
+            connection.rollback()
+            raise
+        company_id = binding['company_id']
+        plan_key = str(payload.get('plan_key') or '')
+        cycle = service.normalize_cycle(payload.get('cycle'))
+        payer_payload = {k: payload[k] for k in _PAYER_FIELDS if k in payload}
+        try:
+            result = service.create_public_oneoff_payment(
+                connection, method_id=method_id, plan_key=plan_key, cycle=payload.get('cycle'),
+                company_id=company_id, payer_payload=payer_payload,
+                external_reference=_server_external_reference(company_id, plan_key, cycle),
+            )
         except MercadoPagoError as exc:
             connection.rollback()
             return _mp_error_response(handler, exc)
         connection.commit()
         return send_json(handler, 201, {'ok': True, 'payment': result})
+
+
+def handle_post_pix(handler, parsed, payload, match):
+    return _handle_public_oneoff(handler, parsed, payload, 'pix')
 
 
 def handle_post_boleto(handler, parsed, payload, match):
-    with closing(get_connection()) as connection:
-        try:
-            result = service.create_boleto_payment(connection, payload or {})
-        except MercadoPagoError as exc:
-            connection.rollback()
-            return _mp_error_response(handler, exc)
-        connection.commit()
-        return send_json(handler, 201, {'ok': True, 'payment': result})
+    return _handle_public_oneoff(handler, parsed, payload, 'bolbradesco')
 
 
 # ── Assinaturas (ciclo de vida, autenticado e escopado por empresa) ────────────
