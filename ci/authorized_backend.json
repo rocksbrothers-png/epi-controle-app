@@ -1,0 +1,10 @@
+{
+  "_comentario": "Owner auditável do backend de produção AUTORIZADO deste produto (EST-V1.6-R1). Por produto, versionado, NÃO sincronizado byte-a-byte com o outro repositório (diferença legítima de ambiente). SaaS (com.livamobile) só pode falar com o backend SaaS. Trocar de backend exige editar este arquivo via PR revisado. Fontes: render.yaml, docs/DEPLOY_SAAS.md, env.example.",
+  "product": "saas",
+  "app_id": "com.livamobile.epicontrole",
+  "api_base_url": "https://epi-controle-app-livamobile-api.onrender.com",
+  "authorized_hosts": [
+    "epi-controle-app-livamobile-api.onrender.com"
+  ],
+  "forbidden_note": "epi-controle-app-gupy.onrender.com é o backend CORPORATIVO (ver docs/R05_CADEIA_DE_PROXY.md) e é PROIBIDO aqui (docs/DEPLOY_SAAS.md)."
+}
