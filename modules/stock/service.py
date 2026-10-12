@@ -9,6 +9,7 @@ from typing import NamedTuple
 
 from epi_backend.config import DATABASE_URL, DB_CONNECTOR_AVAILABLE
 from epi_backend.db import row_to_dict
+from modules.epis.validity import is_expired
 
 UTC = timezone.utc
 
@@ -1200,23 +1201,135 @@ def lookup_stock_item_by_qr(connection, company_id, unit_id, qr_code='', stock_i
     return connection.execute(query_sql, tuple(query_params)).fetchone()
 
 
+def _has_col(connection, table, column):
+    """Coluna existe? (cross-engine). Degrada para False em qualquer erro —
+    janela de migração: código novo (EST-V3) convive com schema antigo."""
+    try:
+        from core.schema import _col_exists
+        return bool(_col_exists(connection, table, column))
+    except Exception:
+        return False
+
+
+def item_physical_expiry(connection, stock_item_id):
+    """Validade FÍSICA da peça/lote (EST-V2) quando conhecida; '' caso contrário.
+
+    Lê ``epi_stock_items.physical_expiry_date``, que descola a validade do
+    catálogo (G02). Onde a coluna ainda não existe (schema antigo), devolve ''
+    e o chamador cai na validade do catálogo do EPI.
+    """
+    if not _has_col(connection, 'epi_stock_items', 'physical_expiry_date'):
+        return ''
+    try:
+        row = connection.execute(
+            'SELECT physical_expiry_date FROM epi_stock_items WHERE id = ?', (int(stock_item_id),)
+        ).fetchone()
+    except Exception:
+        return ''
+    if not row:
+        return ''
+    value = row['physical_expiry_date'] if hasattr(row, 'keys') else row[0]
+    return str(value or '').strip()
+
+
+def effective_delivery_expiry(connection, stock_item_id, catalog_validity):
+    """Validade que rege o uso/entrega da PEÇA (NT 146/2015): a validade física
+    do lote quando conhecida (EST-V2, G02), senão a validade do catálogo do EPI
+    (compatibilidade com itens anteriores à captura por lote)."""
+    return item_physical_expiry(connection, stock_item_id) or str(catalog_validity or '').strip()
+
+
+def blocked_physical_quantity(connection, company_id, unit_id, epi_id):
+    """Peças FISICAMENTE presentes porém bloqueadas (status ``blocked_*``) na
+    unidade. Base do desconto de disponibilidade (G01): o agregado
+    ``unit_epi_stock.quantity`` conta o físico (inclui o bloqueado); o disponível
+    real exclui o bloqueado. Derivado do status real das peças — sem contador
+    paralelo. Degrada para 0 onde ``epi_stock_items`` não existe (migração)."""
+    # IN explícito (não LIKE 'blocked_%'): preciso e cross-engine — o '%' literal
+    # colidiria com a formatação de parâmetros do psycopg2 e o '_' é curinga.
+    placeholders = ','.join(['?'] * len(BLOCKED_STOCK_STATUSES))
+    try:
+        row = connection.execute(
+            'SELECT COUNT(*) AS n FROM epi_stock_items '  # noqa: S608
+            'WHERE company_id = ? AND unit_id = ? AND epi_id = ? '
+            f"AND LOWER(COALESCE(status, '')) IN ({placeholders})",
+            (int(company_id), int(unit_id), int(epi_id), *BLOCKED_STOCK_STATUSES.keys()),
+        ).fetchone()
+    except Exception:
+        return 0
+    if not row:
+        return 0
+    return int((row['n'] if hasattr(row, 'keys') else row[0]) or 0)
+
+
+def record_received_item_physical(connection, stock_item_id, physical_expiry, actor_user_id, now,
+                                  *, evidence='Conferência de recebimento'):
+    """EST-V3 (G02/G15): grava a validade FÍSICA do lote na peça recebida.
+
+    - Preenche physical_expiry_date/expiry_source/expiry_evidence da peça: a
+      validade passa a viver NA PEÇA, não só no catálogo (G02) — dois lotes do
+      mesmo EPI com validades diferentes coexistem.
+    - Se o lote chega JÁ VENCIDO, a peça NÃO entra como disponível: vai para
+      ``blocked_expired`` com motivo estruturado (G15); permanece física
+      (contada no agregado), mas fora do disponível (ver blocked_physical_quantity).
+
+    ``expiry_source``/``expiry_evidence`` são obrigatórios junto de uma validade
+    física (constraint EST-V2); por isso a evidência nunca é vazia. NO-OP quando
+    a validade é desconhecida ou as colunas físicas não existem (compatibilidade).
+    """
+    physical_expiry = str(physical_expiry or '').strip()
+    if not physical_expiry or not _has_col(connection, 'epi_stock_items', 'physical_expiry_date'):
+        return
+    fragments = ['physical_expiry_date = ?', "expiry_source = 'manufacturer_document'", 'expiry_evidence = ?']
+    params = [physical_expiry, str(evidence or 'Conferência de recebimento')]
+    if is_expired(physical_expiry):
+        fragments.append("status = 'blocked_expired'")
+        if _has_col(connection, 'epi_stock_items', 'blocking_reason_code'):
+            fragments += [
+                'blocking_reason_code = ?', 'blocking_justification = ?',
+                'blocked_by_user_id = ?', 'blocked_at = ?',
+            ]
+            params += ['expired', 'Lote recebido já vencido (NT 146/2015)', int(actor_user_id), now]
+    connection.execute(
+        f'UPDATE epi_stock_items SET {", ".join(fragments)} WHERE id = ?',  # noqa: S608
+        (*params, int(stock_item_id)),
+    )
+
+
 def fetch_available_stock_items(connection, company_id, unit_id, epi_id):
-    # FEFO (First Expire, First Out): prioriza o lote com validade mais próxima.
-    # Como os itens de um mesmo EPI compartilham o prazo do fabricante, a data de
-    # fabricação mais antiga corresponde ao vencimento mais próximo → sai primeiro.
-    # Itens sem data de fabricação vão ao final (ordem de entrada), como fallback.
+    # FEFO (First Expire, First Out): prioriza a peça que vence primeiro.
+    # EST-V3 (G03): ordena pela VALIDADE FÍSICA do lote (physical_expiry_date)
+    # quando a coluna existe; peças sem validade física caem no fallback
+    # histórico (data de fabricação) e, por fim, as sem qualquer data.
+    has_phys = _has_col(connection, 'epi_stock_items', 'physical_expiry_date')
+    phys_select = 'esi.physical_expiry_date, ' if has_phys else ''
+    if has_phys:
+        # CAST(... AS TEXT) para o teste de "sem validade física" funcionar nos
+        # dois engines: em PostgreSQL physical_expiry_date é DATE (COALESCE com ''
+        # quebraria); em SQLite é TEXT. A ordenação por data real segue à parte.
+        order_by = (
+            "ORDER BY (CASE WHEN COALESCE(CAST(esi.physical_expiry_date AS TEXT), '') = '' THEN 1 ELSE 0 END) ASC, "
+            'esi.physical_expiry_date ASC, '
+            "(CASE WHEN COALESCE(esi.manufacture_date, '') = '' THEN 1 ELSE 0 END) ASC, "
+            'esi.manufacture_date ASC, esi.id ASC'
+        )
+    else:
+        order_by = (
+            "ORDER BY (CASE WHEN COALESCE(esi.manufacture_date, '') = '' THEN 1 ELSE 0 END) ASC, "
+            'esi.manufacture_date ASC, esi.id ASC'
+        )
     return connection.execute(
         (
             'SELECT esi.id, esi.qr_code_value, esi.epi_id, epis.name AS epi_name, esi.status, '
             'esi.glove_size, esi.size, esi.uniform_size, esi.manufacture_date, '
+            + phys_select +
             'epis.epi_validity_date '
             'FROM epi_stock_items esi '
             'JOIN epis ON epis.id = esi.epi_id '
             'WHERE esi.company_id = ? AND esi.unit_id = ? AND esi.epi_id = ? '
             "AND COALESCE(LOWER(esi.status), 'in_stock') IN ('in_stock', 'available') "
             "AND COALESCE(esi.qr_code_value, '') != '' "
-            "ORDER BY (CASE WHEN COALESCE(esi.manufacture_date, '') = '' THEN 1 ELSE 0 END) ASC, "
-            'esi.manufacture_date ASC, esi.id ASC'
+            + order_by
         ),
         (int(company_id), int(unit_id), int(epi_id))
     ).fetchall()
@@ -1298,10 +1411,49 @@ def set_stock_item_status(connection, item, new_status, reason, actor_user_id, a
     status = str(new_status or '').strip().lower()
     if status != UNBLOCK_STATUS and status not in BLOCKED_STOCK_STATUSES:
         raise ValueError('Status de bloqueio inválido.')
+    # EST-V3 (G04): desbloquear (→ in_stock) uma peça FISICAMENTE vencida é
+    # proibido — só o bloqueio administrativo/inspeção pode ser liberado. Item
+    # vencido não volta ao estoque: destina-se a descarte ou devolução. Usa a
+    # validade física do lote (EST-V2) com fallback ao catálogo do EPI.
+    if status == UNBLOCK_STATUS:
+        catalog_validity = ''
+        try:
+            crow = connection.execute(
+                'SELECT epi_validity_date FROM epis WHERE id = ?', (int(item['epi_id']),)
+            ).fetchone()
+            if crow is not None:
+                catalog_validity = str((crow['epi_validity_date'] if hasattr(crow, 'keys') else crow[0]) or '').strip()
+        except Exception:
+            catalog_validity = ''
+        effective_validity = item_physical_expiry(connection, int(item['id'])) or catalog_validity
+        if effective_validity and is_expired(effective_validity):
+            raise ValueError(
+                f'Desbloqueio recusado: item fisicamente vencido em {effective_validity}. '
+                'Item vencido não retorna ao estoque — destine para descarte ou devolução (NT 146/2015).'
+            )
     old_status = str(item['status'] or '')
+    # EST-V3 (§12): o bloqueio deixa de ser só uma troca de string — grava motivo
+    # estruturado, responsável e horário na própria peça (colunas EST-V2). O
+    # desbloqueio limpa esses campos. Dinâmico e guardado: onde as colunas ainda
+    # não existem (schema antigo), apenas status/updated_at são atualizados.
+    set_fragments = ['status = ?', 'updated_at = ?']
+    set_params = [status, now]
+    if _has_col(connection, 'epi_stock_items', 'blocking_reason_code'):
+        if status == UNBLOCK_STATUS:
+            set_fragments += [
+                'blocking_reason_code = NULL', 'blocking_justification = NULL',
+                'blocked_by_user_id = NULL', 'blocked_at = NULL',
+            ]
+        else:
+            reason_code = status[len('blocked_'):] if status.startswith('blocked_') else status
+            set_fragments += [
+                'blocking_reason_code = ?', 'blocking_justification = ?',
+                'blocked_by_user_id = ?', 'blocked_at = ?',
+            ]
+            set_params += [reason_code, str(reason or '').strip(), int(actor_user_id), now]
     connection.execute(
-        'UPDATE epi_stock_items SET status = ?, updated_at = ? WHERE id = ?',
-        (status, now, int(item['id'])),
+        f'UPDATE epi_stock_items SET {", ".join(set_fragments)} WHERE id = ?',  # noqa: S608
+        (*set_params, int(item['id'])),
     )
     create_stock_movement(
         connection, int(item['company_id']), int(item['unit_id']), int(item['epi_id']),
