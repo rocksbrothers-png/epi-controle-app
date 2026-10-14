@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr-fra \
     libgl1 \
     libglib2.0-0 \
+    libreoffice-writer libreoffice-calc python3-uno libseccomp2 fonts-crosextra-carlito \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -44,7 +45,8 @@ RUN python -c "from epi_backend.manufacture_date_ocr import detect_manufacture_d
 RUN tesseract --version
 RUN python -c "import pytesseract; print(pytesseract.get_tesseract_version())"
 RUN python scripts/check_ocr_runtime.py --require
+RUN python scripts/check_library_runtime.py
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python scripts/check_ocr_runtime.py --require && exec python app.py"]
+CMD ["sh", "-c", "python scripts/check_library_runtime.py && python scripts/check_ocr_runtime.py --require && exec python app.py"]
