@@ -109,6 +109,15 @@ Detalhes, números e ordem de extração em [`UBX_APPJS_AUDITORIA.md`](UBX_APPJS
 - Não cria cliente HTTP novo — o gate de unificação dos adaptadores HTTP continua valendo antes de
   extrair `integrations/`.
 
+## UBX-V2 (2026-10-25) — auditoria de integração, guarda ampliada e formatação compartilhada
+
+Detalhes em [`UBX_APPJS_AUDITORIA.md` §10](UBX_APPJS_AUDITORIA.md#10-ubx-v2-2026-10-25--auditoria-de-integração-e-primeira-extração).
+
+- Extraído: `modules/shared/business/value-format.js` (14 funções puras de formatação/leitura de
+  valores). `app.js` 20.281 → 20.200 linhas; 950 → 936 declarações.
+- Guarda: catraca de endpoints na camada UI, ciclos entre scripts, `business` sem dependência da UI
+  nem leitura de globais, limite de 500 linhas por módulo.
+
 ## Próximo passo
 Executar **Fase 0** (versão no build) como primeiro PR — elimina de vez o problema de cache/versão —
 seguida da **Fase 1** (consolidação HTTP) e **Fase 2** (Compras).
