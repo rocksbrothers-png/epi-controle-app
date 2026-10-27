@@ -136,7 +136,15 @@ Detalhes em [`UBX_APPJS_AUDITORIA.md` §12](UBX_APPJS_AUDITORIA.md#12-ubx-v4-202
 - Regras de acesso da interface como negócio puro (`modules/auth/business/access-rules.js`), com
   23.320 decisões comparadas antes × depois (0 divergências). O backend continua sendo quem autoriza.
 
+## UBX-V5, Etapa 1 (2026-10-27) — arquivamento genérico
+
+Mesmo commit do Corporate. Detalhes em [`UBX_APPJS_AUDITORIA.md` §13](UBX_APPJS_AUDITORIA.md#13-ubx-v5-etapa-1-2026-10-27--arquivamento-genérico).
+
+- `app.js` 18.167 → 17.638 linhas; 798 → 778 declarações; 112 → 108 endpoints.
+- `modules/archival/{business,integrations,ui}`: 214 cenários comparados com as funções originais
+  (0 divergências) e 17 sabotagens detectadas; contrato HTTP de arquivamento agora verificado contra o router.
+
 ## Próximo passo
-Decidir os achados de comportamento da §12.5 da auditoria (fora de refatoração pura); depois arquivamento
-genérico, Empresas/Unidades/CNPJ e, por último, navegação/bootstrap — sempre em paridade com o Corporate.
+UBX-V5, Etapa 2 (Unidades e CNPJ → Empresas → Minha Empresa → Comercial, este após a I18N-FULL-V1) e,
+por último, a Etapa 3 (navegação/bootstrap) — sempre em paridade com o Corporate.
 As Fases 0–2 acima seguem valendo para Compras.
