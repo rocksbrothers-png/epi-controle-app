@@ -1,0 +1,61 @@
+{
+  "note": "Results tied to each recorded headSha; whole-task translation remains incomplete.",
+  "runs": [
+    {
+      "conclusion": "success",
+      "databaseId": 40435981604,
+      "headSha": "9ff2e44e808184196e24ac313c32544f95dfb376",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40435981604",
+      "workflowName": "Backend Isolation Guard"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40435978478,
+      "headSha": "9ff2e44e808184196e24ac313c32544f95dfb376",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40435978478",
+      "workflowName": "Contract Tests"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40435975085,
+      "headSha": "9ff2e44e808184196e24ac313c32544f95dfb376",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40435975085",
+      "workflowName": "Flutter CI"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40435971743,
+      "headSha": "9ff2e44e808184196e24ac313c32544f95dfb376",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40435971743",
+      "workflowName": "Backend CI"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 40434077476,
+      "headSha": "a96107c9a724e6f20cec87a84c0cd30a8be1ee49",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40434077476",
+      "workflowName": "Portal Docs V1"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 40434074209,
+      "headSha": "a96107c9a724e6f20cec87a84c0cd30a8be1ee49",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40434074209",
+      "workflowName": "Flutter CI"
+    },
+    {
+      "conclusion": "failure",
+      "databaseId": 40434070997,
+      "headSha": "a96107c9a724e6f20cec87a84c0cd30a8be1ee49",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40434070997",
+      "workflowName": "Backend CI"
+    }
+  ]
+}
