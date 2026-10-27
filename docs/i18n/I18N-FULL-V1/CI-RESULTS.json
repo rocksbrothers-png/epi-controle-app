@@ -1,6 +1,22 @@
 {
-  "note": "Results tied to each recorded headSha; whole-task translation remains incomplete. Backend failure at 624d8915/75185fb is a stale signature assertion, corrected in the next checkpoint while keeping required baseUrl and host isolation.",
+  "note": "Results are tied to headSha; task remains incomplete. Backend CI at 454bee68/8863a2d failed only the old exact-source assertion for the unknown KPI. This checkpoint updates that guard and verifies null versus zero in the real widget. Corporate tests/ subsequently passed 4471/49 skipped locally; next head still requires CI.",
   "runs": [
+    {
+      "workflowName": "Backend CI",
+      "databaseId": 40538505854,
+      "conclusion": "failure",
+      "headSha": "8863a2dbb37fd3af96fac02fedf902aac7382c7e",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40538505854"
+    },
+    {
+      "workflowName": "Flutter CI",
+      "databaseId": 40538498855,
+      "conclusion": "success",
+      "headSha": "8863a2dbb37fd3af96fac02fedf902aac7382c7e",
+      "status": "completed",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40538498855"
+    },
     {
       "conclusion": "failure",
       "databaseId": 40534726400,
