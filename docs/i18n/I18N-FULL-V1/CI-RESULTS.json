@@ -1,6 +1,22 @@
 {
-  "note": "Results tied to headSha. Existing view bindings checkpoint Backend CI and Flutter CI approved in both products. Later badge changes need CI at their own head. Whole-task coverage and final independent audit remain incomplete.",
+  "note": "Flutter CI approved the badge/feedback checkpoints in both products. Backend Test & Coverage had one stale exact-component-name assertion; all other tests passed (4459 Corporate / 4400 SaaS). Null classification guard and wrapper delegation are preserved. Assertion adapted; 47 targeted tests passed locally in each. New Backend CI is required for the correction. Whole task remains incomplete.",
   "runs": [
+    {
+      "workflowName": "Backend CI",
+      "databaseId": 40561808926,
+      "headSha": "3010613f0731fc143bcb2290e70a939a0433204c",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40561808926"
+    },
+    {
+      "workflowName": "Flutter CI",
+      "databaseId": 40561803016,
+      "headSha": "3010613f0731fc143bcb2290e70a939a0433204c",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/rocksbrothers-png/epi-controle-app/actions/runs/40561803016"
+    },
     {
       "workflowName": "Backend CI",
       "databaseId": 40558062125,
