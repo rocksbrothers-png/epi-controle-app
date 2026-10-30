@@ -862,6 +862,11 @@ FIX-EMPRESAS-ACTIVE-V1, passou a exigir `active == '1'`.
 ### 15.4 Defeito preexistente encontrado (fora do escopo; corrigido depois em FIX-EMPRESAS-ACTIVE-V1)
 
 Corrigido em PR próprio: ver `docs/FIX_EMPRESAS_ACTIVE_V1.md`. Texto original do achado:
+O fixture aceita `active: ''`; o harness fixava esse valor com o marcador `KNOWN-DEFECT` (§15.4), para que a correção
+aparecesse como falha esperada, e não passasse em silêncio. Com a correção da §15.4 ele passou a exigir `active: '1'`
+ao editar e `active: '0'` ao cadastrar escolhendo "Inativa".
+
+### 15.4 Defeito preexistente encontrado (fora do escopo da refatoração; corrigido à parte)
 
 O `<select name="active">` do formulário de Empresas (`static/views/empresas.html`) usa `data-i18n-value` nas
 opções; o `i18n.js` troca o `value` delas pelo texto traduzido ("Ativa"/"Inativa"), o seletor perde `1`/`0` e o
@@ -873,6 +878,14 @@ texto visível fica em português em todos os idiomas. Ativar/inativar pela list
 Nenhum outro `data-i18n-value` em `<option>`/campo enviado existe em `static/views` ou `static/index.html`. Vem de #974; o
 I18N-FULL-V1 mantém o atributo. Correção proposta à parte (remover `data-i18n-value` das duas opções, mantendo o
 texto traduzido por `data-i18n`, com teste), por ser mudança de comportamento.
+
+**Correção (PR à parte, sobre esta fatia).** As duas opções trocaram `data-i18n-value` por `data-i18n`: o `value`
+fica `1`/`0` em todos os idiomas e o rótulo passa a ser traduzido. `static/index.html` regenerado
+(`scripts/build_index.py build`; o `asset_version` não muda). Regressão em duas camadas:
+`tests/test_i18n_value_em_campos_enviados.py` reprova qualquer `data-i18n-value` em `<option>`/`<input>`/`<select>`/
+`<textarea>`/`<button>` de `static/views/*.html` e `static/index.html` (falha na versão anterior, nas 4 ocorrências);
+`scripts/browser/ubx_companies.py` exige o seletor em `1` ao abrir a edição e o cadastro, `active: '1'` no `PUT` e
+`active: '0'` no `POST` após escolher "Inativa" — 20/20 nos 5 idiomas com a correção, e falha sem ela.
 
 ### 15.5 Auditoria independente
 
