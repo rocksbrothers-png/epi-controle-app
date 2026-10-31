@@ -1,6 +1,6 @@
 # SECURITY-CSP-V1 — Content Security Policy aplicada na SPA
 
-Base: Corporate `55f7c11f` / SaaS `f1299e6` (já com SECURITY-OUTPUT-XSS-V2).
+Projeto: **SaaS**. Base: `main` `f1299e6` (já com SECURITY-OUTPUT-XSS-V2).
 Objetivo: passar a CSP de Report-Only para uma política efetivamente aplicada, sem interromper funcionalidades
 legítimas, e sem ligar política restritiva em produção antes de validar o impacto.
 
@@ -31,21 +31,21 @@ Ausentes: `object-src`, `form-action`, `worker-src`, `media-src`. Rotas com pol�
 | `eval`, `new Function`, `setTimeout` com string, `javascript:` | nenhum |
 | Estilo | folhas próprias, Google Fonts, 467 atributos `style=` no HTML e muitos nos templates |
 | Imagem | logotipos, fotos de EPI e assinaturas em `data:`; QR code de `api.qrserver.com`; `blob:` |
-| Conexão | só a própria origem (`/api/...`), nos dois projetos |
+| Conexão | só a própria origem (`/api/...`) |
 | Câmera | `getUserMedia` + bibliotecas de leitura (QR/código de barras) |
 | Popups de impressão | `window.open` + `document.write` (herdam a CSP da página; só estilo inline, sem script) |
 | Frames | nenhum |
 
 **Outras superfícies:**
 - **Portal do colaborador:** parte da própria SPA (`?employee_token=`), mesma política.
-- **Cadastro (só SaaS, `/cadastro`, `static/cadastro.html`):** recebe a política da SPA. É compatível: script
+- **Cadastro (`/cadastro`, `static/cadastro.html`):** recebe a política da SPA. É compatível: script
   `type="module"` da própria origem, `<style>` inline (permitido em `style-src`), `fetch` só para a própria origem e
   navegação para `/pagamento`. Coberto pela guarda de handler inline; não é exercitado pelo harness.
 - **Portal do fornecedor** (`/fornecedor/<token>`): página autocontida com um `<script>` embutido.
 - **Checkout** (`/pagamento`, `/checkout`, `pagamento.html`): SDK do Mercado Pago (scripts, frames e conexões de
   vários domínios).
-- **Flutter Web** (`/app/`): o Corporate serve o build em `static/app`; o SaaS publica o Flutter separadamente
-  (outra origem para a API, Firebase). O SDK do Flutter não está disponível neste ambiente.
+- **Flutter Web**: este projeto publica o Flutter separadamente (outra origem para a API, Firebase); `/app/` no
+  `app.py` recebe a política Report-Only do Flutter. O SDK do Flutter não está disponível neste ambiente.
 
 ## 2. Problemas encontrados
 
@@ -94,7 +94,7 @@ Ausentes: `object-src`, `form-action`, `worker-src`, `media-src`. Rotas com pol�
   - o registro é zerado a cada resposta;
   - a Biblioteca segue só com a sua política.
 - **`report-uri`:** continua vindo de `CSP_REPORT_URI`. Agora também recusa espaço e `;`, que injetariam diretivas.
-- **`render.yaml` (os dois projetos):** declara `CSP_MODE=report-only` e `CSP_REPORT_URI=/api/csp-report` em cada
+- **`render.yaml`:** declara `CSP_MODE=report-only` e `CSP_REPORT_URI=/api/csp-report` em cada
   serviço que roda o `app.py`. Assim produção fica em Report-Only mesmo que `APP_ENV` não seja `prod`/`production`
   (o blueprint não declara `APP_ENV`). Um teste falha se o blueprint deixar de declarar isso.
 - **`scripts/check_web_hardening.py`:** exige no `index.html` nenhum `<script>` inline e nenhum handler `on*=`, e na
@@ -155,26 +155,34 @@ Ausentes: `object-src`, `form-action`, `worker-src`, `media-src`. Rotas com pol�
 
 Em cada idioma: login pelo formulário, troca de idioma e navegação por 19 telas, com 0 violações.
 
-### Corporate e SaaS
+### Independência entre projetos
 
-O código da CSP (`core/csp.py`, `app.py`, portal do fornecedor e frontend) é o mesmo nos dois projetos. Os resultados
-foram os mesmos nos dois:
-- testes unitários;
+Este documento e esta PR valem só para o **SaaS**. Aprovação, testes, auditoria, merge e deploy deste projeto
+dependem exclusivamente da decisão tomada para ele; nada aqui é condicionado ao Corporate, nem o contrário.
+
+- Não há acoplamento de código, banco, configuração, permissões ou infraestrutura com o Corporate: a política, o
+  `CSP_MODE` e o `render.yaml` são deste repositório e deste ambiente.
+- A paridade funcional com o Corporate existe onde se aplica (mesma política para a mesma SPA), mas é mantida por
+  mudanças próprias em cada repositório, revisadas e integradas de forma independente.
+
+Resultados neste projeto:
+- testes unitários da CSP;
 - harness com API sintética: 5/5 idiomas e 6/6 negativos;
-- fluxo real com `app.py` + PostgreSQL local: 5/5 idiomas e 19 telas;
+- fluxo real com `app.py` + PostgreSQL local descartável: 5/5 idiomas e 19 telas;
 - 665 testes JS;
 - pytest completo, com só a falha ODS preexistente.
 
-No SaaS, `scripts/check_web_hardening.py` já falhava na `main` (`f1299e6`): o Dockerfile do SaaS não empacota o
-Flutter (`./static/app/`), que é publicado à parte. As verificações novas da CSP rodam antes desse ponto e passam. O
-script não faz parte do CI.
+`scripts/check_web_hardening.py` já falhava na `main` (`f1299e6`): o Dockerfile deste projeto não empacota o Flutter
+(`./static/app/`), que é publicado à parte. As verificações novas da CSP rodam antes desse ponto e passam. O script
+não faz parte do CI.
 
 ## 5. Implantação (não feita por esta demanda)
 
 1. Publicar com o padrão. Em produção, a SPA fica em **Report-Only**, com a política estrita. Configurar
    `CSP_REPORT_URI=/api/csp-report`: o endpoint já existe e registra `security.csp_report` no log.
 2. Acompanhar os relatórios em uso real (perfis, idiomas, câmera, importação de planilha, impressão).
-3. Sem violações legítimas, definir `CSP_MODE=enforce` em produção (no `render.yaml`, em outra PR). O rollback é
+3. Sem violações legítimas, definir `CSP_MODE=enforce` em produção **deste projeto** (no `render.yaml`, em outra
+   PR), só com autorização específica para este ambiente. A decisão é independente da do Corporate. O rollback é
    voltar a variável, sem deploy de código. O modo é lido na inicialização do processo, então a troca exige
    reiniciar o serviço (o Render reinicia ao mudar uma variável).
 
@@ -184,8 +192,8 @@ script não faz parte do CI.
   atributos. Injeção de CSS não executa script, mas ainda permite alterar o visual e alguns vazamentos por seletor.
   Remover exige migrar os estilos para classes (demanda própria).
 - **Flutter Web e checkout continuam em Report-Only:**
-  - O build do Flutter não pôde ser gerado nem testado aqui (o SDK não está disponível), e o SaaS publica o Flutter
-    em outra origem. O `index.html` do Flutter tem um script inline que precisa de hash.
+  - O build do Flutter não pôde ser gerado nem testado aqui (o SDK não está disponível), e este projeto publica o
+    Flutter em outra origem. O `index.html` do Flutter tem um script inline que precisa de hash.
   - O SDK do Mercado Pago só pode ser validado com o serviço real.
 - **SheetJS sem versão fixa:** `https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js` (sem versão nem SRI). A CSP
   libera esse URL exato, mas o conteúdo pode mudar no CDN. Recomendado fixar a versão ou servir localmente.
@@ -207,7 +215,7 @@ Mantidas como registro, conforme a autorização:
   logs. Nenhum dado foi alterado.
 - **Criação de usuário com `active=0` ignorado:** comportamento anterior; o formulário não oferece a opção.
 - **Falha preexistente do teste ODS** (`test_migration_phase2_formats[ods]`): `No module named 'odf'` localmente.
-  Também falha na `main` dos dois projetos; no CI, que instala a dependência, passa.
+  Também falha na `main` deste projeto (`f1299e6`); no CI, que instala a dependência, passa.
 - **Módulos fora da revisão XSS (V1/V2):** avaliações de EPI, Biblioteca de Segurança, migração e portais (do
   colaborador e do fornecedor).
   - Não fazem parte da varredura de texto contaminado.

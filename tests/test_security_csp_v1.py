@@ -174,8 +174,8 @@ def test_supplier_portal_policy_allows_only_its_own_inline_script():
 
 
 def _frontend_sources():
-    # Todo HTML e JS servido de static/ (inclusive os scripts de topo, pagamento.html e, no SaaS,
-    # cadastro.html), menos os testes JS e o build do Flutter Web (static/app, política própria).
+    # Todo HTML e JS servido de static/ (inclusive os scripts de topo, pagamento.html e páginas extras como
+    # cadastro.html, quando existirem), menos os testes JS e o build do Flutter Web (static/app, política própria).
     for path in sorted(STATIC.rglob('*')):
         rel = path.relative_to(STATIC).as_posix()
         if path.suffix in ('.js', '.html') and not rel.startswith(('js/test/', 'app/')):
