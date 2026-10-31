@@ -57,6 +57,9 @@ jobs:
               - ".github/workflows/backend-ci.yml"
             frontend:
               - "static/**"
+              - "scripts/i18n/**"
+              - "ci/requirements-i18n.txt"
+              - ".github/workflows/i18n.yml"
               - ".github/workflows/backend-ci.yml"
 
   test:
@@ -97,6 +100,8 @@ jobs:
           ruby-version: '3.3'
 
       - name: Run tests with coverage
+        # The release contract tests execute Fastlane with instrumented commands.
+        # Ruby is installed explicitly in the preceding step.
         # Cobertura é relatada mas ainda NÃO é gate (sem --cov-fail-under).
         # Meça o baseline nos primeiros runs e então ative o mínimo (ex.: 80%).
         run: |
@@ -117,6 +122,14 @@ jobs:
             htmlcov/
             junit.xml
           retention-days: 14
+
+  i18n:
+    name: I18N Runtime
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/i18n.yml
+    permissions:
+      contents: read
 
   frontend-tests:
     name: Frontend Tests (JS)
