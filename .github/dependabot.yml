@@ -26,6 +26,12 @@ updates:
       # imagem (tesseract/opencv/wheels).
       - dependency-name: "numpy"
         versions: [">=2.5.0"]
+      # FIX-SAAS-PYMUPDF-BUILD-V1 (TEMPORÁRIO): o PyMuPDF 2.0 roda inferência ONNX no import
+      # e travou o build Docker do Render (check_library_runtime.py > 100 s). A série 1.x
+      # continua recebendo atualizações normalmente; só a 2.x fica fora. Remova após validar
+      # a 2.x com build Docker real (docs/FIX_SAAS_PYMUPDF_BUILD_V1.md).
+      - dependency-name: "pymupdf"
+        versions: [">=2.0"]
 
   # ── Flutter / Dart (workspace melos) ────────────────────────────────────────
   - package-ecosystem: pub

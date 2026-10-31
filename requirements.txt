@@ -12,7 +12,12 @@ openpyxl>=3.1.5,<4
 odfpy>=1.4.1,<2
 
 # Private library preview (Office requires native LibreOffice + python3-uno + libseccomp).
-PyMuPDF>=2.0,<3
+# FIX-SAAS-PYMUPDF-BUILD-V1: série 1.x até validar a 2.x. O PyMuPDF 2.0 importa onnxruntime e
+# executa um modelo de layout já no `import pymupdf` (dentro do worker isolado da Biblioteca):
+# ~1 GB de memória virtual e uma thread por CPU visível, muito lento sob cota de CPU — o build
+# Docker no Render estourou o limite de 100 s de check_library_runtime.py. Ver
+# docs/FIX_SAAS_PYMUPDF_BUILD_V1.md antes de remover.
+PyMuPDF>=1.28.2,<2
 xlrd>=2.0.2,<3
 olefile>=0.47,<1
 defusedxml>=0.7.1,<1
