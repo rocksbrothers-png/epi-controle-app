@@ -972,9 +972,10 @@ class EpiHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             structured_log('error', 'http.unhandled_error', method='GET', path=parsed.path, error=str(exc))
             try:
-                return send_json(self, 500, {'error': public_error_message(exc)})
+                send_json(self, 500, {'error': public_error_message(exc)})
             except (BrokenPipeError, ConnectionResetError):
-                return
+                pass
+            return
 
     def do_HEAD(self):
         parsed = urlparse(self.path)
@@ -1052,9 +1053,10 @@ class EpiHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             structured_log('error', 'http.unhandled_error', method='POST', path=parsed.path, error=str(exc))
             try:
-                return send_json(self, 500, {'error': public_error_message(exc)})
+                send_json(self, 500, {'error': public_error_message(exc)})
             except (BrokenPipeError, ConnectionResetError):
-                return
+                pass
+            return
 
     def do_PUT(self):
         parsed = urlparse(self.path)
@@ -1102,9 +1104,10 @@ class EpiHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             structured_log('error', 'http.unhandled_error', method='PUT', path=parsed.path, error=str(exc))
             try:
-                return send_json(self, 500, {'error': public_error_message(exc)})
+                send_json(self, 500, {'error': public_error_message(exc)})
             except (BrokenPipeError, ConnectionResetError):
-                return
+                pass
+            return
 
     def do_DELETE(self):
         parsed = urlparse(self.path)
@@ -1146,9 +1149,10 @@ class EpiHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             structured_log('error', 'http.unhandled_error', method='DELETE', path=parsed.path, error=str(exc))
             try:
-                return send_json(self, 500, {'error': public_error_message(exc)})
+                send_json(self, 500, {'error': public_error_message(exc)})
             except (BrokenPipeError, ConnectionResetError):
-                return
+                pass
+            return
 
 
 # ── Server startup ───────────────────────────────────────────────────────────
