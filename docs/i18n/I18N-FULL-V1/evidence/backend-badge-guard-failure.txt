@@ -1,0 +1,2 @@
+2026-10-27T18:44:42.6664357Z FAILED tests/test_278_entrega_por_unidade.py::test_o_badge_da_entrega_so_aparece_com_classificacao - AssertionError: o badge perdeu a guarda de `null` — sem classificação, sem badge
+2026-10-27T18:44:42.6697425Z ====== 1 failed, 4400 passed, 61 skipped, 1 warning in 105.95s (0:01:45) =======
