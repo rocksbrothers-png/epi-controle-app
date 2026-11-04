@@ -1,0 +1,33 @@
+00:00 +0: loading /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart
+00:00 +0: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: (setUpAll)
+00:00 +0: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback pt-BR rows keeps canonical filters and input
+00:02 +1: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback pt-BR rows-manager keeps canonical filters and input
+00:03 +2: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback pt-BR empty keeps canonical filters and input
+00:03 +3: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback pt-BR error keeps canonical filters and input
+00:03 +4: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback en-US rows keeps canonical filters and input
+00:05 +5: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback en-US rows-manager keeps canonical filters and input
+00:05 +6: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback en-US empty keeps canonical filters and input
+00:05 +7: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback en-US error keeps canonical filters and input
+00:06 +8: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback es-ES rows keeps canonical filters and input
+00:06 +9: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback es-ES rows-manager keeps canonical filters and input
+00:07 +10: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback es-ES empty keeps canonical filters and input
+00:07 +11: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback es-ES error keeps canonical filters and input
+00:07 +12: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback fr-FR rows keeps canonical filters and input
+00:08 +13: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback fr-FR rows-manager keeps canonical filters and input
+00:08 +14: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback fr-FR empty keeps canonical filters and input
+00:08 +15: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback fr-FR error keeps canonical filters and input
+00:08 +16: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback no-NO rows keeps canonical filters and input
+00:09 +17: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback no-NO rows-manager keeps canonical filters and input
+00:09 +18: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback no-NO empty keeps canonical filters and input
+00:09 +19: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: feedback no-NO error keeps canonical filters and input
+00:09 +20: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: known current and legacy statuses are labels while unknown values stay opaque
+00:09 +21: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/feedback_i18n_test.dart: (tearDownAll)
+00:09 +21: loading /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart
+00:10 +21: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart: generated base pt matches regional BR for every message
+00:10 +22: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart: generated base en matches regional US for every message
+00:10 +23: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart: generated base es matches regional ES for every message
+00:10 +24: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart: generated base fr matches regional FR for every message
+00:11 +25: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/i18n_catalogue_runtime_test.dart: generated base no matches regional NO for every message
+00:11 +26: loading /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/localized_epi_badge_test.dart
+00:11 +26: /workspace/i18n-full-v1/saas/flutter/apps/epi_admin/test/localized_epi_badge_test.dart: all status labels follow live locale changes and retain status colors
+00:15 +27: All tests passed!

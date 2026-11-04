@@ -159,23 +159,29 @@ def test_report_uri_is_appended_only_when_safe(report_uri, expected, monkeypatch
         assert value == csp.serialize(csp.SPA_DIRECTIVES)
 
 
-def test_supplier_portal_policy_allows_only_its_own_inline_script():
+def test_supplier_portal_policy_allows_only_its_three_modules_with_matching_integrity():
     html = supplier_portal_page.PORTAL_PAGE_HTML
-    # O hash cobre exatamente os bytes entre <script> e </script> da página servida.
-    start = html.index('<script>') + len('<script>')
-    body = html[start:html.index('</script>', start)]
-    digest = base64.b64encode(hashlib.sha256(body.encode('utf-8')).digest()).decode('ascii')
+    scripts = re.findall(r'<script src="([^"?]+)\?v=([a-f0-9]+)" integrity="([^"]+)"></script>', html)
+    assert [source for source, _, _ in scripts] == [
+        '/i18n.js', '/js/modules/purchases/integrations/supplier-portal-api.js', '/js/views/supplier-portal.js',
+    ]
+    expected = []
+    for source, version, integrity in scripts:
+        digest = hashlib.sha256((STATIC / source.lstrip('/')).read_bytes()).digest()
+        assert integrity == 'sha256-' + base64.b64encode(digest).decode('ascii')
+        assert version == digest.hex()[:12]
+        expected.append(f"'{integrity}'")
     policy = supplier_portal_page.PORTAL_PAGE_CSP
-    assert _directive(policy, 'script-src') == [f"'sha256-{digest}'"]
+    assert _directive(policy, 'script-src') == expected
     assert _directive(policy, 'default-src') == ["'none'"]
     assert _directive(policy, 'connect-src') == ["'self'"]
-    assert html.lower().count('<script') == 1
+    assert html.lower().count('<script') == 3
     assert not re.search(r'\son[a-z]+\s*=', html.replace("addEventListener", ''))
 
 
 def _frontend_sources():
-    # Todo HTML e JS servido de static/ (inclusive os scripts de topo, pagamento.html e páginas extras como
-    # cadastro.html, quando existirem), menos os testes JS e o build do Flutter Web (static/app, política própria).
+    # Todo HTML e JS servido de static/ (inclusive os scripts de topo, pagamento.html e, no SaaS,
+    # cadastro.html), menos os testes JS e o build do Flutter Web (static/app, política própria).
     for path in sorted(STATIC.rglob('*')):
         rel = path.relative_to(STATIC).as_posix()
         if path.suffix in ('.js', '.html') and not rel.startswith(('js/test/', 'app/')):

@@ -1,0 +1,17 @@
+{
+  "stage": "operational-alerts-and-flutter-aliases",
+  "complete": false,
+  "product": "saas",
+  "javascript_suite": 523,
+  "browser_alert_locales": 5,
+  "backend_alert_metadata_tests": 8,
+  "flutter_generated_delegate_tests": 5,
+  "flutter_messages_per_locale": 781,
+  "flutter_arb_tests": 5,
+  "full_python": {
+    "passed": 4355,
+    "skipped": 45,
+    "failed": 0
+  },
+  "merge_ready": false
+}
