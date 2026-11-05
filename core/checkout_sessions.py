@@ -27,6 +27,11 @@ from epi_backend.config import UTC
 
 # TTL padrão de 24h; configurável por ambiente sem tocar código.
 CHECKOUT_TOKEN_TTL_SECONDS = int(os.environ.get('CHECKOUT_TOKEN_TTL_SECONDS', str(24 * 3600)))
+# Janela extra, depois do TTL, em que o MESMO token ainda autoriza só a leitura
+# do status dos pagamentos da empresa (a página acompanha Pix/boleto/cartão
+# depois de consumir o token). Nunca autoriza criar assinatura ou pagamento.
+CHECKOUT_STATUS_GRACE_SECONDS = 72 * 3600
+_MAX_TOKEN_LENGTH = 256
 _TOKEN_NBYTES = 32  # >= 32 bytes de entropia (token_urlsafe usa os.urandom)
 
 # Origens válidas de binding de uma assinatura (ver subscriptions_service).
@@ -158,3 +163,34 @@ def claim_checkout_session(connection, raw_token):
         'plan_key': str(plan_key or ''),
         'cycle': str(cycle or ''),
     }
+
+
+def resolve_status_company(connection, raw_token):
+    """company_id ligado ao token, para LEITURA de status; None se inválido.
+
+    Somente leitura: não consome nem altera a sessão. Aceita token já consumido
+    (o pagamento acabou de ser criado com ele), até `expires_at` + janela de
+    status. Token ausente, desconhecido, longo demais ou fora da janela → None.
+    O chamador ainda confere que o pagamento pertence a essa empresa.
+    """
+    token = str(raw_token or '').strip()
+    if not token or len(token) > _MAX_TOKEN_LENGTH:
+        return None
+    row = connection.execute(
+        'SELECT company_id, expires_at FROM checkout_sessions WHERE token_hash = ?',
+        (hash_token(token),),
+    ).fetchone()
+    if not row:
+        return None
+    company_id, expires_at = row[0], row[1]
+    if company_id in (None, ''):
+        return None
+    try:
+        expires = datetime.fromisoformat(str(expires_at).replace('Z', '+00:00'))
+    except ValueError:
+        return None
+    if expires.tzinfo is None:
+        expires = expires.replace(tzinfo=UTC)
+    if _now() > expires + timedelta(seconds=CHECKOUT_STATUS_GRACE_SECONDS):
+        return None
+    return int(company_id)

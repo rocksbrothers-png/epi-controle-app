@@ -57,6 +57,14 @@ async function getJson(url) {
   return res.json().catch(() => ({}));
 }
 
+// Status é privado (S1): a página prova a empresa com a MESMA capability de
+// checkout recebida no cadastro, num cabeçalho (fora da URL e dos logs).
+async function getStatusJson(url) {
+  if (!ctx.checkoutToken) { return {}; }
+  const res = await fetch(url, { headers: { Accept: 'application/json', 'X-Checkout-Token': ctx.checkoutToken } });
+  return res.json().catch(() => ({}));
+}
+
 async function postJson(url, body) {
   const res = await fetch(url, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
@@ -221,7 +229,7 @@ function showPixQr(payment) {
 function startStatusPolling(paymentId, resourceType) {
   if (statusTimer) clearInterval(statusTimer);
   statusTimer = setInterval(async () => {
-    const data = await getJson(`${API.status}?payment_id=${encodeURIComponent(paymentId)}&resource_type=${resourceType}`);
+    const data = await getStatusJson(`${API.status}?payment_id=${encodeURIComponent(paymentId)}&resource_type=${encodeURIComponent(resourceType)}`);
     const status = data.payment && data.payment.status;
     if (status) $('status-line').textContent = `Status: ${status}`;
     if (['approved', 'authorized', 'cancelled', 'rejected'].includes(status)) {
