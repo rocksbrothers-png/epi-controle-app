@@ -30,7 +30,7 @@ CHECKOUT_TOKEN_TTL_SECONDS = int(os.environ.get('CHECKOUT_TOKEN_TTL_SECONDS', st
 # Janela extra, depois do TTL, em que o MESMO token ainda autoriza só a leitura
 # do status dos pagamentos da empresa (a página acompanha Pix/boleto/cartão
 # depois de consumir o token). Nunca autoriza criar assinatura ou pagamento.
-CHECKOUT_STATUS_GRACE_SECONDS = 72 * 3600
+CHECKOUT_STATUS_GRACE_SECONDS = 24 * 3600
 _MAX_TOKEN_LENGTH = 256
 _TOKEN_NBYTES = 32  # >= 32 bytes de entropia (token_urlsafe usa os.urandom)
 
@@ -170,20 +170,27 @@ def resolve_status_company(connection, raw_token):
 
     Somente leitura: não consome nem altera a sessão. Aceita token já consumido
     (o pagamento acabou de ser criado com ele), até `expires_at` + janela de
-    status. Token ausente, desconhecido, longo demais ou fora da janela → None.
+    status. Token ausente, desconhecido, longo demais, fora da janela ou
+    SUBSTITUÍDO por uma sessão mais nova da mesma empresa → None.
     O chamador ainda confere que o pagamento pertence a essa empresa.
     """
     token = str(raw_token or '').strip()
     if not token or len(token) > _MAX_TOKEN_LENGTH:
         return None
     row = connection.execute(
-        'SELECT company_id, expires_at FROM checkout_sessions WHERE token_hash = ?',
+        'SELECT id, company_id, expires_at FROM checkout_sessions WHERE token_hash = ?',
         (hash_token(token),),
     ).fetchone()
     if not row:
         return None
-    company_id, expires_at = row[0], row[1]
+    session_id, company_id, expires_at = row[0], row[1], row[2]
     if company_id in (None, ''):
+        return None
+    newer = connection.execute(
+        'SELECT 1 FROM checkout_sessions WHERE company_id = ? AND id > ? LIMIT 1',
+        (company_id, session_id),
+    ).fetchone()
+    if newer:
         return None
     try:
         expires = datetime.fromisoformat(str(expires_at).replace('Z', '+00:00'))

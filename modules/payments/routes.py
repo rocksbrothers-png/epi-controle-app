@@ -122,7 +122,8 @@ def _mp_error_response(handler, exc):
 
 
 def _payment_not_found(handler):
-    return send_json(handler, 404, {'ok': False, 'error': {'code': 'NOT_FOUND', 'message': PAYMENT_NOT_FOUND_MESSAGE}})
+    send_json(handler, 404, {'ok': False, 'error': {'code': 'NOT_FOUND', 'message': PAYMENT_NOT_FOUND_MESSAGE}})
+    return True
 
 
 def _status_query(parsed):
@@ -149,7 +150,8 @@ def _send_payment_status(handler, connection, payment_id, resource_type, company
         return _mp_error_response(handler, exc)
     connection.commit()
     public = {k: result[k] for k in ('payment_id', 'resource_type', 'status', 'status_detail', 'persisted')}
-    return send_json(handler, 200, {'ok': True, 'payment': public})
+    send_json(handler, 200, {'ok': True, 'payment': public})
+    return True
 
 
 # ── GET ───────────────────────────────────────────────────────────────────────
@@ -200,18 +202,21 @@ def handle_get_status(handler, parsed, payload, match):
     Sem credencial → 401. Pagamento desconhecido ou de outra empresa → 404
     genérico, sem chamar o Mercado Pago. Nenhum dado do cliente prova posse.
     """
-    payment_id, resource_type = _status_query(parsed)
     checkout_token = str(handler.headers.get('X-Checkout-Token', '') or '').strip()
+    has_bearer = bool(str(handler.headers.get('Authorization', '') or '').strip())
     with closing(get_connection()) as connection:
+        company_id = None
         if checkout_token:
             company_id = checkout_sessions.resolve_status_company(connection, checkout_token)
-            if company_id is None:
+            if company_id is None and not has_bearer:
                 return _payment_not_found(handler)
-        else:
+        if company_id is None:
+            # Token ausente ou não resolvido: vale o Bearer (sem ele → 401).
             actor = require_actor(connection, require_bearer_actor(handler, parsed, None))
             company_id = actor.get('company_id')
             if company_id in (None, ''):
                 return _payment_not_found(handler)
+        payment_id, resource_type = _status_query(parsed)
         return _send_payment_status(handler, connection, payment_id, resource_type, int(company_id))
 
 
@@ -468,7 +473,8 @@ def handle_post_webhook(handler, parsed, payload, match):
         # Falha FECHADA: sem o segredo no processo nada é aceito. 503 faz o
         # Mercado Pago reenviar mais tarde, sem perder a notificação.
         structured_log('critical', 'payments.webhook_secret_unavailable', path=parsed.path)
-        return send_json(handler, 503, {'ok': False, 'error': {'code': 'WEBHOOK_UNAVAILABLE', 'message': WEBHOOK_UNAVAILABLE_MESSAGE}})
+        send_json(handler, 503, {'ok': False, 'error': {'code': 'WEBHOOK_UNAVAILABLE', 'message': WEBHOOK_UNAVAILABLE_MESSAGE}})
+        return None
     if not service.verify_webhook_signature(handler.headers, query):
         structured_log('warning', 'payments.webhook_invalid_signature', path=parsed.path)
         return send_json(handler, 401, {'ok': False, 'error': {'code': 'INVALID_SIGNATURE', 'message': 'Assinatura inválida.'}})
@@ -481,7 +487,7 @@ def handle_post_webhook(handler, parsed, payload, match):
                 connection.rollback()
             except Exception:
                 pass
-            structured_log('error', 'payments.webhook_error', path=parsed.path, error=str(exc))
+            structured_log('error', 'payments.webhook_error', path=parsed.path, error=redact_secrets(str(exc))[:300])
             # 200 para o MP não reenfileirar indefinidamente um erro não recuperável.
             send_json(handler, 200, {'ok': False, 'error': public_error_message(exc)})
             return None

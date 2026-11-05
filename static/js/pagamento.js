@@ -60,9 +60,10 @@ async function getJson(url) {
 // Status é privado (S1): a página prova a empresa com a MESMA capability de
 // checkout recebida no cadastro, num cabeçalho (fora da URL e dos logs).
 async function getStatusJson(url) {
-  if (!ctx.checkoutToken) { return {}; }
+  if (!ctx.checkoutToken) { return { stopPolling: true }; }
   const res = await fetch(url, { headers: { Accept: 'application/json', 'X-Checkout-Token': ctx.checkoutToken } });
-  return res.json().catch(() => ({}));
+  const data = await res.json().catch(() => ({}));
+  return [401, 403, 404].includes(res.status) ? { ...data, stopPolling: true } : data;
 }
 
 async function postJson(url, body) {
@@ -230,6 +231,12 @@ function startStatusPolling(paymentId, resourceType) {
   if (statusTimer) clearInterval(statusTimer);
   statusTimer = setInterval(async () => {
     const data = await getStatusJson(`${API.status}?payment_id=${encodeURIComponent(paymentId)}&resource_type=${encodeURIComponent(resourceType)}`);
+    if (data.stopPolling) {
+      // Sem credencial válida ou pagamento fora do alcance: parar, sem insistir.
+      clearInterval(statusTimer);
+      if (data.error && data.error.message) $('status-line').textContent = data.error.message;
+      return;
+    }
     const status = data.payment && data.payment.status;
     if (status) $('status-line').textContent = `Status: ${status}`;
     if (['approved', 'authorized', 'cancelled', 'rejected'].includes(status)) {
