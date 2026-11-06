@@ -206,8 +206,20 @@ Detalhes em [`UBX_APPJS_AUDITORIA.md` §19](UBX_APPJS_AUDITORIA.md#19-ubx-comerc
   (`apiFetchWithRetry`); `api()`/`apiFetch`, usado pelas integrações comerciais, é idêntico nos dois.
   `index.html`, dígitos F4/F5B e a referência do Chromium foram gerados neste repositório.
 
+## UBX Comercial — fatia C3 (2026-11-06): interface comercial
+
+Detalhes em [`UBX_APPJS_AUDITORIA.md` §20](UBX_APPJS_AUDITORIA.md#20-ubx-comercial--fatia-c3-2026-11-06-interface-comercial).
+
+- `modules/commercial/ui/commercial-view.js` (19 funções) e `commercial-contract-view.js` (14): formulários,
+  prévia, painéis, filtros, exportação/impressão, contrato e ações; fachada `__EPI_COMMERCIAL_VIEW__`.
+- `app.js` 16.959 → 16.441 linhas; 712 → 679 declarações; 94 endpoints (sem mudança).
+- 2.715 cenários × 5 idiomas e concorrência comparados com a cópia literal do app.js (0 divergências), 28/29
+  sabotagens detectadas (1 mutante equivalente) e Chromium passo a passo nos cinco idiomas contra a referência
+  gravada da `main` DESTE repositório.
+- Aplicada de forma independente a partir da `main` do SaaS; resultado byte a byte igual ao do Corporate nos arquivos
+  pareados. `index.html`, baseline da guarda, dígitos F4/F5B e a referência do Chromium gerados neste repositório.
+
 ## Próximo passo
-UBX Comercial C3 (`ui/commercial-view.js`) e C4 (`formatCompanyCurrency`, `updateTopbarCompanyBadge`,
-`renderMyCompanyDomains`), cada uma com autorização própria, e, por último, a Etapa 3 (navegação/bootstrap) — sempre
+UBX Comercial C4 (`formatCompanyCurrency`, `updateTopbarCompanyBadge`, `renderMyCompanyDomains`), com autorização própria, e, por último, a Etapa 3 (navegação/bootstrap) — sempre
 em paridade com o Corporate. Pagamentos ficam fora da UBX.
 As Fases 0–2 acima seguem valendo para Compras.
