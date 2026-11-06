@@ -322,9 +322,8 @@ function loadOriginal(lang, opts) {
 }
 function loadCurrent(lang, opts) {
   const env = cached('current', lang, (ctx) => {
-    const app = read('app.js');
-    vm.runInContext(NAMES.map((n) => extractFunction(app, n)).join('\n\n'), ctx);
-    ctx.__VIEW__ = Object.fromEntries(NAMES.map((n) => [n, ctx[n]]));
+    for (const rel of VIEW_MODULES) { vm.runInContext(read(rel), ctx); }
+    ctx.__VIEW__ = ctx.__EPI_COMMERCIAL_VIEW__;
   });
   return env.reset(opts);
 }
@@ -559,4 +558,49 @@ module.exports = function ({ testAsync, test, assert, eq }) {
     eq(JSON.stringify(api), JSON.stringify([['api', '/api/commercial-contract?actor_user_id=7&company_id=901', 1, 'undefined']]), 'uma leitura de contrato');
   });
 
+  test('UBX Comercial C3: os módulos publicam as 23 síncronas e os namespaces congelados, carregam uma vez e respeitam a ordem de carga', () => {
+    const ctx = { Object, Set, Map, JSON };
+    ctx.globalThis = ctx;
+    vm.createContext(ctx);
+    const before = Object.keys(ctx);
+    for (const rel of VIEW_MODULES) { vm.runInContext(read(rel), ctx); }
+    const added = Object.keys(ctx).filter((k) => !before.includes(k)).sort();
+    const sync = NAMES.filter((n) => !ASYNC_NAMES.includes(n));
+    eq(JSON.stringify(added), JSON.stringify(['__EPI_COMMERCIAL_CONTRACT_VIEW__', '__EPI_COMMERCIAL_VIEW__', '__EPI_MODULE_COMMERCIAL_CONTRACT_VIEW_LOADED__',
+      '__EPI_MODULE_COMMERCIAL_VIEW_LOADED__', ...sync].sort()), 'globais publicados');
+    const ns = ctx.__EPI_COMMERCIAL_VIEW__;
+    const contract = ctx.__EPI_COMMERCIAL_CONTRACT_VIEW__;
+    assert(Object.isFrozen(ns) && Object.isFrozen(contract), 'namespaces congelados');
+    eq(JSON.stringify(Object.keys(ns)), JSON.stringify(NAMES), 'fachada: as 33 funções, na ordem do app.js');
+    eq(JSON.stringify(Object.keys(contract)), JSON.stringify(CONTRACT_NAMES), 'contrato: as 14 funções');
+    for (const name of CONTRACT_NAMES) { assert(ns[name] === contract[name], `${name}: fachada === contrato`); }
+    for (const name of sync) { assert(ctx[name] === ns[name], `${name}: global === namespace`); }
+    for (const name of ASYNC_NAMES) { assert(!(name in ctx), `${name} continua fora de globalThis (era de bloco)`); }
+    for (const rel of VIEW_MODULES) { vm.runInContext(read(rel), ctx); }
+    assert(ctx.__EPI_COMMERCIAL_VIEW__ === ns && ctx.__EPI_COMMERCIAL_CONTRACT_VIEW__ === contract, 'segunda carga não republica');
+
+    for (const rel of VIEW_MODULES) {
+      const module = read(rel);
+      assert(!/(?<![.\w$])api\(|fetch\(|XMLHttpRequest|\/api\//.test(module), `${rel}: sem HTTP direto (só a C2 e o updateCompany de Empresas)`);
+      assert(!/addEventListener|bindAppListener|safeOn\(/.test(module), `${rel}: sem listeners (a ligação continua no app.js; nenhum duplicado)`);
+      assert(!/\blet\s+(state|refs)\b|__EPI_APP_STATE__\s*=|__EPI_REFS__\s*=/.test(module), `${rel}: sem estado paralelo (state/refs são os do app.js)`);
+    }
+    assert(!/__EPI_COMMERCIAL_VIEW__|commercial-view\.js/.test(read(VIEW_MODULES[0]).replace(/^\s*\/\/.*$/gm, '')), 'o contrato não depende da tela (sem ciclo)');
+
+    const app = read('app.js');
+    for (const name of NAMES) {
+      assert(!new RegExp(`^\\s*(?:async\\s+)?function ${name}\\(`, 'm').test(app), `${name} não ficou duplicada no app.js`);
+    }
+    for (const name of ASYNC_NAMES.filter((n) => !['loadCommercialContract', 'saveCommercialContractDraft'].includes(n))) {
+      assert(app.includes(`__EPI_COMMERCIAL_VIEW__.${name}`), `${name}: o app.js liga pelo namespace`);
+    }
+    const order = [...read('views/_scripts.html').matchAll(/<script[^>]+src="([^"?]+)/g)].map((m) => m[1]);
+    const i = (src) => order.indexOf(src);
+    const iContract = i('/js/modules/commercial/ui/commercial-contract-view.js');
+    const iView = i('/js/modules/commercial/ui/commercial-view.js');
+    assert(iContract > i('/js/modules/commercial/integrations/commercial-api.js') && iContract > i('/js/views/view-helpers.js')
+      && iView > iContract && iView > i('/js/modules/commercial/ui/commercial-presentation.js') && iView < i('/app.js'),
+    `ordem de carga: contrato ${iContract}, comercial ${iView}, app ${i('/app.js')}`);
+    for (const rel of VIEW_MODULES) { eq(order.filter((src) => src === `/${rel}`).length, 1, `${rel} carregado uma vez`); }
+  });
 };
