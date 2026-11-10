@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/styles.css?v=a8f5b2bcb369">
+  <link rel="stylesheet" href="/styles.css?v=cf77d0681e26">
   <!-- Bootstrap de tema (P2-2, reescrito na frente de Isolamento PR C).
        Antes lia `epi-theme` do `localStorage`: aparência de escopo DEVICE,
        aplicada ANTES de qualquer autenticação. Num computador compartilhado
@@ -16,8 +16,8 @@
        Agora lê a cópia de sessão, que `sessionStorage` mantém presa a esta aba
        e que só é escrita DEPOIS da autenticação, carimbada com o principal.
        Por construção não há o que aplicar antes de saber de quem é. -->
-  <script src="/js/boot/theme-preference.js?v=a8f5b2bcb369"></script>
-<link rel="stylesheet" href="/styles/safety-library.css?v=a8f5b2bcb369">
+  <script src="/js/boot/theme-preference.js?v=cf77d0681e26"></script>
+<link rel="stylesheet" href="/styles/safety-library.css?v=cf77d0681e26">
 </head>
 <body>
   <section id="login-screen" class="screen active">
@@ -2326,6 +2326,7 @@
                   <option value="snapshot_view" data-i18n="ui.configuracao.snapshot_6ad27b">Snapshot</option>
                   <option value="snapshot_print" data-i18n="ui.configuracao.snapshot_impressao_ce5c61">Snapshot (impressão)</option>
                   <option value="snapshot_export" data-i18n="ui.configuracao.snapshot_exportacao_ea2632">Snapshot (exportação)</option>
+                  <option value="view_360" data-i18n="employee360.audit.view">Ficha 360° aberta</option>
                   <option value="denied" data-i18n="ui.configuracao.negado_1da31a">Negado</option>
                 </select>
               </label>
@@ -4002,115 +4003,140 @@
       <div id="onboarding-feedback" class="form-feedback" aria-live="polite"></div>
     </div>
   </div>
+
+  <!-- Ficha 360° de EPI (F1) — aberta pela linha do colaborador; conteúdo desenhado por
+       static/js/modules/employee-ppe-360/ui/employee-ppe-360-view.js. Nada no app.js. -->
+  <div id="employee-ppe-360-modal" class="modal-overlay ppe360-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="employee-ppe-360-title">
+    <div class="card modal-card ppe360-dialog">
+      <header class="ppe360-header">
+        <div class="ppe360-header__titles">
+          <p class="ppe360-breadcrumb" data-i18n="employee360.breadcrumb">Controle de EPI / Colaboradores</p>
+          <h2 id="employee-ppe-360-title" class="ppe360-title"><span data-i18n="employee360.title">Ficha 360° de EPI</span> <span class="ppe360-title__icon" aria-hidden="true">⛑</span></h2>
+          <p class="hint ppe360-subtitle" data-i18n="employee360.subtitle">Visão consolidada individual</p>
+        </div>
+        <div class="ppe360-header__actions">
+          <button type="button" class="ghost" data-ppe360-action="refresh" data-i18n="employee360.refresh">Atualizar</button>
+          <button type="button" class="ghost" data-ppe360-action="close" aria-label="Fechar" data-i18n-aria-label="employee360.close" data-i18n="employee360.close">Fechar</button>
+        </div>
+      </header>
+      <div id="employee-ppe-360-root" class="ppe360-body" aria-live="polite" aria-busy="false"></div>
+    </div>
+  </div>
   <script defer src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
-  <script defer src="/i18n.js?v=a8f5b2bcb369"></script>
-  <script defer src="/i18n-helper.js?v=a8f5b2bcb369"></script>
-  <script defer src="/tenant-init.js?v=a8f5b2bcb369"></script>
+  <script defer src="/i18n.js?v=cf77d0681e26"></script>
+  <script defer src="/i18n-helper.js?v=cf77d0681e26"></script>
+  <script defer src="/tenant-init.js?v=cf77d0681e26"></script>
   <!-- Módulos core/utils (refatoração JS) — carregados antes dos demais scripts -->
-  <script defer src="/js/core/constants.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/core/permissions.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/core/feature-flags.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/core/config.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/utils/storage.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/utils/debug.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/utils/dom.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/utils/perf.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/feature-flags-rt.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/permissions-rt.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/auth.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/api-client.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/router.js?v=a8f5b2bcb369"></script>
+  <script defer src="/js/core/constants.js?v=cf77d0681e26"></script>
+  <script defer src="/js/core/permissions.js?v=cf77d0681e26"></script>
+  <script defer src="/js/core/feature-flags.js?v=cf77d0681e26"></script>
+  <script defer src="/js/core/config.js?v=cf77d0681e26"></script>
+  <script defer src="/js/utils/storage.js?v=cf77d0681e26"></script>
+  <script defer src="/js/utils/debug.js?v=cf77d0681e26"></script>
+  <script defer src="/js/utils/dom.js?v=cf77d0681e26"></script>
+  <script defer src="/js/utils/perf.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/feature-flags-rt.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/permissions-rt.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/auth.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/api-client.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/router.js?v=cf77d0681e26"></script>
   <!-- Módulos de domínio UBX (modules/<domínio>/{ui,business,integrations}) — antes das views e do app.js -->
-  <script defer src="/js/modules/shared/business/value-format.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/form-field-identity.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/domain-labels.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/dialogs.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/print-popup.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shell/ui/shell-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shell/ui/topbar-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shell/ui/settings-drawer.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/mutation-flow.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/company-logo.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/auth/business/access-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/auth/ui/access-context.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/reports/business/report-filters.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/reports/integrations/reports-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/reports/ui/reports-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/shared/ui/file-data-url.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/epis/business/epi-form-values.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/epis/ui/epi-registration.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/users/business/user-form.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/users/integrations/users-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/users/ui/users-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/business/purchase-import-matching.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/ui-helpers.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/view-helpers.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/dashboard-scope.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/stock/ui/pending-validity-navigation.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/dashboard/ui/alert-presentation.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/dashboard.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/epis.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/estoque.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/stock-physical.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/estoque-config.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/safety-library.js?v=a8f5b2bcb369"></script>
-<script defer src="/js/views/employee-portal.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/legal-entity-fields.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/legal-entities-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/outsourced-companies-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/outsourced-employees-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/employees/business/employee-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/employees/integrations/employees-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/employees/ui/employees-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/outsourced/integrations/outsourced-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/outsourced/ui/outsourced-companies-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/outsourced/ui/outsourced-company-requests-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/outsourced/ui/outsourced-employees-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/archival/business/archival-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/archival/integrations/archival-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/archival/ui/archival-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/archival/ui/unit-archival-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/legal-entities/integrations/legal-entities-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/legal-entities/ui/legal-entities-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/units/business/unit-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/units/ui/units-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/companies/business/company-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/companies/integrations/companies-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/companies/ui/companies-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/my-company/business/my-company-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/my-company/integrations/my-company-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/my-company/ui/my-company-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/platform-brand/integrations/platform-brand-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/platform-brand/ui/platform-brand-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/commercial/business/commercial-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/commercial/ui/commercial-presentation.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/commercial/integrations/commercial-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/commercial/ui/commercial-contract-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/commercial/ui/commercial-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/data-migration-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/ui/reason-labels.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/ui/import-review-labels.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/business/purchase-limits-rules.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/integrations/purchase-limits-api.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/purchases/ui/purchase-limits-view.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/purchases.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/procurement.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/feedback.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/devolution.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/fichas.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/feedback-detail.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/views/profile.js?v=a8f5b2bcb369"></script>
-  <script defer src="/colab-list.js?v=a8f5b2bcb369"></script>
-  <script defer src="/gestao-colab.js?v=a8f5b2bcb369"></script>
-  <script defer src="/estoque.js?v=a8f5b2bcb369"></script>
-  <script defer src="/ux-global.js?v=a8f5b2bcb369"></script>
-  <script defer src="/js/modules/data-migration/integrations/job-decisions.js?v=a8f5b2bcb369"></script>
-  <script defer src="/app.js?v=a8f5b2bcb369"></script>
-  <script defer src="/share-modal.js?v=a8f5b2bcb369"></script>
-  <script defer src="/entrega-epi.js?v=a8f5b2bcb369"></script>
-  <script defer src="/navigation.js?v=a8f5b2bcb369"></script>
-  <script defer src="/navigation-controls.js?v=a8f5b2bcb369"></script>
-  <script defer src="/error-monitor.js?v=a8f5b2bcb369"></script>
-  <script defer src="/ux-analytics.js?v=a8f5b2bcb369"></script>
+  <script defer src="/js/modules/shared/business/value-format.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/form-field-identity.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/domain-labels.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/dialogs.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/print-popup.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shell/ui/shell-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shell/ui/topbar-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shell/ui/settings-drawer.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/mutation-flow.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/company-logo.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/auth/business/access-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/auth/ui/access-context.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/reports/business/report-filters.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/reports/integrations/reports-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/reports/ui/reports-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/shared/ui/file-data-url.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/epis/business/epi-form-values.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/epis/ui/epi-registration.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/users/business/user-form.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/users/integrations/users-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/users/ui/users-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/business/purchase-import-matching.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/ui-helpers.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/view-helpers.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/dashboard-scope.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/stock/ui/pending-validity-navigation.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/dashboard/ui/alert-presentation.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/dashboard.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/epis.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/estoque.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/stock-physical.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/estoque-config.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/safety-library.js?v=cf77d0681e26"></script>
+<script defer src="/js/views/employee-portal.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/legal-entity-fields.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/legal-entities-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/outsourced-companies-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/outsourced-employees-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employees/business/employee-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employees/integrations/employees-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employees/ui/employees-view.js?v=cf77d0681e26"></script>
+  <!-- Ficha 360° de EPI (F0 + F1): regras puras, ciclo de vida, integração e painel -->
+  <script defer src="/js/modules/employee-ppe-360/business/employee-ppe-360-contract.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employee-ppe-360/business/employee-ppe-360-summary.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employee-ppe-360/ui/employee-ppe-360-lifecycle.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employee-ppe-360/integrations/employee-ppe-360-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/employee-ppe-360/ui/employee-ppe-360-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/outsourced/integrations/outsourced-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/outsourced/ui/outsourced-companies-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/outsourced/ui/outsourced-company-requests-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/outsourced/ui/outsourced-employees-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/archival/business/archival-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/archival/integrations/archival-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/archival/ui/archival-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/archival/ui/unit-archival-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/legal-entities/integrations/legal-entities-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/legal-entities/ui/legal-entities-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/units/business/unit-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/units/ui/units-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/companies/business/company-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/companies/integrations/companies-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/companies/ui/companies-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/my-company/business/my-company-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/my-company/integrations/my-company-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/my-company/ui/my-company-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/platform-brand/integrations/platform-brand-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/platform-brand/ui/platform-brand-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/commercial/business/commercial-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/commercial/ui/commercial-presentation.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/commercial/integrations/commercial-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/commercial/ui/commercial-contract-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/commercial/ui/commercial-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/data-migration-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/ui/reason-labels.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/ui/import-review-labels.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/business/purchase-limits-rules.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/integrations/purchase-limits-api.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/purchases/ui/purchase-limits-view.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/purchases.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/procurement.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/feedback.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/devolution.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/fichas.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/feedback-detail.js?v=cf77d0681e26"></script>
+  <script defer src="/js/views/profile.js?v=cf77d0681e26"></script>
+  <script defer src="/colab-list.js?v=cf77d0681e26"></script>
+  <script defer src="/gestao-colab.js?v=cf77d0681e26"></script>
+  <script defer src="/estoque.js?v=cf77d0681e26"></script>
+  <script defer src="/ux-global.js?v=cf77d0681e26"></script>
+  <script defer src="/js/modules/data-migration/integrations/job-decisions.js?v=cf77d0681e26"></script>
+  <script defer src="/app.js?v=cf77d0681e26"></script>
+  <script defer src="/share-modal.js?v=cf77d0681e26"></script>
+  <script defer src="/entrega-epi.js?v=cf77d0681e26"></script>
+  <script defer src="/navigation.js?v=cf77d0681e26"></script>
+  <script defer src="/navigation-controls.js?v=cf77d0681e26"></script>
+  <script defer src="/error-monitor.js?v=cf77d0681e26"></script>
+  <script defer src="/ux-analytics.js?v=cf77d0681e26"></script>
 </body>
 </html>
