@@ -44,15 +44,29 @@
 
 require "xcodeproj"
 
+# Modo SwiftPM-only: a partir do momento em que NENHUM plugin depende mais de
+# CocoaPods (ex.: google_mlkit_* >= 1.0.3, que passou a publicar pacote
+# SwiftPM), o Flutter com Swift Package Manager habilitado NÃO gera Podfile.
+# Isso é esperado e não é erro — mas só é aceito se o Runner.xcodeproj
+# comprovar a integração SwiftPM (referência ao
+# FlutterGeneratedPluginSwiftPackage). Sem Podfile E sem SwiftPM, o projeto
+# iOS não foi gerado corretamente e o script aborta (fail-closed).
+
 IOS_DEPLOYMENT_TARGET = "15.5"
+SPM_MARKER = "FlutterGeneratedPluginSwiftPackage"
 
 ios_dir = File.expand_path("..", __dir__) # .../ios
 podfile_path = File.join(ios_dir, "Podfile")
 proj_path = File.join(ios_dir, "Runner.xcodeproj")
 
-unless File.exist?(podfile_path)
-  abort("[pin_ios_deployment_target] #{podfile_path} não existe. Rode " \
-        "`flutter build ios --config-only` antes.")
+pbxproj_path = File.join(ios_dir, "Runner.xcodeproj", "project.pbxproj")
+has_podfile = File.exist?(podfile_path)
+spm_integrated = File.exist?(pbxproj_path) && File.read(pbxproj_path).include?(SPM_MARKER)
+
+unless has_podfile || spm_integrated
+  abort("[pin_ios_deployment_target] #{podfile_path} não existe e o " \
+        "Runner.xcodeproj não tem integração SwiftPM (#{SPM_MARKER}). Rode " \
+        "`flutter create . --platforms=ios` e `flutter build ios --config-only` antes.")
 end
 
 unless File.exist?(proj_path)
@@ -61,17 +75,22 @@ unless File.exist?(proj_path)
 end
 
 # ── Podfile (CocoaPods) ──────────────────────────────────────────────────
-content = File.read(podfile_path)
+if has_podfile
+  content = File.read(podfile_path)
 
-# Remove qualquer linha `platform :ios` pré-existente (comentada ou não) —
-# vamos declarar a nossa, explícita, no topo.
-lines = content.lines.reject { |l| l =~ /^\s*#?\s*platform\s+:ios\b/ }
-content = lines.join
+  # Remove qualquer linha `platform :ios` pré-existente (comentada ou não) —
+  # vamos declarar a nossa, explícita, no topo.
+  lines = content.lines.reject { |l| l =~ /^\s*#?\s*platform\s+:ios\b/ }
+  content = lines.join
 
-content = "platform :ios, '#{IOS_DEPLOYMENT_TARGET}'\n" + content
+  content = "platform :ios, '#{IOS_DEPLOYMENT_TARGET}'\n" + content
 
-File.write(podfile_path, content)
-puts "[pin_ios_deployment_target] platform :ios, '#{IOS_DEPLOYMENT_TARGET}' aplicado em #{podfile_path}"
+  File.write(podfile_path, content)
+  puts "[pin_ios_deployment_target] platform :ios, '#{IOS_DEPLOYMENT_TARGET}' aplicado em #{podfile_path}"
+else
+  puts "[pin_ios_deployment_target] Sem Podfile: nenhum plugin depende de " \
+       "CocoaPods (integração 100% SwiftPM). Só o Runner.xcodeproj será fixado."
+end
 
 # ── Runner.xcodeproj (Xcode / Swift Package Manager) ────────────────────
 project = Xcodeproj::Project.open(proj_path)
