@@ -1956,3 +1956,47 @@ badge. A CSP não substitui a correção de saída (o SPA segue Report-Only em p
 ### 26.5 Paridade com o Corporate
 
 Aplicada de forma independente a partir da `main` do SaaS (`e168a0d`); os testes foram escritos e vistos reprovando aqui antes da correção. Módulo, testes e roteiro do Chromium são byte a byte iguais aos do Corporate; `index.html` foi gerado neste repositório.
+
+## 27. FIX — rótulos de status no modal do requisitante (2026-11-19)
+
+Base: Corporate `main` `4555dd95`, SaaS `main` `fcdcf94` (SEC-COMPRAS-1 integrada: #1107/#481). Pendência registrada
+na §25.6. Só frontend; nenhum endpoint, contrato, regra, permissão, banco ou infraestrutura alterado.
+
+### 27.1 Causa
+
+`openRequesterReviewModal` (`static/js/views/purchases.js`) lia `globalThis.ITEM_STATUS_LABELS`. Esse objeto nunca
+existiu no `globalThis`: o mapa era `const` de bloco no `app.js` e, desde a UBX Compras P1 (§25), vive só no namespace
+congelado `__EPI_PURCHASE_STATUS_UI__`. O fallback `{}` fazia os itens bloqueados (`approved`, `ordered`, `received`,
+`closed`) aparecerem com o código interno. A saída já passava por `esc()`; não havia XSS.
+
+### 27.2 Correção
+
+- Uma linha: `globalThis.__EPI_PURCHASE_STATUS_UI__?.ITEM_STATUS_LABELS || {}`. Reutiliza o catálogo oficial (getters
+  com `tr`, traduzidos no idioma ativo); nenhum mapa ou global novo. O módulo carrega antes de `views/purchases.js` em
+  `_scripts.html`, e a leitura acontece na abertura do modal.
+- Os códigos enviados à API não mudam (o modal só lê `item.status` para exibir); a separação editáveis/bloqueados,
+  os eventos e o fechamento não mudam.
+- `index.html` regenerado; dígitos F4/F5B recalculados com `_digesto_dos_pareados()` (o arquivo é pareado).
+
+### 27.3 Testes
+
+- `static/js/test/requester-modal-labels-runtime.js`: contexto isolado com o motor de tradução real e os 5 catálogos,
+  `view-helpers`, o módulo de status e o próprio `views/purchases.js`, com DOM mínimo simulado. Abre o modal real e
+  confere, nos 5 idiomas, o rótulo de cada status bloqueado contra a chave declarada no módulo e o JSON do catálogo
+  (expectativa independente), a ausência do código interno, a separação dos itens, o escape do nome do EPI, que os
+  itens não são alterados e o fechamento por "Cancelar" e por clique fora: 35 verificações. Reprova sem a correção
+  (`pt-BR: rótulo de approved deveria ser "Aprovado"`).
+- Chromium (`scripts/browser/ubx_purchase_status.py`): cenário novo abre o modal real na SPA nos 5 idiomas e confere
+  os rótulos do catálogo, nenhuma execução de marcação, fechamento ao cancelar e códigos preservados. Contraprova: o
+  mesmo roteiro contra o `static/` da `main` reprova com `(approved)`, `(ordered)`, `(received)`, `(closed)`.
+
+### 27.4 Traduções a revisar (não alteradas nesta correção)
+
+Todas as 16 chaves de `ITEM_STATUS_LABELS` existem nos 5 catálogos, mas 7 valores estão em inglês onde deveriam estar
+traduzidos: `portal.statusApproved` ("Approved") em `es-ES`, `fr-FR` e `nb-NO`; `portal.statusInRequest`
+("In requisition") em `es-ES`, `fr-FR` e `nb-NO`; `portal.statusReceived` ("Received") em `nb-NO`. Proposta: corrigir os
+valores nos catálogos em uma fatia de I18N, com a verificação de completude existente.
+
+### 27.5 Paridade com o Corporate
+
+Aplicada de forma independente a partir da `main` do SaaS; `views/purchases.js`, o módulo, o teste e o roteiro do Chromium são byte a byte iguais aos do Corporate. `index.html` e dígitos F4/F5B gerados neste repositório.
